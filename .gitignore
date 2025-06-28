@@ -1,0 +1,23 @@
+# Arquivos gerados pelo build do Maven/Gradle
+/target/
+/bin/
+/build/
+/.settings/
+
+# Arquivos de log
+*.log
+*.log.*
+*.tmp
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de outras IDEs
+.idea/
+.vscode/
+*.iml
+
+# Arquivos do Sistema Operacional
+Thumbs.db
+Desktop.ini
