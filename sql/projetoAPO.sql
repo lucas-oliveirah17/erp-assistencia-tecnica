@@ -1,5 +1,7 @@
 -- Recomenda-se a criação de um banco de dados específico para o sistema.
 CREATE DATABASE ProjetoAPO;
+-- DROP DATABASE ProjetoAPO;
+
 USE ProjetoAPO;
 
 CREATE TABLE Usuario (
@@ -14,15 +16,23 @@ CREATE TABLE Usuario (
 -- TABELA Cliente
 -- Armazena os dados dos clientes da assistência técnica.
 -- ==========================================================================================
-CREATE TABLE Cliente (
-    idcliente INT AUTO_INCREMENT PRIMARY KEY,
-    nomecliente VARCHAR(255) NOT NULL,
-    cpfcnpj VARCHAR(18) NOT NULL UNIQUE,
-    telcli VARCHAR(20) NOT NULL,
-    emailcli VARCHAR(255) NOT NULL UNIQUE,
-    tipocli ENUM('Pessoa Física', 'Pessoa Jurídica') NOT NULL,
-    clienteativo BOOLEAN DEFAULT TRUE
+CREATE TABLE tb_cliente (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    cpf_cnpj VARCHAR(18) NOT NULL UNIQUE,
+    tipo_cliente ENUM('PF', 'PJ') NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    endereco VARCHAR(255),
+    numero VARCHAR(10),
+    bairro VARCHAR(100),
+    cidade VARCHAR(100),
+    uf CHAR(2),
+    cep VARCHAR(9),
+    complemento VARCHAR(255),
+    ativo BOOLEAN DEFAULT TRUE
 );
+-- DROP TABLE tb_cliente;
 
 -- ==========================================================================================
 -- TABELA Funcionario
@@ -81,7 +91,7 @@ CREATE TABLE Aparelho (
     lugarestoque INT,
     garantia TEXT,
     estado ENUM('Em Manutenção', 'Em Estoque', 'Em Entrega') NOT NULL,
-    FOREIGN KEY (proprietario) REFERENCES Cliente(idcliente),
+    FOREIGN KEY (proprietario) REFERENCES tb_cliente(id_cliente),
     FOREIGN KEY (lugarestoque) REFERENCES Estoque_Aparelho(idestoque)
 );
 
@@ -110,3 +120,5 @@ CREATE TABLE Ordem_de_Servico (
     FOREIGN KEY (tecnicoresponsavel) REFERENCES Funcionario(idfuncionario),
     FOREIGN KEY (atendente) REFERENCES Funcionario(idfuncionario)
 );
+
+-- SELECT user, host FROM mysql.user;

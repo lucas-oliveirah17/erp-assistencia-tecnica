@@ -12,7 +12,6 @@ public class DBQuery {
 	private String    fieldKey  	= "";
 	private int		  keyFieldIndex = -1;
 	
-	
 	public DBQuery() {
 		try {
 			this.statement = new DBConnection().getConnection().createStatement();
@@ -99,6 +98,25 @@ public class DBQuery {
 			System.out.print("O n�mero de valores informados n�o � equivalente aos campos da tabela!");
 		}	
 		return 0;
+	}
+	
+	public int insertWithoutId(String[] values) {
+	    if (values.length != this.fieldsName.length - 1) {
+	        System.out.println("Número de valores não bate com número de colunas (exceto chave)!");
+	        return 0;
+	    }
+	    
+	    String[] fieldsWithoutKey = new String[this.fieldsName.length - 1];
+	    int j = 0;
+	    for (int i = 0; i < this.fieldsName.length; i++) {
+	        if (i != this.keyFieldIndex) {
+	            fieldsWithoutKey[j++] = this.fieldsName[i];
+	        }
+	    }
+	    
+	    String sql = "INSERT INTO " + this.tableName + " ( " + joinElements(fieldsWithoutKey, ", ") + " ) VALUES ('" + joinElements(values, "','") + "')";
+	    System.out.println(sql);
+	    return execute(sql);
 	}
 		
 	public int delete(String[] values) {
