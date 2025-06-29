@@ -33,6 +33,7 @@ CREATE TABLE tb_cliente (
     ativo BOOLEAN DEFAULT TRUE
 );
 -- DROP TABLE tb_cliente;
+-- SELECT * FROM tb_cliente;
 
 -- ==========================================================================================
 -- TABELA Funcionario
@@ -101,7 +102,7 @@ CREATE TABLE Aparelho (
 -- ==========================================================================================
 CREATE TABLE Ordem_de_Servico (
     idordemservico INT AUTO_INCREMENT PRIMARY KEY,
-    idcliente INT NOT NULL,
+    id_cliente INT NOT NULL,
     idaparelho INT NOT NULL,
     tecnicoresponsavel INT NOT NULL,
     atendente INT NOT NULL,
@@ -115,7 +116,7 @@ CREATE TABLE Ordem_de_Servico (
     datacriacao DATETIME DEFAULT CURRENT_TIMESTAMP,
     estado ENUM('Finalizado', 'Em Manutenção', 'Aguardando Resposta Cliente') NOT NULL,
     enderecoentrega INT,
-    FOREIGN KEY (idcliente) REFERENCES Cliente(idcliente),
+    FOREIGN KEY (id_cliente) REFERENCES tb_cliente(id_cliente),
     FOREIGN KEY (idaparelho) REFERENCES Aparelho(idaparelho),
     FOREIGN KEY (tecnicoresponsavel) REFERENCES Funcionario(idfuncionario),
     FOREIGN KEY (atendente) REFERENCES Funcionario(idfuncionario)
