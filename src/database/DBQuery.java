@@ -100,7 +100,11 @@ public class DBQuery {
 		return 0;
 	}
 	
-	public int insertWithoutId(String[] values) {
+	public int insert(String[] values, boolean ignoreKey) {
+		if (!ignoreKey) {
+	        return insert(values); // reutiliza o método acima
+	    }
+		
 	    if (values.length != this.fieldsName.length - 1) {
 	        System.out.println("Número de valores não bate com número de colunas (exceto chave)!");
 	        return 0;

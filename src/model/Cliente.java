@@ -19,7 +19,11 @@ public class Cliente {
 	private String complemento;
 	private boolean ativo;
 	
-		
+	
+	public Cliente() {
+		this.ativo = true;
+	}
+	
 	public Cliente(int id, String nome, String cpfCnpj, TipoCliente tipo, String telefone, String email,
 			String endereco, String numero, String bairro, String cidade, Uf uf, String cep, String complemento,
 			boolean ativo) {

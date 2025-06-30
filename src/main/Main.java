@@ -11,8 +11,8 @@ public class Main {
 
         // new TelaCadastroCliente();
         
-        // new TelaCadastroUsuario();
+        new TelaCadastroUsuario();
     	
-    	new TelaGerenciamentoUsuarios();
+    	// new TelaGerenciamentoUsuarios();
     }
 }

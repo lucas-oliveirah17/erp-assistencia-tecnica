@@ -1,14 +1,7 @@
 package view;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-
-import java.awt.GridLayout;
-// import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,16 +16,13 @@ public class TelaCadastroCliente extends JFrame {
                        txtBairro, txtCidade, txtCep, txtComplemento;
     private JComboBox<TipoCliente> cmbTipo;
     private JComboBox<Uf> cmbUf;
-    // private Font font_title = new Font("Arial", Font.BOLD, 22);
-    // private Font font_label = new Font("Arial", Font.BOLD, 12);
-    // private Font font_input = new Font("Arial", Font.BOLD, 12);
 
     public TelaCadastroCliente() {
     	// Configuração da janela
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Cliente");
         setSize(400, 600);
-        setLayout(new GridLayout(15, 2, 5, 5));
+        setLayout(new GridLayout(13, 2));
 
         // Campos
         txtNome = new JTextField();

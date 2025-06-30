@@ -30,6 +30,6 @@ public class ClienteDAO {
 	        cliente.isAtivo() ? "1" : "0"
         };
         
-        return dbQuery.insertWithoutId(values) > 0;
+        return dbQuery.insert(values, true) > 0;
     }
 }
