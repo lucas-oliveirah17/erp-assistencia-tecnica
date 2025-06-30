@@ -7,6 +7,7 @@ import java.util.List;
 
 import database.DBQuery;
 import model.Usuario;
+import model.enums.Privilegios;
 
 public class UsuarioDAO {
 	
@@ -27,7 +28,7 @@ public class UsuarioDAO {
         String[] values = {
 	        usuario.getEmail(),
 	        usuario.getSenha(),
-	        usuario.getPrivilegios().name(), // Converte o enum para String
+	        usuario.getPrivilegios().getValorDb(), // Converte o enum para String
 	        usuario.isAtivo() ? "1" : "0"    // Converte o boolean para "1" ou "0"
         };
         
@@ -89,7 +90,7 @@ public class UsuarioDAO {
                     rs.getInt("id_usuario"),
                     rs.getString("email"),
                     rs.getString("senha"),
-                    Usuario.Privilegios.valueOf(rs.getString("privilegios")),
+                    Privilegios.fromDb(rs.getString("privilegios")),
                     rs.getBoolean("ativo")
                 ));
             }

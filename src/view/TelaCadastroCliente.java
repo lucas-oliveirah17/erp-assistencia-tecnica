@@ -14,12 +14,15 @@ import java.awt.event.ActionListener;
 
 import dao.ClienteDAO;
 import model.Cliente;
+import model.enums.TipoCliente;
+import model.enums.Uf;
 
 public class TelaCadastroCliente extends JFrame {
 	private static final long serialVersionUID = 1L; // Default serialVersion
 	private JTextField txtNome, txtCpfCnpj, txtTelefone, txtEmail, txtEndereco, txtNumero,
-                       txtBairro, txtCidade, txtUf, txtCep, txtComplemento;
-    private JComboBox<Cliente.TipoCliente> cmbTipo;
+                       txtBairro, txtCidade, txtCep, txtComplemento;
+    private JComboBox<TipoCliente> cmbTipo;
+    private JComboBox<Uf> cmbUf;
     // private Font font_title = new Font("Arial", Font.BOLD, 22);
     // private Font font_label = new Font("Arial", Font.BOLD, 12);
     // private Font font_input = new Font("Arial", Font.BOLD, 12);
@@ -29,19 +32,19 @@ public class TelaCadastroCliente extends JFrame {
     	setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Cliente");
         setSize(400, 600);
-        setLayout(new GridLayout(15, 2));
+        setLayout(new GridLayout(15, 2, 5, 5));
 
         // Campos
         txtNome = new JTextField();
         txtCpfCnpj = new JTextField();
-        cmbTipo = new JComboBox<>(Cliente.TipoCliente.values());
+        cmbTipo = new JComboBox<>(TipoCliente.values());
         txtTelefone = new JTextField();
         txtEmail = new JTextField();
         txtEndereco = new JTextField();
         txtNumero = new JTextField();
         txtBairro = new JTextField();
         txtCidade = new JTextField();
-        txtUf = new JTextField();
+        cmbUf = new JComboBox<>(Uf.values());
         txtCep = new JTextField();
         txtComplemento = new JTextField();
 
@@ -55,7 +58,7 @@ public class TelaCadastroCliente extends JFrame {
         add(new JLabel("Número:")); add(txtNumero);
         add(new JLabel("Bairro:")); add(txtBairro);
         add(new JLabel("Cidade:")); add(txtCidade);
-        add(new JLabel("UF:")); add(txtUf);
+        add(new JLabel("UF:")); add(cmbUf);
         add(new JLabel("CEP:")); add(txtCep);
         add(new JLabel("Complemento:")); add(txtComplemento);
         
@@ -70,14 +73,14 @@ public class TelaCadastroCliente extends JFrame {
                     0,
                     txtNome.getText(),
                     txtCpfCnpj.getText(),
-                    (Cliente.TipoCliente) cmbTipo.getSelectedItem(),
+                    (TipoCliente) cmbTipo.getSelectedItem(),
                     txtTelefone.getText(),
                     txtEmail.getText(),
                     txtEndereco.getText(),
                     txtNumero.getText(),
                     txtBairro.getText(),
                     txtCidade.getText(),
-                    txtUf.getText(),
+                    (Uf) cmbUf.getSelectedItem(),
                     txtCep.getText(),
                     txtComplemento.getText(),
                     true

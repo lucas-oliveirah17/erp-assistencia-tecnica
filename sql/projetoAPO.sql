@@ -1,4 +1,3 @@
--- Recomenda-se a criação de um banco de dados específico para o sistema.
 CREATE DATABASE IF NOT EXISTS projeto_apo;
 -- DROP DATABASE projeto_apo;
 
@@ -35,7 +34,11 @@ CREATE TABLE IF NOT EXISTS tb_cliente (
     numero VARCHAR(10),
     bairro VARCHAR(100),
     cidade VARCHAR(100),
-    uf CHAR(2),
+    uf ENUM(
+        'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT',
+        'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO',
+        'RR', 'SC', 'SP', 'SE', 'TO'
+    ) NOT NULL,
     cep VARCHAR(9),
     complemento VARCHAR(255),
     ativo BOOLEAN DEFAULT TRUE
@@ -218,3 +221,6 @@ INSERT INTO tb_ordem_servico (id_cliente, id_aparelho, tecnico_responsavel, aten
 (10, 10, 3, 4, 'Tela azul constante', 'Reinstalação do sistema', 'Reinstalação', 120.00, 'avista', 'pix', '2025-07-04', 'finalizado', 10);
 
 -- SELECT user, host FROM mysql.user;
+-- SELECT VERSION();
+
+

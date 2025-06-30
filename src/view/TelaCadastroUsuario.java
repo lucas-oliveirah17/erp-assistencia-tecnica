@@ -15,26 +15,27 @@ import java.awt.event.ActionListener;
 
 import dao.UsuarioDAO;
 import model.Usuario;
+import model.enums.Privilegios;
 
 public class TelaCadastroUsuario extends JFrame {
     
     private static final long serialVersionUID = 1L; // Default serialVersion
     private JTextField txtEmail;
     private JPasswordField txtSenha;
-    private JComboBox<Usuario.Privilegios> cmbPrivilegios;
+    private JComboBox<Privilegios> cmbPrivilegios;
     private JCheckBox chkAtivo;
 
     public TelaCadastroUsuario() {
-        // Configuração da janela, seguindo o padrão da TelaCadastroCliente
+    	// Configuração da janela
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Usuário");
-        setSize(400, 200); // Tamanho ajustado para menos campos
-        setLayout(new GridLayout(5, 2, 5, 5)); // GridLayout com 5 linhas, 2 colunas e espaçamento
+        setSize(400, 200);
+        setLayout(new GridLayout(5, 2, 5, 5));
 
         // Instanciação dos campos
         txtEmail = new JTextField();
         txtSenha = new JPasswordField();
-        cmbPrivilegios = new JComboBox<>(Usuario.Privilegios.values());
+        cmbPrivilegios = new JComboBox<>(Privilegios.values());
         chkAtivo = new JCheckBox("Usuário Ativo", true); // Default para true
 
         // Adicionando campos e rótulos ao layout, na mesma ordem
@@ -63,7 +64,7 @@ public class TelaCadastroUsuario extends JFrame {
                     0, // ID é gerado pelo banco
                     txtEmail.getText(),
                     new String(txtSenha.getPassword()),
-                    (Usuario.Privilegios) cmbPrivilegios.getSelectedItem(),
+                    (Privilegios) cmbPrivilegios.getSelectedItem(),
                     chkAtivo.isSelected()
                 );
 

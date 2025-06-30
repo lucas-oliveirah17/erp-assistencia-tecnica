@@ -24,7 +24,7 @@ public class ClienteDAO {
 	        cliente.getNumero(),
 	        cliente.getBairro(),
 	        cliente.getCidade(),
-	        cliente.getUf(),
+	        cliente.getUf().getValorDb(),
 	        cliente.getCep(),
 	        cliente.getComplemento(),
 	        cliente.isAtivo() ? "1" : "0"

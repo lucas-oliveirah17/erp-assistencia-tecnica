@@ -1,11 +1,9 @@
 package model;
 
+import model.enums.TipoCliente;
+import model.enums.Uf;
 
-public class Cliente {
-	public enum TipoCliente{
-		PF, PJ
-	}
-	
+public class Cliente {	
 	private int id;
 	private String nome;
 	private String cpfCnpj;
@@ -16,14 +14,14 @@ public class Cliente {
 	private String numero;
 	private String bairro;
 	private String cidade;
-	private String uf;
+	private Uf uf;
 	private String cep;
 	private String complemento;
 	private boolean ativo;
 	
 		
 	public Cliente(int id, String nome, String cpfCnpj, TipoCliente tipo, String telefone, String email,
-			String endereco, String numero, String bairro, String cidade, String uf, String cep, String complemento,
+			String endereco, String numero, String bairro, String cidade, Uf uf, String cep, String complemento,
 			boolean ativo) {
 		super();
 		this.id = id;
@@ -113,10 +111,10 @@ public class Cliente {
 		this.cidade = cidade;
 	}
 	
-	public String getUf() {
+	public Uf getUf() {
 		return uf;
 	}
-	public void setUf(String uf) {
+	public void setUf(Uf uf) {
 		this.uf = uf;
 	}
 	
@@ -141,5 +139,3 @@ public class Cliente {
 		this.ativo = ativo;
 	}
 }
-
-

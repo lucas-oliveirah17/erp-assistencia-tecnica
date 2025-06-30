@@ -2,6 +2,7 @@ package view;
 
 import dao.UsuarioDAO;
 import model.Usuario;
+import model.enums.Privilegios;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -17,7 +18,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
     private DefaultTableModel tableModel;
     private JTextField txtId, txtEmail;
     private JPasswordField txtSenha;
-    private JComboBox<Usuario.Privilegios> cmbPrivilegios;
+    private JComboBox<Privilegios> cmbPrivilegios;
     private JCheckBox chkAtivo;
     private JButton btnAtualizar, btnExcluir, btnLimpar;
 
@@ -48,7 +49,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         txtId.setEditable(false); // ID não pode ser editado
         txtEmail = new JTextField();
         txtSenha = new JPasswordField();
-        cmbPrivilegios = new JComboBox<>(Usuario.Privilegios.values());
+        cmbPrivilegios = new JComboBox<>(Privilegios.values());
         chkAtivo = new JCheckBox("Usuário Ativo");
         
         btnAtualizar = new JButton("Atualizar");
@@ -116,7 +117,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         // Pega os dados da linha selecionada
         int id = (int) tableModel.getValueAt(linha, 0);
         String email = (String) tableModel.getValueAt(linha, 1);
-        Usuario.Privilegios privilegio = (Usuario.Privilegios) tableModel.getValueAt(linha, 2);
+        Privilegios privilegio = (Privilegios) tableModel.getValueAt(linha, 2);
         boolean ativo = tableModel.getValueAt(linha, 3).toString().equalsIgnoreCase("Sim");
         
         // Preenche os campos do formulário
@@ -146,7 +147,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
             Integer.parseInt(txtId.getText()),
             txtEmail.getText(),
             senha,
-            (Usuario.Privilegios) cmbPrivilegios.getSelectedItem(),
+            (Privilegios) cmbPrivilegios.getSelectedItem(),
             chkAtivo.isSelected()
         );
         
