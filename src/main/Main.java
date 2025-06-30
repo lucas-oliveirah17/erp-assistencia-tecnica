@@ -9,10 +9,10 @@ import dao.UsuarioDAO;
 public class Main {
     public static void main(String[] args) {
 
-        // new TelaCadastroCliente();
+        new TelaCadastroCliente();
         
         // new TelaCadastroUsuario();
     	
-    	new TelaGerenciamentoUsuarios();
+    	// new TelaGerenciamentoUsuarios();
     }
 }

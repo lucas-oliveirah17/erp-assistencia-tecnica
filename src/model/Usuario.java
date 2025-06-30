@@ -3,7 +3,7 @@ package model;
 public class Usuario {
 
 		public enum Privilegios {
-			admin, usuario
+			administrador, usuario
 		}
 		
 		private int id;

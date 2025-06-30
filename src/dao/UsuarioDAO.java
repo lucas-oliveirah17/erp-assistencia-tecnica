@@ -15,8 +15,8 @@ public class UsuarioDAO {
 	public UsuarioDAO() {
 
         String tableName = "tb_usuario";
-        String fieldNames = "iduser, emailuser, senhauser, privilegiosuser, userativo";
-        String fieldKey = "iduser";
+        String fieldNames = "id_usuario, email, senha, privilegios, ativo";
+        String fieldKey = "id_usuario";
 
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
@@ -86,11 +86,11 @@ public class UsuarioDAO {
         try {
             while (rs.next()) {
                 usuarios.add(new Usuario(
-                    rs.getInt("iduser"),
-                    rs.getString("emailuser"),
-                    rs.getString("senhauser"),
-                    Usuario.Privilegios.valueOf(rs.getString("privilegiosuser")),
-                    rs.getBoolean("userativo")
+                    rs.getInt("id_usuario"),
+                    rs.getString("email"),
+                    rs.getString("senha"),
+                    Usuario.Privilegios.valueOf(rs.getString("privilegios")),
+                    rs.getBoolean("ativo")
                 ));
             }
         } catch (SQLException e) {
