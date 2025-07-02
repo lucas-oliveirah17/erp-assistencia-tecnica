@@ -67,6 +67,7 @@ public class DBQuery {
 		return (out);
 	}
 	
+	
 	public int execute(String sql) { // insert, delete, update
 		try {
 			int rs = statement.executeUpdate(sql);
@@ -98,6 +99,22 @@ public class DBQuery {
 			System.out.print("O n�mero de valores informados n�o � equivalente aos campos da tabela!");
 		}	
 		return 0;
+	}
+	
+	public int insert(String[] values, String fieldsNamesInsert) {
+	    for (String value : values) {
+	        System.out.println(value);
+	    }
+	    String[] campos = fieldsNamesInsert.split(",");
+	    if (values.length == campos.length) {
+	        String sql = "INSERT INTO " + this.tableName + " ( " + this.joinElements(campos, ", ");
+	        sql += ") VALUES ('" + joinElements(values, "','") + "')";
+	        System.out.print(sql);
+	        return this.execute(sql);
+	    } else {
+	        System.out.print("O número de valores informados não é equivalente aos campos da tabela!");
+	    }
+	    return 0;
 	}
 			
 	public int delete(String[] values) {

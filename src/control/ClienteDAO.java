@@ -8,18 +8,22 @@ public class ClienteDAO {
 	
 	public ClienteDAO() {
         String tableName = "tb_cliente";
-        String fieldNames = "nome, cpf_cnpj, tipo_cliente, "
-        		+ "telefone, email, endereco, numero, "
-        		+ "complemento, bairro, cidade, uf, cep";
+        String fieldNames = "id_cliente, nome, cpf_cnpj, tipo_cliente, "
+        		+ "telefone, email, endereco, numero, complemento, "
+        		+ "bairro, cidade, uf, cep, ativo";
         String fieldKey = "id_cliente";
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
 	
 	public boolean salvar(Cliente cliente) {
+		String fieldsNameInsert = "nome, cpf_cnpj, tipo_cliente, telefone, "
+				+ "email, endereco, numero, complemento, "
+				+ "bairro, cidade, uf, cep";
+		
         String[] values = {
 	        cliente.getNome(),
 	        cliente.getCpfCnpj(),
-	        cliente.getTipo().name(),
+	        cliente.getTipo().getValorDb(),
 	        cliente.getTelefone(),
 	        cliente.getEmail(),
 	        cliente.getEndereco(),
@@ -31,6 +35,6 @@ public class ClienteDAO {
 	        cliente.getCep()
         };
         
-        return dbQuery.insert(values) > 0;
+        return dbQuery.insert(values, fieldsNameInsert) > 0;
     }
 }

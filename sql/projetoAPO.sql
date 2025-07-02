@@ -52,14 +52,12 @@ CREATE TABLE IF NOT EXISTS tb_cliente (
 -- ==========================================================================================
 CREATE TABLE IF NOT EXISTS tb_funcionario (
     id_funcionario INT AUTO_INCREMENT PRIMARY KEY,
-    id_usuario INT UNIQUE,
     nome VARCHAR(255) NOT NULL,
     cpf VARCHAR(14) NOT NULL UNIQUE,
     funcao VARCHAR(100) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (id_usuario) REFERENCES tb_usuario(id_usuario)
+    ativo BOOLEAN DEFAULT TRUE
 );
 -- DROP TABLE tb_funcionario;
 -- SELECT * FROM tb_funcionario;
