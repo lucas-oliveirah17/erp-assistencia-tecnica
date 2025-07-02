@@ -8,9 +8,9 @@ import view.TelaGerenciamentoUsuarios;
 public class Main {
     public static void main(String[] args) {
 
-        //new TelaCadastroCliente();
+        new TelaCadastroCliente();
         //new TelaCadastroFuncionario();
-        new TelaCadastroUsuario();
+        //new TelaCadastroUsuario();
         
     	//new TelaGerenciamentoUsuarios();
     	

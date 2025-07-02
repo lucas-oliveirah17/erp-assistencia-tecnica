@@ -34,7 +34,7 @@ public class TelaCadastroFuncionario extends JFrame {
         this.setTitle("Cadastro de Funcionário");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
-        this.setSize(400, 280);
+        //this.setSize(400, 280);
         this.setLocationRelativeTo(null);
 
         // -- PAINEL PRINCIPAL --
@@ -102,6 +102,7 @@ public class TelaCadastroFuncionario extends JFrame {
         painelPrincipal.add(painelBotoes);
 
         this.setContentPane(painelPrincipal);
+        this.pack(); // Ajusta o tamanho da janela ao conteúdo
         this.setVisible(true);
     }
 
