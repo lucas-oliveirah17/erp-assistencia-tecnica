@@ -1,4 +1,4 @@
-package dao;
+package control;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +33,7 @@ public class UsuarioDAO {
         };
         
         // Chama o método da classe DBQuery para executar o INSERT.
-        return dbQuery.insert(values, true) > 0;
+        return dbQuery.insert(values) > 0;
     }
 	
 	/**

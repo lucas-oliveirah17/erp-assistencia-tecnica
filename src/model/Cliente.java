@@ -25,7 +25,7 @@ public class Cliente {
 	}
 	
 	public Cliente(int id, String nome, String cpfCnpj, TipoCliente tipo, String telefone, String email,
-			String endereco, String numero, String bairro, String cidade, Uf uf, String cep, String complemento,
+			String endereco, String numero, String complemento, String bairro, String cidade, Uf uf, String cep, 
 			boolean ativo) {
 		super();
 		this.id = id;
@@ -36,11 +36,11 @@ public class Cliente {
 		this.email = email;
 		this.endereco = endereco;
 		this.numero = numero;
+		this.complemento = complemento;
 		this.bairro = bairro;
 		this.cidade = cidade;
 		this.uf = uf;
 		this.cep = cep;
-		this.complemento = complemento;
 		this.ativo = ativo;
 	}
 	
@@ -101,6 +101,13 @@ public class Cliente {
 		this.numero = numero;
 	}
 	
+	public String getComplemento() {
+		return complemento;
+	}
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
+	}
+	
 	public String getBairro() {
 		return bairro;
 	}
@@ -127,13 +134,6 @@ public class Cliente {
 	}
 	public void setCep(String cep) {
 		this.cep = cep;
-	}
-	
-	public String getComplemento() {
-		return complemento;
-	}
-	public void setComplemento(String complemento) {
-		this.complemento = complemento;
 	}
 	
 	public boolean isAtivo() {

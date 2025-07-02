@@ -1,4 +1,4 @@
-package dao;
+package control;
 
 import database.DBQuery;
 import model.Cliente;
@@ -8,7 +8,9 @@ public class ClienteDAO {
 	
 	public ClienteDAO() {
         String tableName = "tb_cliente";
-        String fieldNames = "id_cliente, nome, cpf_cnpj, tipo_cliente, telefone, email, endereco, numero, bairro, cidade, uf, cep, complemento, ativo";
+        String fieldNames = "nome, cpf_cnpj, tipo_cliente, "
+        		+ "telefone, email, endereco, numero, "
+        		+ "complemento, bairro, cidade, uf, cep";
         String fieldKey = "id_cliente";
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
@@ -22,14 +24,13 @@ public class ClienteDAO {
 	        cliente.getEmail(),
 	        cliente.getEndereco(),
 	        cliente.getNumero(),
+	        cliente.getComplemento(),
 	        cliente.getBairro(),
 	        cliente.getCidade(),
 	        cliente.getUf().getValorDb(),
-	        cliente.getCep(),
-	        cliente.getComplemento(),
-	        cliente.isAtivo() ? "1" : "0"
+	        cliente.getCep()
         };
         
-        return dbQuery.insert(values, true) > 0;
+        return dbQuery.insert(values) > 0;
     }
 }

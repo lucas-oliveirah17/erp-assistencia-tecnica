@@ -1,11 +1,13 @@
 package view;
 
-import dao.UsuarioDAO;
 import model.Usuario;
 import model.enums.Privilegios;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import control.UsuarioDAO;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;

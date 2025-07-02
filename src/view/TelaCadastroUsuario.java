@@ -3,6 +3,9 @@ package view;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+
+import control.UsuarioDAO;
+
 import javax.swing.JPasswordField;
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
@@ -13,7 +16,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import dao.UsuarioDAO;
 import model.Usuario;
 import model.enums.Privilegios;
 

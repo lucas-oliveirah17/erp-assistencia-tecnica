@@ -99,30 +99,7 @@ public class DBQuery {
 		}	
 		return 0;
 	}
-	
-	public int insert(String[] values, boolean ignoreKey) {
-		if (!ignoreKey) {
-	        return insert(values); // reutiliza o método acima
-	    }
-		
-	    if (values.length != this.fieldsName.length - 1) {
-	        System.out.println("Número de valores não bate com número de colunas (exceto chave)!");
-	        return 0;
-	    }
-	    
-	    String[] fieldsWithoutKey = new String[this.fieldsName.length - 1];
-	    int j = 0;
-	    for (int i = 0; i < this.fieldsName.length; i++) {
-	        if (i != this.keyFieldIndex) {
-	            fieldsWithoutKey[j++] = this.fieldsName[i];
-	        }
-	    }
-	    
-	    String sql = "INSERT INTO " + this.tableName + " ( " + joinElements(fieldsWithoutKey, ", ") + " ) VALUES ('" + joinElements(values, "','") + "')";
-	    System.out.println(sql);
-	    return execute(sql);
-	}
-		
+			
 	public int delete(String[] values) {
 		if (values.length != this.fieldsName.length){
 			System.out.println("\n A quantidade de campos � diferente da quantidade de valores!");

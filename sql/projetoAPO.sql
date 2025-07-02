@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS tb_cliente (
     email VARCHAR(255) NOT NULL UNIQUE,
     endereco VARCHAR(255),
     numero VARCHAR(10),
+    complemento VARCHAR(255),
     bairro VARCHAR(100),
     cidade VARCHAR(100),
     uf ENUM(
@@ -40,7 +41,6 @@ CREATE TABLE IF NOT EXISTS tb_cliente (
         'RR', 'SC', 'SP', 'SE', 'TO'
     ) NOT NULL,
     cep VARCHAR(9),
-    complemento VARCHAR(255),
     ativo BOOLEAN DEFAULT TRUE
 );
 -- DROP TABLE tb_cliente;
