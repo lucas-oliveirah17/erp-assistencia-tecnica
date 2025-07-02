@@ -11,9 +11,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class TelaCadastroFuncionario extends JFrame {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; // Default serialVersion
 
-    // Componentes de entrada
+    // -- COMPONENTES DE ENTRADA --
     private JTextField tfNome = new JTextField();
     private JTextField tfCpf = new JTextField();
     private JComboBox<FuncaoFuncionario> cbFuncao = new JComboBox<>(FuncaoFuncionario.values());
@@ -23,14 +23,14 @@ public class TelaCadastroFuncionario extends JFrame {
     private JButton btnSalvar = new JButton("Salvar");
     private JButton btnCancelar = new JButton("Cancelar");
 
-    // Fonte e tamanho das entradas
+    // -- FONTE E TAMANHO DAS ENTRADAS --
     private Font panelFont = new Font("Arial", Font.BOLD, 14);
     private Font labelFont = new Font("Arial", Font.BOLD, 12);
     private Font inputFont = new Font("Arial", Font.PLAIN, 12);
     private Dimension inputSize = new Dimension(200, 25);
 
     public TelaCadastroFuncionario() {
-    	// Configuração da janela
+    	// -- CONFIGURAÇÕES DA JANELA --
         this.setTitle("Cadastro de Funcionário");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
@@ -105,7 +105,7 @@ public class TelaCadastroFuncionario extends JFrame {
         this.setVisible(true);
     }
 
-    // Método de apoio para aplicar estilo
+    // -- MÉTODO DE APOIO PARA APLICAR ESTILO --
     private void estilizarComponentes(JPanel painel, Dimension inputSize) {
         for (Component c : painel.getComponents()) {
             if (c instanceof JLabel) {

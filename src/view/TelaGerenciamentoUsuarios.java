@@ -14,8 +14,8 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class TelaGerenciamentoUsuarios extends JFrame {
-
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L; // Default serialVersion
+    
     private JTable tabelaUsuarios;
     private DefaultTableModel tableModel;
     private JTextField txtId, txtEmail;
@@ -25,7 +25,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
     private JButton btnAtualizar, btnExcluir, btnLimpar;
 
     public TelaGerenciamentoUsuarios() {
-        // --- Configurações da Janela ---
+    	// -- CONFIGURAÇÕES DA JANELA --
         setTitle("Gerenciamento de Usuários");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
