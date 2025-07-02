@@ -1,85 +1,128 @@
 package view;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-
-import control.UsuarioDAO;
-
-import javax.swing.JPasswordField;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import model.Usuario;
 import model.enums.Privilegios;
+import control.UsuarioDAO;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class TelaCadastroUsuario extends JFrame {
-    
-    private static final long serialVersionUID = 1L; // Default serialVersion
-    private JTextField txtEmail;
-    private JPasswordField txtSenha;
-    private JComboBox<Privilegios> cmbPrivilegios;
-    private JCheckBox chkAtivo;
+    private static final long serialVersionUID = 1L;
+
+    // Componentes de entrada
+    private JTextField tfEmail = new JTextField();
+    private JTextField tfSenha = new JTextField();
+    private JComboBox<Privilegios> cbPrivilegios = new JComboBox<>(Privilegios.values());
+
+    private JButton btnSalvar = new JButton("Salvar");
+    private JButton btnCancelar = new JButton("Cancelar");
+
+    // Fonte e tamanho das entradas
+    private Font panelFont = new Font("Arial", Font.BOLD, 14);
+    private Font labelFont = new Font("Arial", Font.BOLD, 12);
+    private Font inputFont = new Font("Arial", Font.PLAIN, 12);
+    private Dimension inputSize = new Dimension(200, 25);
 
     public TelaCadastroUsuario() {
     	// Configuração da janela
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setTitle("Cadastro de Usuário");
-        setSize(400, 200);
-        setLayout(new GridLayout(5, 2, 5, 5));
+        this.setTitle("Cadastro de Usuários");
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setResizable(false);
+        this.setSize(400, 280);
+        this.setLocationRelativeTo(null);
 
-        // Instanciação dos campos
-        txtEmail = new JTextField();
-        txtSenha = new JPasswordField();
-        cmbPrivilegios = new JComboBox<>(Privilegios.values());
-        chkAtivo = new JCheckBox("Usuário Ativo", true); // Default para true
+        // -- PAINEL PRINCIPAL --
+        JPanel painelPrincipal = new JPanel();
+        painelPrincipal.setLayout(new BoxLayout(painelPrincipal, BoxLayout.Y_AXIS));
+        painelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Adicionando campos e rótulos ao layout, na mesma ordem
-        add(new JLabel("Email:"));
-        add(txtEmail);
+        // -- PAINEL DADOS GERAIS --
+        JPanel painelDadosGerais = new JPanel(new GridBagLayout());
+        painelDadosGerais.setBorder(BorderFactory.createTitledBorder("Dados"));
         
-        add(new JLabel("Senha:"));
-        add(txtSenha);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+
+        int linha = 0;
+
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Nome:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfEmail, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Senha:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfSenha, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Função:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(cbPrivilegios, gbc);
+
+        // -- PAINEL BOTÕES --
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));      
+           
+        btnSalvar.addActionListener(this::salvarUsuario);
+        btnCancelar.addActionListener(e -> dispose());
         
-        add(new JLabel("Privilégios:"));
-        add(cmbPrivilegios);
-        
-        add(chkAtivo);
-        add(new JLabel()); // Célula vazia para alinhar o layout, como no exemplo
+        painelBotoes.add(btnSalvar);
+        painelBotoes.add(btnCancelar);
 
-        // Adicionando Botão Salvar
-        JButton btnSalvar = new JButton("Salvar");
-        add(btnSalvar);
-        add(new JLabel()); // Célula vazia
+        // --- ESTILIZAÇÃO --
+        ((TitledBorder) painelDadosGerais.getBorder()).setTitleFont(panelFont);
 
-        // ActionListener para o botão, usando a mesma estrutura de classe anônima
-        btnSalvar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Lógica de criação e salvamento dentro do listener
-                Usuario usuario = new Usuario(
-                    0, // ID é gerado pelo banco
-                    txtEmail.getText(),
-                    new String(txtSenha.getPassword()),
-                    (Privilegios) cmbPrivilegios.getSelectedItem(),
-                    chkAtivo.isSelected()
-                );
+        estilizarComponentes(painelDadosGerais, inputSize);
 
-                UsuarioDAO dao = new UsuarioDAO();
-                if (dao.salvar(usuario)) {
-                    JOptionPane.showMessageDialog(null, "Usuário cadastrado com sucesso!");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Erro ao cadastrar usuário.");
-                }
+        // -- MONTAGEM FINAL --
+        painelPrincipal.add(painelDadosGerais);
+        painelPrincipal.add(Box.createVerticalStrut(10)); // Cria um espaçamento de 10px entre os paineis
+        painelPrincipal.add(painelBotoes);
+
+        this.setContentPane(painelPrincipal);
+        this.setVisible(true);
+    }
+
+    // Método de apoio para aplicar estilo
+    private void estilizarComponentes(JPanel painel, Dimension inputSize) {
+        for (Component c : painel.getComponents()) {
+            if (c instanceof JLabel) {
+                c.setFont(labelFont);
+            } else if (c instanceof JTextField || c instanceof JComboBox) {
+                c.setFont(inputFont);
+                ((JComponent) c).setPreferredSize(inputSize);
             }
-        });
+        }
+    }
+    
+    private void salvarUsuario(ActionEvent e) {
+        Usuario usuario = new Usuario();
+        try {
+        	usuario.setEmail(tfEmail.getText());
+        	usuario.setSenha(tfSenha.getText());
+            usuario.setPrivilegios((Privilegios) cbPrivilegios.getSelectedItem());
 
-        // Torna a janela visível ao final do construtor
-        setVisible(true);
+            UsuarioDAO dao = new UsuarioDAO();
+            boolean sucesso = dao.salvar(usuario);
+
+            if (sucesso) {
+                JOptionPane.showMessageDialog(this, "Usuário salvo com sucesso!");
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao salvar usuário.");
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage());
+        }
     }
 }

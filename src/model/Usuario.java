@@ -9,6 +9,10 @@ public class Usuario {
 	private Privilegios privilegios;
 	private boolean ativo;
 
+	public Usuario() {
+		this.ativo = true;
+	}
+	
 	public Usuario(int id, String email, String senha, Privilegios privilegios, boolean ativo) {
 		this.id = id;
 		this.email = email;

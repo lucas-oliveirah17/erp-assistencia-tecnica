@@ -9,8 +9,8 @@ public class Main {
     public static void main(String[] args) {
 
         //new TelaCadastroCliente();
-        new TelaCadastroFuncionario();
-        // new TelaCadastroUsuario();
+        //new TelaCadastroFuncionario();
+        new TelaCadastroUsuario();
         
     	//new TelaGerenciamentoUsuarios();
     	

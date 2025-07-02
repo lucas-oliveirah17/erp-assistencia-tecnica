@@ -24,16 +24,16 @@ public class UsuarioDAO {
 	
 
 	public boolean salvar(Usuario usuario) {
-
+		String fieldsNameInsert = "email, senha, privilegios";
+		
         String[] values = {
 	        usuario.getEmail(),
 	        usuario.getSenha(),
 	        usuario.getPrivilegios().getValorDb(), // Converte o enum para String
-	        usuario.isAtivo() ? "1" : "0"    // Converte o boolean para "1" ou "0"
         };
         
         // Chama o método da classe DBQuery para executar o INSERT.
-        return dbQuery.insert(values) > 0;
+        return dbQuery.insert(values, fieldsNameInsert) > 0;
     }
 	
 	/**
