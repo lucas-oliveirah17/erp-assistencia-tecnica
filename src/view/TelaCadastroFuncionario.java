@@ -1,7 +1,7 @@
 package view;
 
 import model.Funcionario;
-
+import model.enums.FuncaoFuncionario;
 import control.FuncionarioDAO;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ public class TelaCadastroFuncionario extends JFrame {
     // Componentes de entrada
     private JTextField tfNome = new JTextField();
     private JTextField tfCpf = new JTextField();
-    private JTextField tfFuncao = new JTextField();
+    private JComboBox<FuncaoFuncionario> cbFuncao = new JComboBox<>(FuncaoFuncionario.values());
     private JTextField tfTelefone = new JTextField();
     private JTextField tfEmail = new JTextField();
 
@@ -68,7 +68,7 @@ public class TelaCadastroFuncionario extends JFrame {
         gbc.gridx = 0; gbc.gridy = linha;
         painelDadosGerais.add(new JLabel("Função:"), gbc);
         gbc.gridx = 1;
-        painelDadosGerais.add(tfFuncao, gbc);
+        painelDadosGerais.add(cbFuncao, gbc);
 
         linha++;
         gbc.gridx = 0; gbc.gridy = linha;
@@ -122,7 +122,7 @@ public class TelaCadastroFuncionario extends JFrame {
         try {
             funcionario.setNome(tfNome.getText());
             funcionario.setCpf(tfCpf.getText());
-            funcionario.setFuncao(tfFuncao.getText());
+            funcionario.setFuncao((FuncaoFuncionario) cbFuncao.getSelectedItem());
             funcionario.setTelefone(tfTelefone.getText());
             funcionario.setEmail(tfEmail.getText());
             

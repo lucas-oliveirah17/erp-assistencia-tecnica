@@ -54,7 +54,9 @@ CREATE TABLE IF NOT EXISTS tb_funcionario (
     id_funcionario INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     cpf VARCHAR(14) NOT NULL UNIQUE,
-    funcao VARCHAR(100) NOT NULL,
+    funcao ENUM(
+		'tecnico', 'atendente', 'gerente', 'rh', 'diretor'
+    ) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     ativo BOOLEAN DEFAULT TRUE
@@ -89,7 +91,8 @@ CREATE TABLE IF NOT EXISTS tb_estoque_aparelho (
     localizacao VARCHAR(255) NOT NULL,
     categoria VARCHAR(100),
     dimensao VARCHAR(100),
-    capacidade INT
+    capacidade INT,
+    ativo BOOLEAN DEFAULT TRUE
 );
 -- DROP TABLE tb_estoque_aparelho;
 -- SELECT * FROM tb_estoque_aparelho;
@@ -102,13 +105,17 @@ CREATE TABLE IF NOT EXISTS tb_aparelho (
     id_aparelho INT AUTO_INCREMENT PRIMARY KEY,
     modelo VARCHAR(100) NOT NULL,
     numero_serie VARCHAR(100) NOT NULL UNIQUE,
-    categoria VARCHAR(100),
+    categoria ENUM(
+		'televisao', 'monitor', 'home_theater', 'celular', 'tablet', 'aparelho_som', 
+		'notebook', 'computador'
+	) NOT NULL,
     dimensao VARCHAR(50),
     peso DECIMAL(10, 2),
     proprietario INT NOT NULL,
     id_estoque_aparelho INT,
     garantia TEXT,
     estado ENUM('em_manutencao', 'em_estoque', 'em_entrega') NOT NULL,
+    ativo BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (proprietario) REFERENCES tb_cliente(id_cliente),
     FOREIGN KEY (id_estoque_aparelho) REFERENCES tb_estoque_aparelho(id_estoque_aparelho)
 );
@@ -127,14 +134,14 @@ CREATE TABLE IF NOT EXISTS tb_ordem_servico (
     atendente INT NOT NULL,
     descricao_ocorrencia TEXT NOT NULL,
     comentario_tecnico TEXT,
-    tipo_servico VARCHAR(255),
+    tipo_servico ENUM('manutencao', 'orcamento', 'reparo'),
     valor_servico DECIMAL(10, 2),
     tipo_pagamento ENUM('avista', 'parcelado'),
     forma_pagamento ENUM('cartao_credito', 'debito', 'pix', 'boleto'),
     prazo DATE,
     data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
     estado ENUM('finalizado', 'em_manutencao', 'aguardando_resposta') NOT NULL,
-    endereco_entrega INT,
+    ativo BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (id_cliente) REFERENCES tb_cliente(id_cliente),
     FOREIGN KEY (id_aparelho) REFERENCES tb_aparelho(id_aparelho),
     FOREIGN KEY (tecnico_responsavel) REFERENCES tb_funcionario(id_funcionario),
@@ -146,77 +153,89 @@ CREATE TABLE IF NOT EXISTS tb_ordem_servico (
 -- ==========================================================================================
 -- INSERÇÕES PARA DADOS INICIAIS DO BANCO DE DADOS
 -- ==========================================================================================
-INSERT INTO tb_cliente (nome, cpf_cnpj, tipo_cliente, telefone, email, endereco, numero, bairro, cidade, uf, cep, complemento) VALUES
-('Ana Souza', '123.456.789-00', 'pf', '11987654321', 'ana@email.com', 'Rua das Flores', '101', 'Centro', 'São Paulo', 'SP', '01000-000', ''),
-('João Lima', '987.654.321-00', 'pf', '11999998888', 'joao@email.com', 'Av. Brasil', '45', 'Jardins', 'São Paulo', 'SP', '01400-000', ''),
-('TechCorp Ltda', '12.345.678/0001-99', 'pj', '1133224455', 'contato@techcorp.com', 'Rua Industrial', '300', 'Zona Industrial', 'Campinas', 'SP', '13000-000', 'Bloco A'),
-('Carlos Mendes', '123.123.123-99', 'pf', '1188888888', 'carlos@email.com', 'Av. Paulista', '900', 'Bela Vista', 'São Paulo', 'SP', '01310-000', ''),
-('Roberta Dias', '321.321.321-77', 'pf', '11912345678', 'roberta@email.com', 'Rua Nova', '200', 'Centro', 'Santos', 'SP', '11000-000', ''),
-('Empresa X', '11.111.111/0001-00', 'pj', '1144556677', 'empresaX@dominio.com', 'Rua das Empresas', '10', 'Distrito', 'Osasco', 'SP', '06000-000', ''),
-('Mariana Castro', '456.789.123-11', 'pf', '11987654322', 'mariana@email.com', 'Rua A', '111', 'Bairro B', 'Ribeirão Preto', 'SP', '14000-000', ''),
-('André Silva', '789.123.456-00', 'pf', '1177776666', 'andre@email.com', 'Rua C', '222', 'Bairro D', 'Campinas', 'SP', '13050-000', ''),
-('Loja Peças Ltda', '99.888.777/0001-11', 'pj', '1166554433', 'pecas@loja.com', 'Av. Central', '500', 'Comercial', 'Guarulhos', 'SP', '07100-000', ''),
-('Beatriz Gomes', '111.222.333-44', 'pf', '11911223344', 'beatriz@email.com', 'Rua D', '303', 'Bairro E', 'São Paulo', 'SP', '01500-000', '');
+INSERT INTO tb_usuario (email, senha, privilegios) VALUES
+('joao.admin@apo.com', 'senha123', 'administrador'),
+('maria.usr@apo.com', 'senha123', 'usuario'),
+('carlos.usr@apo.com', 'senha123', 'usuario'),
+('ana.admin@apo.com', 'senha123', 'administrador'),
+('lucas.tecnico@apo.com', 'senha123', 'usuario'),
+('juliana.usr@apo.com', 'senha123', 'usuario'),
+('pedro.admin@apo.com', 'senha123', 'administrador'),
+('carla.usr@apo.com', 'senha123', 'usuario'),
+('fernando.usr@apo.com', 'senha123', 'usuario'),
+('laura.admin@apo.com', 'senha123', 'administrador');
+
+INSERT INTO tb_cliente (nome, cpf_cnpj, tipo_cliente, telefone, email, endereco, numero, complemento, bairro, cidade, uf, cep) VALUES
+('Lucas Almeida', '123.456.789-01', 'pf', '(11)91234-5678', 'lucas@email.com', 'Rua das Flores', '123', '', 'Centro', 'São Paulo', 'SP', '01001-000'),
+('Empresa XYZ', '12.345.678/0001-00', 'pj', '(11)99876-5432', 'contato@xyz.com.br', 'Av. Paulista', '1000', '10º Andar', 'Bela Vista', 'São Paulo', 'SP', '01310-000'),
+('Maria Souza', '987.654.321-00', 'pf', '(21)91234-5678', 'maria@email.com', 'Rua das Acácias', '321', '', 'Copacabana', 'Rio de Janeiro', 'RJ', '22050-002'),
+('João Silva', '456.789.123-45', 'pf', '(31)98888-7777', 'joao@email.com', 'Av. Afonso Pena', '200', '', 'Centro', 'Belo Horizonte', 'MG', '30130-003'),
+('TechCorp Ltda', '11.111.111/0001-11', 'pj', '(48)99999-9999', 'suporte@techcorp.com', 'Rua da Inovação', '45', 'Bloco B', 'Estreito', 'Florianópolis', 'SC', '88075-000'),
+('Cláudia Ramos', '111.222.333-44', 'pf', '(85)98888-0000', 'claudia@email.com', 'Rua das Palmeiras', '85', '', 'Aldeota', 'Fortaleza', 'CE', '60150-001'),
+('Construtora Alfa', '55.444.333/0001-55', 'pj', '(62)91234-1111', 'contato@alfa.com', 'Av. T-63', '740', '', 'Bueno', 'Goiânia', 'GO', '74230-010'),
+('Rafael Torres', '222.333.444-55', 'pf', '(51)93456-7890', 'rafael@email.com', 'Rua Central', '55', '', 'Centro', 'Porto Alegre', 'RS', '90010-320'),
+('Isabela Mendes', '333.444.555-66', 'pf', '(41)97654-3210', 'isa@email.com', 'Av. República', '10', 'Apto 102', 'Água Verde', 'Curitiba', 'PR', '80240-140'),
+('Bruna Lima', '444.555.666-77', 'pf', '(71)99999-8888', 'bruna@email.com', 'Rua das Laranjeiras', '22', '', 'Barra', 'Salvador', 'BA', '40140-000');
 
 INSERT INTO tb_funcionario (nome, cpf, funcao, telefone, email) VALUES
-('Lucas Oliveira', '123.456.789-01', 'Técnico', '11999990000', 'lucas@empresa.com'),
-('Juliana Alves', '987.654.321-02', 'Atendente', '11988887777', 'juliana@empresa.com'),
-('Pedro Lima', '321.654.987-03', 'Técnico', '11977776666', 'pedro@empresa.com'),
-('Fernanda Costa', '654.321.987-04', 'Atendente', '11966665555', 'fernanda@empresa.com'),
-('Carlos Eduardo', '789.456.123-05', 'Gerente', '11955554444', 'carlos@empresa.com'),
-('Amanda Nunes', '963.852.741-06', 'Financeiro', '11944443333', 'amanda@empresa.com'),
-('Rafael Dias', '852.963.741-07', 'Técnico', '11933332222', 'rafael@empresa.com'),
-('Sofia Martins', '741.852.963-08', 'RH', '11922221111', 'sofia@empresa.com'),
-('Bruno Silva', '159.357.486-09', 'Suporte', '11911110000', 'bruno@empresa.com'),
-('Larissa Lopes', '357.159.486-10', 'Atendente', '11900009999', 'larissa@empresa.com');
+('Carlos Mendes', '123.123.123-12', 'tecnico', '(11)91234-5678', 'carlos@apo.com'),
+('Fernanda Lima', '234.234.234-23', 'atendente', '(21)92345-6789', 'fernanda@apo.com'),
+('Joana Silva', '345.345.345-34', 'gerente', '(31)93456-7890', 'joana@apo.com'),
+('Paulo Henrique', '456.456.456-45', 'tecnico', '(41)94567-8901', 'paulo@apo.com'),
+('André Matos', '567.567.567-56', 'diretor', '(51)95678-9012', 'andre@apo.com'),
+('Vanessa Rocha', '678.678.678-67', 'atendente', '(71)96789-0123', 'vanessa@apo.com'),
+('Bruno Soares', '789.789.789-78', 'tecnico', '(62)97890-1234', 'bruno@apo.com'),
+('Tatiane Freitas', '890.890.890-89', 'rh', '(85)98901-2345', 'tatiane@apo.com'),
+('Eduardo Reis', '901.901.901-90', 'gerente', '(48)99012-3456', 'eduardo@apo.com'),
+('Letícia Costa', '012.012.012-01', 'tecnico', '(11)90123-4567', 'leticia@apo.com');
 
 INSERT INTO tb_fornecedor (razao_social, cnpj, telefone, site, tipo_fornecedor, garantia, nome_fantasia) VALUES
-('Tecnoparts Ltda', '11.222.333/0001-11', '1133334444', 'http://tecnoparts.com', 'Eletrônicos', '12 meses', 'Tecnoparts'),
-('Eletronic World', '22.333.444/0001-22', '1144445555', 'http://eletronicworld.com', 'Componentes', '24 meses', 'E-World'),
-('Distribuidora Mega', '33.444.555/0001-33', '1155556666', 'http://megadistrib.com', 'Acessórios', '6 meses', 'MegaDist'),
-('Cabo Fácil', '44.555.666/0001-44', '1166667777', 'http://cabofacil.com', 'Cabos', 'Indeterminado', 'CaboFácil'),
-('FonteTech', '55.666.777/0001-55', '1177778888', 'http://fontetech.com', 'Fontes', '18 meses', 'FonteTech'),
-('Cooler Brasil', '66.777.888/0001-66', '1188889999', 'http://coolerbr.com', 'Resfriamento', '12 meses', 'CoolerBR'),
-('Chip&Co', '77.888.999/0001-77', '1199990000', 'http://chipco.com', 'Chips', '12 meses', 'ChipCo'),
-('Placas Alpha', '88.999.000/0001-88', '1122334455', 'http://placasalpha.com', 'Placas Mãe', '24 meses', 'Alpha'),
-('HardStore', '99.000.111/0001-99', '1133445566', 'http://hardstore.com', 'HDs e SSDs', '12 meses', 'HardStore'),
-('Visão Digital', '00.111.222/0001-00', '1144556677', 'http://visaodigital.com', 'Monitores', '24 meses', 'VisãoDigital');
+('Eletrônica Silva LTDA', '01.234.567/0001-01', '(11)4002-8922', 'http://eletronicasilva.com.br', 'eletrônicos', '12 meses', 'Silva Eletrônicos'),
+('TecParts Distribuidora', '02.345.678/0001-02', '(21)3003-1234', 'http://tecparts.com.br', 'componentes', '6 meses', 'TecParts'),
+('FastCom Peças', '03.456.789/0001-03', '(31)3222-4455', NULL, 'cabos e conectores', '3 meses', 'FastCom'),
+('GigaTech Brasil', '04.567.890/0001-04', '(41)4444-5555', 'https://gigatech.com', 'hardware', '12 meses', 'GigaTech'),
+('AudioPlus', '05.678.901/0001-05', '(51)9999-8888', NULL, 'áudio', '2 anos', 'AudioPlus'),
+('TelaFácil SA', '06.789.012/0001-06', '(71)7777-6666', 'http://telafacil.com', 'displays', '6 meses', 'TelaFácil'),
+('MobileCenter Ltda', '07.890.123/0001-07', '(62)3333-4444', NULL, 'smartphones', '1 ano', 'MobileCenter'),
+('NotebookPRO', '08.901.234/0001-08', '(85)2222-1111', 'https://notebookpro.com.br', 'notebooks', '18 meses', 'NotebookPRO'),
+('DataWorld', '09.012.345/0001-09', '(91)5555-6666', NULL, 'infraestrutura', '12 meses', 'DataWorld'),
+('EletroMania', '10.123.456/0001-10', '(11)8888-7777', 'http://eletronet.com', 'geral', '6 meses', 'EletroMania');
 
 INSERT INTO tb_estoque_aparelho (localizacao, categoria, dimensao, capacidade) VALUES
-('Estoque A1', 'Notebook', '40x30x10', 50),
-('Estoque A2', 'Smartphone', '15x7x1', 200),
-('Estoque B1', 'Desktop', '60x60x30', 30),
-('Estoque C1', 'TV', '120x80x20', 10),
-('Estoque D1', 'Tablet', '25x20x2', 100),
-('Estoque A3', 'Impressoras', '50x40x30', 20),
-('Estoque B2', 'Fontes', '30x20x15', 150),
-('Estoque C2', 'Cabos', '10x10x10', 500),
-('Estoque D2', 'Coolers', '15x15x10', 80),
-('Estoque B3', 'Monitores', '50x30x10', 40);
+('Prateleira A1', 'smartphones', '30x30x30', 10),
+('Prateleira B2', 'notebooks', '50x40x10', 8),
+('Gaveta 1', 'tablets', '25x20x5', 15),
+('Sala Técnica', 'diversos', 'grande', 5),
+('Armário 2', 'acessórios', '10x10x5', 50),
+('Estoque Alto', 'televisores', '120x80x20', 2),
+('Prateleira C3', 'monitores', '60x40x15', 6),
+('Gaveta 2', 'home_theater', '50x30x20', 4),
+('Depósito', 'diversos', 'variável', 20),
+('Armazém Externo', 'computadores', 'grande', 10);
 
 INSERT INTO tb_aparelho (modelo, numero_serie, categoria, dimensao, peso, proprietario, id_estoque_aparelho, garantia, estado) VALUES
-('Dell Inspiron 15', 'SN001', 'Notebook', '38x25x2', 2.5, 1, 1, 'Garantia de 1 ano', 'em_manutencao'),
-('iPhone 12', 'SN002', 'Smartphone', '15x7x1', 0.3, 2, 2, 'Garantia Apple', 'em_estoque'),
-('TV Samsung 50"', 'SN003', 'TV', '112x70x7', 8.0, 3, 4, 'Garantia de 2 anos', 'em_entrega'),
-('Lenovo ThinkPad', 'SN004', 'Notebook', '36x24x2', 2.3, 4, 1, 'Garantia de 1 ano', 'em_estoque'),
-('Canon Pixma', 'SN005', 'Impressora', '45x30x15', 4.0, 5, 6, 'Garantia Canon', 'em_manutencao'),
-('Samsung Galaxy S22', 'SN006', 'Smartphone', '15x7x1', 0.4, 6, 2, 'Garantia de fábrica', 'em_estoque'),
-('iMac 27"', 'SN007', 'Desktop', '65x45x20', 10.0, 7, 3, 'Garantia Apple', 'em_entrega'),
-('Xiaomi Mi 11', 'SN008', 'Smartphone', '16x7x1', 0.35, 8, 2, 'Garantia de 1 ano', 'em_estoque'),
-('HP Envy', 'SN009', 'Notebook', '37x24x2', 2.4, 9, 1, 'Garantia HP', 'em_estoque'),
-('Acer Aspire 5', 'SN010', 'Notebook', '39x26x2', 2.6, 10, 1, 'Garantia de 1 ano', 'em_manutencao');
+('Galaxy S21', 'SN123456789', 'celular', '15x7x0.8', 0.18, 1, 1, '1 ano pela Samsung', 'em_estoque'),
+('Smart TV LG 55"', 'LG987654321', 'televisao', '122x71x5', 13.5, 3, 6, '2 anos', 'em_manutencao'),
+('Notebook Dell i7', 'DL5566X9', 'notebook', '35x24x2', 2.1, 4, 2, '1 ano', 'em_estoque'),
+('Tablet iPad Air', 'IPAD1234', 'tablet', '24x17x0.6', 0.5, 5, 3, '1 ano AppleCare', 'em_entrega'),
+('Monitor Samsung 24"', 'SAMS24HD', 'monitor', '55x33x6', 3.2, 6, 7, '6 meses', 'em_estoque'),
+('Home Theater Sony', 'HTSONY200', 'home_theater', '80x40x10', 7.0, 2, 8, '2 anos', 'em_manutencao'),
+('Computador AMD Ryzen', 'CPTRYZEN5000', 'computador', '45x20x45', 10.0, 7, 10, '1 ano', 'em_estoque'),
+('Celular Xiaomi Redmi', 'XMIRED123', 'celular', '15x7x0.9', 0.19, 9, 1, '1 ano', 'em_entrega'),
+('Tablet Galaxy Tab A', 'GTABAXX22', 'tablet', '25x16x0.8', 0.48, 10, 3, '1 ano', 'em_estoque'),
+('Notebook Lenovo', 'LN123X556', 'notebook', '34x23x2', 1.8, 8, 2, '1 ano', 'em_manutencao');
 
-INSERT INTO tb_ordem_servico (id_cliente, id_aparelho, tecnico_responsavel, atendente, descricao_ocorrencia, comentario_tecnico, tipo_servico, valor_servico, tipo_pagamento, forma_pagamento, prazo, estado, endereco_entrega) VALUES
-(1, 1, 1, 2, 'Notebook não liga', 'Problema na fonte', 'Reparo de fonte', 250.00, 'avista', 'pix', '2025-07-05', 'em_manutencao', 1),
-(2, 2, 3, 4, 'Tela quebrada', 'Substituição pendente', 'Troca de tela', 600.00, 'parcelado', 'cartao_credito', '2025-07-10', 'aguardando_resposta', 2),
-(3, 3, 1, 2, 'Sem imagem', 'TV funcionando após ajuste', 'Ajuste de firmware', 300.00, 'avista', 'boleto', '2025-07-01', 'finalizado', 3),
-(4, 4, 3, 4, 'Teclado não funciona', 'Troca concluída', 'Substituição de teclado', 150.00, 'avista', 'debito', '2025-07-03', 'finalizado', 4),
-(5, 5, 1, 2, 'Erro de impressão', 'Problema na cabeça de impressão', 'Manutenção geral', 200.00, 'parcelado', 'cartao_credito', '2025-07-08', 'em_manutencao', 5),
-(6, 6, 3, 4, 'Tela não acende', '', 'Diagnóstico de display', 0.00, 'avista', 'pix', '2025-07-10', 'aguardando_resposta', 6),
-(7, 7, 1, 2, 'Problemas de desempenho', 'Limpeza de sistema', 'Formatação e otimização', 180.00, 'avista', 'pix', '2025-07-06', 'finalizado', 7),
-(8, 8, 3, 4, 'Bateria descarregando rápido', 'Substituição agendada', 'Troca de bateria', 280.00, 'parcelado', 'cartao_credito', '2025-07-12', 'em_manutencao', 8),
-(9, 9, 1, 2, 'Não inicializa', 'HD com problemas', 'Troca de HD', 350.00, 'avista', 'debito', '2025-07-07', 'finalizado', 9),
-(10, 10, 3, 4, 'Tela azul constante', 'Reinstalação do sistema', 'Reinstalação', 120.00, 'avista', 'pix', '2025-07-04', 'finalizado', 10);
+INSERT INTO tb_ordem_servico (id_cliente, id_aparelho, tecnico_responsavel, atendente, descricao_ocorrencia, comentario_tecnico, tipo_servico, valor_servico, tipo_pagamento, forma_pagamento, prazo, estado) VALUES
+(1, 1, 1, 2, 'Tela quebrada', 'Substituição da tela', 'reparo', 550.00, 'avista', 'pix', '2025-07-10', 'em_manutencao'),
+(3, 2, 4, 6, 'Imagem falhando', 'Placa principal danificada', 'manutencao', 850.00, 'parcelado', 'cartao_credito', '2025-07-15', 'aguardando_resposta'),
+(4, 3, 7, 2, 'Travamentos frequentes', 'Limpeza e reinstalação do SO', 'manutencao', 320.00, 'avista', 'debito', '2025-07-09', 'finalizado'),
+(5, 4, 1, 6, 'Vidro trincado', 'Substituído com sucesso', 'reparo', 400.00, 'avista', 'pix', '2025-07-05', 'finalizado'),
+(6, 5, 10, 2, 'Não liga', 'Fonte com defeito', 'orcamento', 0.00, 'avista', 'boleto', '2025-07-08', 'aguardando_resposta'),
+(2, 6, 1, 2, 'Sem áudio', 'Problema no amplificador', 'manutencao', 700.00, 'parcelado', 'cartao_credito', '2025-07-12', 'em_manutencao'),
+(7, 7, 4, 6, 'Upgrade solicitado', 'Troca de SSD', 'reparo', 250.00, 'avista', 'pix', '2025-07-04', 'finalizado'),
+(9, 8, 1, 2, 'Tela rachada', NULL, 'orcamento', 0.00, 'avista', 'pix', '2025-07-14', 'aguardando_resposta'),
+(10, 9, 10, 6, 'Sem som', 'Alto-falante danificado', 'manutencao', 180.00, 'avista', 'debito', '2025-07-07', 'finalizado'),
+(8, 10, 7, 6, 'Sistema travando', 'Atualização de BIOS e SO', 'reparo', 350.00, 'avista', 'pix', '2025-07-11', 'em_manutencao');
 
 -- SELECT user, host FROM mysql.user;
 -- SELECT VERSION();

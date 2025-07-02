@@ -20,7 +20,6 @@ public class Usuario {
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
@@ -28,7 +27,6 @@ public class Usuario {
 	public String getEmail() {
 		return email;
 	}
-
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -36,7 +34,6 @@ public class Usuario {
 	public String getSenha() {
 		return senha;
 	}
-
 	public void setSenha(String senha) {
 		this.senha = senha;
 	}
@@ -44,7 +41,6 @@ public class Usuario {
 	public Privilegios getPrivilegios() {
 		return privilegios;
 	}
-
 	public void setPrivilegios(Privilegios privilegios) {
 		this.privilegios = privilegios;
 	}
@@ -52,7 +48,6 @@ public class Usuario {
 	public boolean isAtivo() {
 		return ativo;
 	}
-
 	public void setAtivo(boolean ativo) {
 		this.ativo = ativo;
 	}

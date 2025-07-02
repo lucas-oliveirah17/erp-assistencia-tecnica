@@ -20,7 +20,7 @@ public class FuncionarioDAO {
         String[] values = {
         	funcionario.getNome(),
 	        funcionario.getCpf(),
-	        funcionario.getFuncao(),
+	        funcionario.getFuncao().getValorDb(),
 	        funcionario.getTelefone(),
 	        funcionario.getEmail()
         };
