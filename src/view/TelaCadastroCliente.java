@@ -43,8 +43,6 @@ public class TelaCadastroCliente extends JFrame {
         this.setTitle("Cadastro de Cliente");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
-        //this.setSize(400, 600);
-        this.setLocationRelativeTo(null);
 
         // -- PAINEL PRINCIPAL --
         JPanel painelPrincipal = new JPanel();
@@ -162,6 +160,7 @@ public class TelaCadastroCliente extends JFrame {
 
         this.setContentPane(painelPrincipal);
         this.pack(); // Ajusta o tamanho da janela ao conteúdo
+        this.setLocationRelativeTo(null); // Aparece centralizado na tela
         this.setVisible(true);
     }
 
