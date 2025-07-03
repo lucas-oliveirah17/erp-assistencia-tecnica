@@ -86,8 +86,8 @@ public class TelaCadastroFuncionario extends JFrame {
         btnSalvar.addActionListener(this::salvarFuncionario);
         btnCancelar.addActionListener(e -> dispose());
         
-        painelBotoes.add(btnSalvar);
         painelBotoes.add(btnCancelar);
+        painelBotoes.add(btnSalvar);
 
         // --- ESTILIZAÇÃO --
         ((TitledBorder) painelDadosGerais.getBorder()).setTitleFont(panelFont);

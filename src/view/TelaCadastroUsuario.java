@@ -72,8 +72,8 @@ public class TelaCadastroUsuario extends JFrame {
         btnSalvar.addActionListener(this::salvarUsuario);
         btnCancelar.addActionListener(e -> dispose());
         
-        painelBotoes.add(btnSalvar);
         painelBotoes.add(btnCancelar);
+        painelBotoes.add(btnSalvar);
 
         // --- ESTILIZAÇÃO --
         ((TitledBorder) painelDadosGerais.getBorder()).setTitleFont(panelFont);

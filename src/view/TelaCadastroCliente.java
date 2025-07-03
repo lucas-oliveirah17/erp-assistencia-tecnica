@@ -141,9 +141,9 @@ public class TelaCadastroCliente extends JFrame {
         btnSalvar.addActionListener(this::salvarCliente);
         btnCancelar.addActionListener(e -> dispose());
         
-        painelBotoes.add(btnSalvar);
         painelBotoes.add(btnCancelar);
-
+        painelBotoes.add(btnSalvar);
+        
         // --- ESTILIZAÇÃO --
         ((TitledBorder) painelDadosGerais.getBorder()).setTitleFont(panelFont);
         ((TitledBorder) painelEndereco.getBorder()).setTitleFont(panelFont);

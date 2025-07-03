@@ -64,8 +64,8 @@ public class TelaLogin extends JFrame {
         btnEntrar.addActionListener(this::verificarLogin);
         btnSair.addActionListener(e -> dispose());
         
-        painelBotoes.add(btnEntrar);
         painelBotoes.add(btnSair);
+        painelBotoes.add(btnEntrar);
         
         // --- ESTILIZAÇÃO --
         ((TitledBorder) painelEntradasLogin.getBorder()).setTitleFont(panelFont);
