@@ -14,6 +14,8 @@ import java.awt.event.ActionEvent;
 
 public class TelaCadastroCliente extends JFrame {
     private static final long serialVersionUID = 1L; // Default serialVersion
+    
+    private TelaGerenciamentoClientes painelGerenciamento;
 
     // -- COMPONENTES DE ENTRADA --
     private JTextField tfNome = new JTextField();
@@ -37,8 +39,17 @@ public class TelaCadastroCliente extends JFrame {
     private Font labelFont = new Font("Arial", Font.BOLD, 12);
     private Font inputFont = new Font("Arial", Font.PLAIN, 12);
     private Dimension inputSize = new Dimension(200, 25);
-
+    
     public TelaCadastroCliente() {
+        this(null);
+    }
+    
+    public TelaCadastroCliente(TelaGerenciamentoClientes painelGerenciamento) {
+        this.painelGerenciamento = painelGerenciamento;
+        inicializar();
+    }
+
+    public void inicializar() {
     	// -- CONFIGURAÇÕES DA JANELA --
         this.setTitle("Cadastro de Cliente");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -197,6 +208,9 @@ public class TelaCadastroCliente extends JFrame {
 
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, "Cliente salvo com sucesso!");
+                if (painelGerenciamento != null) {
+                    painelGerenciamento.carregarDadosTabela();
+                }
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao salvar cliente.");

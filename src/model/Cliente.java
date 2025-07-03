@@ -12,13 +12,13 @@ public class Cliente {
 	private String email;
 	private String endereco;
 	private String numero;
+	private String complemento;
 	private String bairro;
 	private String cidade;
 	private Uf uf;
 	private String cep;
-	private String complemento;
-	private boolean ativo;
 	
+	private boolean ativo;
 	
 	public Cliente() {
 		this.ativo = true;

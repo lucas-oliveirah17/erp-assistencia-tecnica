@@ -3,17 +3,17 @@ package view;
 import model.Usuario;
 import model.enums.Privilegios;
 
+import control.UsuarioDAO;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-
-import control.UsuarioDAO;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-public class TelaGerenciamentoUsuarios extends JFrame {
+public class TelaGerenciamentoUsuarios extends JPanel {
     private static final long serialVersionUID = 1L; // Default serialVersion
     
     private JTable tabelaUsuarios;
@@ -25,12 +25,8 @@ public class TelaGerenciamentoUsuarios extends JFrame {
     private JButton btnAtualizar, btnExcluir, btnLimpar;
 
     public TelaGerenciamentoUsuarios() {
-    	// -- CONFIGURAÇÕES DA JANELA --
-        setTitle("Gerenciamento de Usuários");
-        setSize(800, 600);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));
+    	// -- CONFIGURAÇÕES DO PAINEL --
+        this.setLayout(new BorderLayout(10, 10));
 
         // --- Painel da Tabela (LISTAR) ---
         JPanel painelTabela = new JPanel(new BorderLayout());

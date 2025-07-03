@@ -53,10 +53,21 @@ public class TelaPrincipal extends JFrame {
 
         menuSair.add(sair);
         menuBar.add(menuSair);
-
-        // -- MONTAGEM FINAL --
+        
         setJMenuBar(menuBar); // Insere o menuBar no Frame
         
+        // CONFIGURAÇÃO DAS ABAS
+        JTabbedPane telas = new JTabbedPane();
+        telas.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // ADICIONANDO TELAS EM ABAS
+        telas.addTab("Cliente", new TelaGerenciamentoClientes());
+        telas.addTab("Usuário", new TelaGerenciamentoUsuarios());
+        telas.addTab("Sobre", new TelaSobre());
+        
+        add(telas); // Insere as abas no Frame
+        
+        // CONFIGURAÇÃO FINAL
         this.pack(); // Ajusta o tamanho da janela ao conteúdo
         this.setLocationRelativeTo(null); // Aparece centralizado na tela
         setVisible(true);
