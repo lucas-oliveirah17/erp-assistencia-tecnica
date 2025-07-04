@@ -88,7 +88,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         gbc.gridx = 1;
         gbc.weightx = 0.5;
         gbc.weighty = 0;
-        gbc.insets = new Insets(0, 5, 0, 0);
+        gbc.insets = new Insets(5, 0, 0, 0); // Define margens internas. 5 para esquerda a direita.
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
         painelFormulario.add(criarPainelEndereco(), gbc);
@@ -164,7 +164,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         JPanel painelDadosGerais = new JPanel();
         painelDadosGerais.setLayout(new BoxLayout(painelDadosGerais, BoxLayout.Y_AXIS));
         painelDadosGerais.setBorder(BorderFactory.createCompoundBorder(
-        	    BorderFactory.createTitledBorder("Endereço Residencial"),
+        	    BorderFactory.createTitledBorder("Dados"),
         	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
             ));
         painelDadosGerais.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
