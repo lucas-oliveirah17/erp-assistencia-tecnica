@@ -7,7 +7,6 @@ import java.util.List;
 
 import database.DBQuery;
 import model.Cliente;
-import model.Usuario;
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
@@ -99,5 +98,17 @@ public class ClienteDAO {
 		};
 		
 		return dbQuery.update(values) > 0;
+	}
+	
+	public boolean desativar(Cliente cliente) {
+	    if (cliente == null || cliente.getId() <= 0) {
+	        throw new IllegalArgumentException("Cliente inválido para desativar.");
+	    }
+
+	    String sql = "UPDATE " + dbQuery.getTableName() +
+	                 " SET ativo = 0 WHERE " + dbQuery.getFieldKey() + " = " + cliente.getId();
+
+	    int rowsAffected = dbQuery.execute(sql);
+	    return rowsAffected > 0;
 	}
 }

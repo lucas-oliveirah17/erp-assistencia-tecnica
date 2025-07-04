@@ -177,6 +177,28 @@ INSERT INTO tb_cliente (nome, cpf_cnpj, tipo_cliente, telefone, email, endereco,
 ('Isabela Mendes', '333.444.555-66', 'pf', '(41)97654-3210', 'isa@email.com', 'Av. República', '10', 'Apto 102', 'Água Verde', 'Curitiba', 'PR', '80240-140'),
 ('Bruna Lima', '444.555.666-77', 'pf', '(71)99999-8888', 'bruna@email.com', 'Rua das Laranjeiras', '22', '', 'Barra', 'Salvador', 'BA', '40140-000');
 
+INSERT INTO tb_cliente (nome, cpf_cnpj, tipo_cliente, telefone, email, endereco, numero, complemento, bairro, cidade, uf, cep) VALUES
+('Ana Carolina', '987.321.654-00', 'pf', '(11)93456-7890', 'ana.carolina@email.com', 'Rua do Sol', '88', '', 'Vila Mariana', 'São Paulo', 'SP', '04112-000'),
+('Conserta Tudo Ltda', '77.555.333/0001-77', 'pj', '(21)97890-1234', 'contato@consertatudoltda.com', 'Rua das Flores', '500', 'Sala 101', 'Centro', 'Rio de Janeiro', 'RJ', '20031-050'),
+('Felipe Mendes', '741.852.963-21', 'pf', '(31)98765-4321', 'felipe.mendes@email.com', 'Av. dos Andradas', '1234', '', 'Lourdes', 'Belo Horizonte', 'MG', '30140-120'),
+('GreenTech Soluções', '88.444.222/0001-88', 'pj', '(48)99123-4567', 'contato@greentech.com.br', 'Rua das Palmeiras', '300', '', 'Trindade', 'Florianópolis', 'SC', '88035-210'),
+('Juliana Ribeiro', '159.753.486-00', 'pf', '(85)99999-8888', 'juliana.ribeiro@email.com', 'Rua do Comércio', '67', '', 'Meireles', 'Fortaleza', 'CE', '60125-000'),
+('Metalúrgica RS', '44.333.222/0001-44', 'pj', '(51)92345-6789', 'contato@metalurgicars.com', 'Rua das Indústrias', '110', 'Galpão 4', 'Distrito Industrial', 'Porto Alegre', 'RS', '91740-000'),
+('Patrícia Santos', '963.852.741-99', 'pf', '(41)98765-4321', 'patricia.santos@email.com', 'Av. Paraná', '777', 'Ap 1502', 'Centro', 'Curitiba', 'PR', '80060-000'),
+('Construtora Beta', '99.888.777/0001-99', 'pj', '(62)91234-5678', 'contato@betaconstrucoes.com', 'Av. Brasil', '1200', '', 'Setor Oeste', 'Goiânia', 'GO', '74085-210'),
+('Ricardo Alves', '852.741.963-11', 'pf', '(21)98765-1111', 'ricardo.alves@email.com', 'Rua das Laranjeiras', '88', 'Casa', 'Botafogo', 'Rio de Janeiro', 'RJ', '22240-004'),
+('Supermercado Central Sul', '55.666.444/0001-55', 'pj', '(31)99876-5432', 'contato@supercentralsul.com', 'Rua do Comércio', '900', '', 'Santa Efigênia', 'Belo Horizonte', 'MG', '30210-110'),
+('Vanessa Costa', '147.258.369-00', 'pf', '(27)99999-7777', 'vanessa.costa@email.com', 'Rua XV de Novembro', '230', '', 'Jardim Camburi', 'Vitória', 'ES', '29055-440'),
+('Vidraçaria Luz', '22.111.333/0001-22', 'pj', '(41)91111-2222', 'contato@vidracarialuz.com', 'Av. Água Verde', '145', '', 'Água Verde', 'Curitiba', 'PR', '80240-000'),
+('Wesley Ferreira', '753.159.852-00', 'pf', '(85)98888-4444', 'wesley.ferreira@email.com', 'Rua da Paz', '520', '', 'Aldeota', 'Fortaleza', 'CE', '60150-120'),
+('XTech Informática', '88.777.666/0001-88', 'pj', '(48)98888-5555', 'contato@xtech.com.br', 'Rua das Orquídeas', '77', 'Sala 204', 'Trindade', 'Florianópolis', 'SC', '88036-210'),
+('Yara Lima', '369.258.147-00', 'pf', '(51)91234-7777', 'yara.lima@email.com', 'Rua da Liberdade', '101', '', 'Moinhos de Vento', 'Porto Alegre', 'RS', '90540-000'),
+('Zap Comércio', '66.555.444/0001-66', 'pj', '(11)99999-3333', 'contato@zapcomercio.com', 'Av. das Nações', '505', 'Loja 3', 'Itaim Bibi', 'São Paulo', 'SP', '04530-010'),
+('André Gomes', '258.147.369-00', 'pf', '(62)93333-8888', 'andre.gomes@email.com', 'Rua 5', '90', 'Casa', 'Setor Bueno', 'Goiânia', 'GO', '74223-020'),
+('Bella Flores', '99.666.555-44', 'pj', '(71)99988-1111', 'contato@bellaflores.com', 'Rua Chile', '88', '', 'Campo Grande', 'Salvador', 'BA', '40285-030'),
+('Carlos Moreira', '357.951.456-00', 'pf', '(21)92345-6789', 'carlos.moreira@email.com', 'Rua Visconde de Pirajá', '456', '', 'Ipanema', 'Rio de Janeiro', 'RJ', '22410-002'),
+('Delícias da Casa', '33.222.111/0001-33', 'pj', '(31)91111-3333', 'contato@deliciasdacasa.com', 'Av. Afonso Pena', '1230', '', 'Centro', 'Belo Horizonte', 'MG', '30130-080');
+
 INSERT INTO tb_funcionario (nome, cpf, funcao, telefone, email) VALUES
 ('Carlos Mendes', '123.123.123-12', 'tecnico', '(11)91234-5678', 'carlos@apo.com'),
 ('Fernanda Lima', '234.234.234-23', 'atendente', '(21)92345-6789', 'fernanda@apo.com'),

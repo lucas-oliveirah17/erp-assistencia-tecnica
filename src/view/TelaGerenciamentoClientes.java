@@ -1,13 +1,14 @@
 package view;
 
 import model.Cliente;
+import model.Usuario;
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
 import control.ClienteDAO;
+import control.UsuarioDAO;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.*;
@@ -184,7 +185,9 @@ public class TelaGerenciamentoClientes extends JPanel {
            
         // AÇÕES DOS BOTÕES
         btnNovo.addActionListener(e -> new TelaCadastroCliente(this));
+        btnAtualizar.addActionListener(e -> atualizarCliente());
         btnLimpar.addActionListener(e -> limparFormulario());
+        btnExcluir.addActionListener(e -> excluirCliente());
         
         painelBotoes.add(btnNovo);
         painelBotoes.add(btnAtualizar);
@@ -274,5 +277,105 @@ public class TelaGerenciamentoClientes extends JPanel {
         tfCidade.setText("");
         tfCep.setText("");
         cbUf.setSelectedIndex(0);
+    }
+    
+    private void atualizarCliente() {
+        try {
+            if (tfId.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela para atualizar.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            int id = Integer.parseInt(tfId.getText());
+            String nome = tfNome.getText().trim();
+            String cpfCnpj = tfCpfCnpj.getText().trim();
+            TipoCliente tipo = (TipoCliente) cbTipo.getSelectedItem();
+            String telefone = tfTelefone.getText().trim();
+            String email = tfEmail.getText().trim();
+            String endereco = tfEndereco.getText().trim();
+            String numero = tfNumero.getText().trim();
+            String complemento = tfComplemento.getText().trim();
+            String bairro = tfBairro.getText().trim();
+            String cidade = tfCidade.getText().trim();
+            Uf uf = (Uf) cbUf.getSelectedItem();
+            String cep = tfCep.getText().trim();
+
+            // Validações
+            if (nome.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "O nome não pode estar vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Cliente cliente = new Cliente();
+            cliente.setId(id);
+            cliente.setNome(nome);
+            cliente.setCpfCnpj(cpfCnpj);
+            cliente.setTipo(tipo);
+            cliente.setTelefone(telefone);
+            cliente.setEmail(email);
+            cliente.setEndereco(endereco);
+            cliente.setNumero(numero);
+            cliente.setComplemento(complemento);
+            cliente.setBairro(bairro);
+            cliente.setCidade(cidade);
+            cliente.setUf(uf);
+            cliente.setCep(cep);
+
+            ClienteDAO dao = new ClienteDAO();
+            boolean sucesso = dao.atualizar(cliente);
+
+            if (sucesso) {
+                JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
+                carregarDadosTabela();
+                limparFormulario();
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao atualizar cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void excluirCliente() {
+        if (tfId.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+        		"Selecione um cliente na tabela para desativar.", 
+        		"Aviso", 
+        		JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirmacao = JOptionPane.showConfirmDialog(this, 
+    		"Tem certeza que deseja desativar este cliente?", 
+    		"Confirmação de Desativação", 
+    		JOptionPane.YES_NO_OPTION);
+        
+        if (confirmacao == JOptionPane.YES_OPTION) {
+            try {
+                int id = Integer.parseInt(tfId.getText());
+                
+                Cliente cliente = new Cliente();
+                cliente.setId(id);
+                
+                ClienteDAO dao = new ClienteDAO();
+                boolean sucesso = dao.desativar(cliente);
+                
+                if (sucesso) {
+                    JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
+                    carregarDadosTabela();
+                    limparFormulario();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao excluir cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 }
