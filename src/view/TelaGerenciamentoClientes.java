@@ -3,6 +3,7 @@ package view;
 import util.EntradaFormsComboBox;
 import util.EntradaFormsTextField;
 import util.PainelBotoesUtil;
+import util.PainelFormularioUtil;
 import util.TabelaUtils;
 
 import model.Cliente;
@@ -91,7 +92,12 @@ public class TelaGerenciamentoClientes extends JPanel {
         gbc.insets = new Insets(0, 0, 0, 5); // Define margens internas. 5 para espaço a direita.
         gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
         gbc.anchor = GridBagConstraints.FIRST_LINE_START; // Alinha topo esquerdo
-        painelFormulario.add(criarPainelDadosGerais(), gbc);
+
+        // Cria formulário Dados
+        painelFormulario.add(PainelFormularioUtil.criarPainelFormulario(
+    		"Dados", tfNome, tfCpfCnpj, cbTipo, tfTelefone, tfEmail), gbc
+        );
+        
 
         // Painel de Endereço (coluna direita)
         gbc.gridx = 1;
@@ -100,8 +106,13 @@ public class TelaGerenciamentoClientes extends JPanel {
         gbc.insets = new Insets(5, 0, 0, 0); // Define margens internas. 5 para esquerda a direita.
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        painelFormulario.add(criarPainelEndereco(), gbc);
- 
+
+        // Cria formulário Endereço Residencial
+        painelFormulario.add(PainelFormularioUtil.criarPainelFormulario(
+    		"Endereço Residencial", tfEndereco, tfNumero, tfComplemento,
+    		tfBairro, tfCidade, cbUf, tfCep), gbc
+        );
+         
         // Evento para preencher o formulário ao clicar na tabela
         tabelaClientes.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -175,70 +186,7 @@ public class TelaGerenciamentoClientes extends JPanel {
     	
         return painelTabela;
     }
-    
-    private JPanel criarPainelDadosGerais() {
-        JPanel painelDadosGerais = new JPanel();
-        painelDadosGerais.setLayout(new BoxLayout(painelDadosGerais, BoxLayout.Y_AXIS));
-        painelDadosGerais.setBorder(BorderFactory.createCompoundBorder(
-        	    BorderFactory.createTitledBorder("Dados"),
-        	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
-            ));
-        painelDadosGerais.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
-
- 
-        // Adiciona os componentes ao painel com espaçamento
-        painelDadosGerais.add(tfNome);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        painelDadosGerais.add(tfCpfCnpj);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        painelDadosGerais.add(cbTipo);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        painelDadosGerais.add(tfTelefone);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        painelDadosGerais.add(tfEmail);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        return painelDadosGerais;
-    }
-  
-    private JPanel criarPainelEndereco() {
-        JPanel painelEndereco = new JPanel();
-        painelEndereco.setLayout(new BoxLayout(painelEndereco, BoxLayout.Y_AXIS));
-        painelEndereco.setBorder(BorderFactory.createCompoundBorder(
-    	    BorderFactory.createTitledBorder("Endereço Residencial"),
-    	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
-        ));
-        painelEndereco.setAlignmentY(Component.TOP_ALIGNMENT);
-
-        // Adiciona os componentes ao painel com espaçamento
-        painelEndereco.add(tfEndereco);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfNumero);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfComplemento);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfBairro);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfCidade);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(cbUf);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfCep);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        return painelEndereco;
-    }
-        
+            
     public void carregarDadosTabela() {
         tableModel.setRowCount(0); // Limpa a tabela
         

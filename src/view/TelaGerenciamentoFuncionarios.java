@@ -3,6 +3,7 @@ package view;
 import util.EntradaFormsComboBox;
 import util.EntradaFormsTextField;
 import util.PainelBotoesUtil;
+import util.PainelFormularioUtil;
 import util.TabelaUtils;
 
 import model.Funcionario;
@@ -19,6 +20,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -30,6 +32,7 @@ import java.awt.event.MouseEvent;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
 
 import java.util.List;
@@ -84,7 +87,11 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
         gbc.insets = new Insets(0, 0, 0, 5); // Define margens internas. 5 para espaço a direita.
         gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
         gbc.anchor = GridBagConstraints.FIRST_LINE_START; // Alinha topo esquerdo
-        painelFormulario.add(criarPainelDadosGerais(), gbc);
+
+        // Cria formulário
+        painelFormulario.add(PainelFormularioUtil.criarPainelFormulario(
+    		"Dados", tfNome, tfCpf, cbFuncao, tfTelefone, tfEmail), gbc
+        );
         
         // Painel de Endereço (coluna direita)
         gbc.gridx = 1;
@@ -93,9 +100,11 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
         gbc.insets = new Insets(5, 0, 0, 0); // Define margens internas. 5 para esquerda a direita.
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        painelFormulario.add(criarPainelVazio(), gbc);
         
-     // Evento para preencher o formulário ao clicar na tabela
+        // Cria painel vazio
+        painelFormulario.add(PainelFormularioUtil.criarPainelVazio(), gbc);
+
+        // Evento para preencher o formulário ao clicar na tabela
         tabelaFuncionarios.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int linhaSelecionada = tabelaFuncionarios.getSelectedRow();
@@ -166,42 +175,6 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
     	
         return painelTabela;
     }
-	
-	private JPanel criarPainelDadosGerais() {
-        JPanel painelDadosGerais = new JPanel();
-        painelDadosGerais.setLayout(new BoxLayout(painelDadosGerais, BoxLayout.Y_AXIS));
-        painelDadosGerais.setBorder(BorderFactory.createCompoundBorder(
-        	    BorderFactory.createTitledBorder("Dados"),
-        	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
-            ));
-        painelDadosGerais.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
-
- 
-        // Adiciona os componentes ao painel com espaçamento
-        painelDadosGerais.add(tfNome);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        painelDadosGerais.add(tfCpf);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        painelDadosGerais.add(cbFuncao);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        painelDadosGerais.add(tfTelefone);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        painelDadosGerais.add(tfEmail);
-        painelDadosGerais.add(Box.createVerticalStrut(10));
-
-        return painelDadosGerais;
-    }
-	
-	private JPanel criarPainelVazio() {
-		JPanel painelVazio = new JPanel();
-	    painelVazio.setOpaque(false); // Deixa o painel invisível (sem cor de fundo)
-	    painelVazio.setLayout(new BorderLayout()); // Layout neutro, ocupa todo o espaço disponível
-	    return painelVazio;
-	}
 	
 	public void carregarDadosTabela() {
         tableModel.setRowCount(0); // Limpa a tabela
