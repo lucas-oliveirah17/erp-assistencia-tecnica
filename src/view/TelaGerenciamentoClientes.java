@@ -1,15 +1,13 @@
 package view;
 
 import model.Cliente;
-import model.Usuario;
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
 import control.ClienteDAO;
-import control.UsuarioDAO;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -19,9 +17,11 @@ import java.util.List;
 public class TelaGerenciamentoClientes extends JPanel {
     private static final long serialVersionUID = 1L; // Default serialVersion
     
+    // Componentes da tabela de clientes
     private JTable tabelaClientes;
     private DefaultTableModel tableModel;
     
+    // Campos do formulário
     private JTextField tfId = new JTextField();
     private JTextField tfNome = new JTextField();
     private JTextField tfCpfCnpj = new JTextField();
@@ -36,141 +36,71 @@ public class TelaGerenciamentoClientes extends JPanel {
     private JComboBox<Uf> cbUf = new JComboBox<>(Uf.values());;
     private JTextField tfCep = new JTextField();
     
+    // Botões de ação
     private JButton btnNovo = new JButton("Novo"); 
     private JButton btnAtualizar = new JButton("Atualizar"); 
     private JButton btnLimpar = new JButton("Limpar"); 
     private JButton btnExcluir = new JButton("Excluir");
 
     public TelaGerenciamentoClientes() {
-    	// -- CONFIGURAÇÕES DO PAINEL --
+    	// Define o layout do painel principal como um BoxLayout na direção vertical (Y_AXIS),
+    	// ou seja, os componentes serão empilhados verticalmente (um abaixo do outro).
     	this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
-        // --- PAINEL DA TABELA (LISTAR) ---
+        // --- Painel da Tabela (Lista de Clientes) ---
         JPanel painelTabela = new JPanel();
         painelTabela.setLayout(new BoxLayout(painelTabela, BoxLayout.Y_AXIS));
         painelTabela.setBorder(BorderFactory.createTitledBorder("Lista de Clientes"));
         painelTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200)); // Fixar altura da tabela
 
-        // Cabeçalho da tabela
+        // Cabeçalhos da tabela
         String[] colunas = {
     		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
     		"Email", "Endereco", "Nº", "Complemento",
     		"Bairro", "Cidade", "UF", "CEP"
         };
         
-        // DESATIVA EDIÇÂO NA LINHA DA TABELA
+        // Modelo da tabela com células não editáveis
         tableModel = new DefaultTableModel(colunas, 0) {
 			private static final long serialVersionUID = 1L;
 
 			@Override
             public boolean isCellEditable(int row, int column) {
-                return false;  // nenhuma célula será editável
+                return false;
             }
         };
         
         tabelaClientes = new JTable(tableModel);
                 
-        carregarDadosTabela(); // Carrega a lista de dados
+        carregarDadosTabela(); // Preenche a tabela com dados do banco
               
         painelTabela.add(new JScrollPane(tabelaClientes));
         
-        // -- PAINEL DADOS GERAIS DO CLIENTE --
-        JPanel painelCliente = new JPanel();
-        painelCliente.setLayout(new GridLayout(1, 2, 10, 0)); // 1 linha, 2 colunas, 10px espaço entre colunas
+        // --- Painel do Formulário ---
+        JPanel painelFormulario = new JPanel(new GridBagLayout());
 
-        // Coluna 1
-        // -- PAINEL DADOS GERAIS --
-        JPanel painelDadosGerais = new JPanel(new GridBagLayout());
-        painelDadosGerais.setBorder(BorderFactory.createTitledBorder("Dados"));
-        
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.gridy = 0;
+
+        // Painel de Dados Gerais (coluna esquerda)
+        gbc.gridx = 0; // Define que o componente será colocado na coluna 0 do GridBagLayout
+        gbc.weightx = 0.5; // Define o "peso" horizontal. 0.5 para ocupar metade do painel
+        gbc.weighty = 0; // 0 para não crescer verticalmente
+        gbc.insets = new Insets(0, 0, 0, 5); // Define margens internas. 5 para espaço a direita.
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START; // Alinha topo esquerdo
+        painelFormulario.add(criarPainelDadosGerais(), gbc);
+
+        // Painel de Endereço (coluna direita)
+        gbc.gridx = 1;
+        gbc.weightx = 0.5;
+        gbc.weighty = 0;
+        gbc.insets = new Insets(0, 5, 0, 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-
-        int linha = 0;
-
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Nome:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfNome, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("CPF/CNPJ:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfCpfCnpj, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Tipo de Cliente:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(cbTipo, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Telefone:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfTelefone, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Email:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfEmail, gbc);
-
-        // Coluna 2
-        // -- PAINEL ENDEREÇO --
-        JPanel painelEndereco = new JPanel(new GridBagLayout());
-        painelEndereco.setBorder(BorderFactory.createTitledBorder("Endereço Residencial"));
-        painelEndereco.setAlignmentY(Component.TOP_ALIGNMENT);
-        linha = 0;
-
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Endereço:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfEndereco, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Número:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfNumero, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Complemento:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfComplemento, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Bairro:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfBairro, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Cidade:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfCidade, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("UF:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(cbUf, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("CEP:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfCep, gbc);
-                
-        painelCliente.add(painelDadosGerais);
-        painelCliente.add(painelEndereco);
-        
-        // PREENCHE FORMULARIO AO CLICAR EM ALGUMA LINHA DA TABELA
+        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        painelFormulario.add(criarPainelEndereco(), gbc);
+ 
+        // Evento para preencher o formulário ao clicar na tabela
         tabelaClientes.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 int linhaSelecionada = tabelaClientes.getSelectedRow();
@@ -180,24 +110,35 @@ public class TelaGerenciamentoClientes extends JPanel {
             }
         });
                   
-        // -- PAINEL BOTÕES --
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));      
+        // --- Painel de Botões ---
+	    // Cria um painel FlowLayout alinhado à direita.
+	    // 10 → espaçamento horizontal entre os componentes (botões), em pixels.
+	    // 5 → espaçamento vertical entre os componentes e as bordas do painel, em pixels.
+        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));      
            
-        // AÇÕES DOS BOTÕES
+        // Define ações dos botões
         btnNovo.addActionListener(e -> new TelaCadastroCliente(this));
         btnAtualizar.addActionListener(e -> atualizarCliente());
         btnLimpar.addActionListener(e -> limparFormulario());
         btnExcluir.addActionListener(e -> excluirCliente());
         
+        // Define tamanho fixo dos botões (largura, altura)
+        Dimension tamanhoBotao = new Dimension(90, 30);
+        btnNovo.setPreferredSize(tamanhoBotao);
+        btnAtualizar.setPreferredSize(tamanhoBotao);
+        btnLimpar.setPreferredSize(tamanhoBotao);
+        btnExcluir.setPreferredSize(tamanhoBotao);
+        
+        // Adiciona botões ao painel
         painelBotoes.add(btnNovo);
         painelBotoes.add(btnAtualizar);
         painelBotoes.add(btnLimpar);        
         painelBotoes.add(btnExcluir);
        
-        // -- MONTAGEM FINAL --
+        // --- Montagem Final ---
         add(painelTabela);
-        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertical
-        add(painelCliente);
+        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
+        add(painelFormulario);
         add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertical
         add(painelBotoes);
     }
@@ -205,7 +146,7 @@ public class TelaGerenciamentoClientes extends JPanel {
     public void carregarDadosTabela() {
         tableModel.setRowCount(0); // Limpa a tabela
         ClienteDAO dao = new ClienteDAO();
-        List<Cliente> clientes = dao.listarTodos();
+        List<Cliente> clientes = dao.listarApenasAtivos();
 
         for (Cliente c : clientes) {
             tableModel.addRow(new Object[]{
@@ -224,6 +165,15 @@ public class TelaGerenciamentoClientes extends JPanel {
                 c.getCep(),
             });
         }
+        
+        centralizarTextoColunas(tabelaClientes, 0); // coluna ID
+        larguraColuna(tabelaClientes, 0, 40); // (tabela, coluna, largura) 
+        
+        centralizarTextoColunas(tabelaClientes, 7); // coluna Numero
+        larguraColuna(tabelaClientes, 7, 40);
+        
+        centralizarTextoColunas(tabelaClientes, 11); // coluna UF
+        larguraColuna(tabelaClientes, 11, 40);
     }
     
     private void preencherFormulario(int linha) {
@@ -377,5 +327,124 @@ public class TelaGerenciamentoClientes extends JPanel {
                 JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+    
+    private void larguraColuna(JTable tabela, int indiceColuna, int largura) {
+        TableColumn coluna = tabela.getColumnModel().getColumn(indiceColuna);
+        coluna.setMinWidth(largura);
+        coluna.setPreferredWidth(largura);
+    }
+    
+    private void centralizarTextoColunas(JTable table, int... indices) {
+        DefaultTableCellRenderer centralizado = new DefaultTableCellRenderer();
+        centralizado.setHorizontalAlignment(SwingConstants.CENTER);
+
+        for (int i : indices) {
+            table.getColumnModel().getColumn(i).setCellRenderer(centralizado);
+        }
+    }
+    
+    private JPanel criarPainelDadosGerais() {
+    	// O GridBagLayout permite posicionar componentes em uma grade flexível,
+        JPanel painelDadosGerais = new JPanel(new GridBagLayout());
+        painelDadosGerais.setBorder(BorderFactory.createTitledBorder("Dados"));
+        painelDadosGerais.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5); // Espaçamento interno
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.LINE_START; // Alinhamento no canto esquerdo
+        gbc.weightx = 1.0;
+
+        int linha = 0;
+
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Nome:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfNome, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("CPF/CNPJ:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfCpfCnpj, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Tipo de Cliente:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(cbTipo, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Telefone:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfTelefone, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfEmail, gbc);
+
+        return painelDadosGerais;
+    }
+
+    
+    private JPanel criarPainelEndereco() {
+        JPanel painelEndereco = new JPanel(new GridBagLayout());
+        painelEndereco.setBorder(BorderFactory.createTitledBorder("Endereço Residencial"));
+        painelEndereco.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.LINE_START; // Alinha os componentes à esquerda
+        gbc.weightx = 1.0;
+
+        int linha = 0;
+
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Endereço:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfEndereco, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Número:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfNumero, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Complemento:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfComplemento, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Bairro:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfBairro, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Cidade:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfCidade, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("UF:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(cbUf, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("CEP:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfCep, gbc);
+
+        return painelEndereco;
     }
 }

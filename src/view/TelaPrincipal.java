@@ -24,7 +24,7 @@ public class TelaPrincipal extends JFrame {
         JMenuBar menuBar = new JMenuBar();
 
         // -- MENU CADASTRO --
-        JMenu menuCadastro = new JMenu("Cadastros");
+        JMenu menuCadastro = new JMenu("Cadastrar");
         JMenuItem menuCliente = new JMenuItem("Clientes");
         JMenuItem menuFuncionario = new JMenuItem("Funcionários");
         JMenuItem menuUsuario = new JMenuItem("Usuários");
