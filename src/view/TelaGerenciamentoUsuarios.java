@@ -135,7 +135,7 @@ public class TelaGerenciamentoUsuarios extends JPanel {
         // A senha só é atualizada se o campo não estiver vazio
         String senha = new String(txtSenha.getPassword());
         if (senha.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Para manter a senha atual, deixe o campo em branco.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Senha não foi alterada.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
              // ATENÇÃO: A lógica abaixo NÃO atualiza a senha se o campo estiver vazio.
              // Para um update real da senha, seria preciso tratar isso no DAO ou buscar a senha atual.
              // O código da sua classe DBQuery atualmente não suporta um UPDATE condicional de campos.

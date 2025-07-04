@@ -116,8 +116,8 @@ CREATE TABLE IF NOT EXISTS tb_aparelho (
     garantia TEXT,
     estado ENUM('em_manutencao', 'em_estoque', 'em_entrega') NOT NULL,
     ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (proprietario) REFERENCES tb_cliente(id_cliente),
-    FOREIGN KEY (id_estoque_aparelho) REFERENCES tb_estoque_aparelho(id_estoque_aparelho)
+    FOREIGN KEY (proprietario) REFERENCES tb_cliente(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_estoque_aparelho) REFERENCES tb_estoque_aparelho(id_estoque_aparelho) ON DELETE CASCADE
 );
 -- DROP TABLE tb_aparelho;
 -- SELECT * FROM tb_aparelho;
@@ -142,10 +142,10 @@ CREATE TABLE IF NOT EXISTS tb_ordem_servico (
     data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
     estado ENUM('finalizado', 'em_manutencao', 'aguardando_resposta') NOT NULL,
     ativo BOOLEAN DEFAULT TRUE,
-    FOREIGN KEY (id_cliente) REFERENCES tb_cliente(id_cliente),
-    FOREIGN KEY (id_aparelho) REFERENCES tb_aparelho(id_aparelho),
-    FOREIGN KEY (tecnico_responsavel) REFERENCES tb_funcionario(id_funcionario),
-    FOREIGN KEY (atendente) REFERENCES tb_funcionario(id_funcionario)
+    FOREIGN KEY (id_cliente) REFERENCES tb_cliente(id_cliente) ON DELETE CASCADE,
+    FOREIGN KEY (id_aparelho) REFERENCES tb_aparelho(id_aparelho) ON DELETE CASCADE,
+    FOREIGN KEY (tecnico_responsavel) REFERENCES tb_funcionario(id_funcionario) ON DELETE CASCADE,
+    FOREIGN KEY (atendente) REFERENCES tb_funcionario(id_funcionario) ON DELETE CASCADE
 );
 -- DROP TABLE tb_ordem_servico;
 -- SELECT * FROM tb_ordem_servico;

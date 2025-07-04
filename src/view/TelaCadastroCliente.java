@@ -41,14 +41,14 @@ public class TelaCadastroCliente extends JFrame {
     private Dimension inputSize = new Dimension(200, 25);
     
     public TelaCadastroCliente() {
-        this(null);
+    	this((TelaGerenciamentoClientes) null);
     }
     
     public TelaCadastroCliente(TelaGerenciamentoClientes painelGerenciamento) {
         this.painelGerenciamento = painelGerenciamento;
         inicializar();
     }
-
+    
     public void inicializar() {
     	// -- CONFIGURAÇÕES DA JANELA --
         this.setTitle("Cadastro de Cliente");
@@ -145,7 +145,7 @@ public class TelaCadastroCliente extends JFrame {
         painelEndereco.add(new JLabel("CEP:"), gbc);
         gbc.gridx = 1;
         painelEndereco.add(tfCep, gbc);
-
+        
         // -- PAINEL BOTÕES --
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));      
            
@@ -202,6 +202,7 @@ public class TelaCadastroCliente extends JFrame {
             cliente.setCidade(tfCidade.getText());
             cliente.setUf((Uf) cbUf.getSelectedItem());
             cliente.setCep(tfCep.getText());
+            cliente.setAtivo(true);
 
             ClienteDAO dao = new ClienteDAO();
             boolean sucesso = dao.salvar(cliente);

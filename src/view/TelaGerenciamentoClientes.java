@@ -1,6 +1,10 @@
 package view;
 
+import util.EntradaFormsTextField;
+import util.EntradaFormsComboBox;
+
 import model.Cliente;
+import model.Usuario;
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
@@ -16,65 +20,54 @@ import java.util.List;
 
 public class TelaGerenciamentoClientes extends JPanel {
     private static final long serialVersionUID = 1L; // Default serialVersion
+    private Usuario usuarioLogado;
     
     // Componentes da tabela de clientes
     private JTable tabelaClientes;
     private DefaultTableModel tableModel;
     
     // Campos do formulário
-    private JTextField tfId = new JTextField();
-    private JTextField tfNome = new JTextField();
-    private JTextField tfCpfCnpj = new JTextField();
-    private JComboBox<TipoCliente> cbTipo = new JComboBox<>(TipoCliente.values());;
-    private JTextField tfTelefone = new JTextField();
-    private JTextField tfEmail = new JTextField();
-    private JTextField tfEndereco = new JTextField(); 
-    private JTextField tfNumero = new JTextField();
-    private JTextField tfComplemento = new JTextField();
-    private JTextField tfBairro = new JTextField();
-    private JTextField tfCidade = new JTextField();
-    private JComboBox<Uf> cbUf = new JComboBox<>(Uf.values());;
-    private JTextField tfCep = new JTextField();
+    private EntradaFormsTextField tfId = new EntradaFormsTextField("ID:");
+    private EntradaFormsTextField tfNome = new EntradaFormsTextField("Nome:");
+    private EntradaFormsTextField tfCpfCnpj = new EntradaFormsTextField("CPF/CNPJ:");
+    private EntradaFormsComboBox<TipoCliente> cbTipo = new EntradaFormsComboBox<>("Tipo de Cliente:",TipoCliente.values());;
+    private EntradaFormsTextField tfTelefone = new EntradaFormsTextField("Telefone:");
+    private EntradaFormsTextField tfEmail = new EntradaFormsTextField("Email:");
+    private EntradaFormsTextField tfEndereco = new EntradaFormsTextField("Endereço:"); 
+    private EntradaFormsTextField tfNumero = new EntradaFormsTextField("Número:");
+    private EntradaFormsTextField tfComplemento = new EntradaFormsTextField("Complemento::");
+    private EntradaFormsTextField tfBairro = new EntradaFormsTextField("Bairro::");
+    private EntradaFormsTextField tfCidade = new EntradaFormsTextField("Cidade::");
+    private EntradaFormsComboBox<Uf> cbUf = new EntradaFormsComboBox<>("UF:",Uf.values());;
+    private EntradaFormsTextField tfCep = new EntradaFormsTextField("CEP:");
     
     // Botões de ação
     private JButton btnNovo = new JButton("Novo"); 
     private JButton btnAtualizar = new JButton("Atualizar"); 
-    private JButton btnLimpar = new JButton("Limpar"); 
+    private JButton btnLimpar = new JButton("Limpar");
+    private JButton btnAtivar = new JButton("Ativar");
+    private JButton btnDesativar = new JButton("Desativar");
     private JButton btnExcluir = new JButton("Excluir");
+    
+    // Checkbox de filtro de exibição
+    private JCheckBox ckbMostrarInativos = new JCheckBox("Mostrar Inativos");
 
-    public TelaGerenciamentoClientes() {
+    public TelaGerenciamentoClientes(Usuario usuario) {
+    	this.usuarioLogado = usuario;
+    	
     	// Define o layout do painel principal como um BoxLayout na direção vertical (Y_AXIS),
     	// ou seja, os componentes serão empilhados verticalmente (um abaixo do outro).
     	this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
+    	// Painel filtro (Admin)
+    	JPanel painelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ckbMostrarInativos.addActionListener(e -> carregarDadosTabela());
+        painelFiltro.add(ckbMostrarInativos);
+        
         // --- Painel da Tabela (Lista de Clientes) ---
         JPanel painelTabela = new JPanel();
-        painelTabela.setLayout(new BoxLayout(painelTabela, BoxLayout.Y_AXIS));
-        painelTabela.setBorder(BorderFactory.createTitledBorder("Lista de Clientes"));
-        painelTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200)); // Fixar altura da tabela
-
-        // Cabeçalhos da tabela
-        String[] colunas = {
-    		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
-    		"Email", "Endereco", "Nº", "Complemento",
-    		"Bairro", "Cidade", "UF", "CEP"
-        };
         
-        // Modelo da tabela com células não editáveis
-        tableModel = new DefaultTableModel(colunas, 0) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        
-        tabelaClientes = new JTable(tableModel);
-                
-        carregarDadosTabela(); // Preenche a tabela com dados do banco
-              
-        painelTabela.add(new JScrollPane(tabelaClientes));
+        painelTabela = criarPainelTabela();
         
         // --- Painel do Formulário ---
         JPanel painelFormulario = new JPanel(new GridBagLayout());
@@ -108,34 +101,17 @@ public class TelaGerenciamentoClientes extends JPanel {
                     preencherFormulario(linhaSelecionada);
                 }
             }
-        });
+        });      
                   
-        // --- Painel de Botões ---
-	    // Cria um painel FlowLayout alinhado à direita.
-	    // 10 → espaçamento horizontal entre os componentes (botões), em pixels.
-	    // 5 → espaçamento vertical entre os componentes e as bordas do painel, em pixels.
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));      
+        // --- Painel dos Botões ---
+        JPanel painelBotoes = new JPanel();
+        painelBotoes = criarPainelBotoes();
            
-        // Define ações dos botões
-        btnNovo.addActionListener(e -> new TelaCadastroCliente(this));
-        btnAtualizar.addActionListener(e -> atualizarCliente());
-        btnLimpar.addActionListener(e -> limparFormulario());
-        btnExcluir.addActionListener(e -> excluirCliente());
-        
-        // Define tamanho fixo dos botões (largura, altura)
-        Dimension tamanhoBotao = new Dimension(90, 30);
-        btnNovo.setPreferredSize(tamanhoBotao);
-        btnAtualizar.setPreferredSize(tamanhoBotao);
-        btnLimpar.setPreferredSize(tamanhoBotao);
-        btnExcluir.setPreferredSize(tamanhoBotao);
-        
-        // Adiciona botões ao painel
-        painelBotoes.add(btnNovo);
-        painelBotoes.add(btnAtualizar);
-        painelBotoes.add(btnLimpar);        
-        painelBotoes.add(btnExcluir);
-       
         // --- Montagem Final ---
+        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
+        	add(painelFiltro);
+            add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
+        }
         add(painelTabela);
         add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
         add(painelFormulario);
@@ -143,10 +119,158 @@ public class TelaGerenciamentoClientes extends JPanel {
         add(painelBotoes);
     }
     
+    private JPanel criarPainelTabela() {
+    	JPanel painelTabela = new JPanel();
+        painelTabela.setLayout(new BoxLayout(painelTabela, BoxLayout.Y_AXIS));
+        // painelTabela.setBorder(BorderFactory.createTitledBorder("Lista de Clientes"));
+        painelTabela.setBorder(BorderFactory.createCompoundBorder(
+        	    BorderFactory.createTitledBorder("Lista de Clientes"),
+        	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
+            ));
+        painelTabela.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
+        painelTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100)); // Fixar altura da tabela
+        
+        // Cabeçalhos da tabela
+        String[] colunas = {
+    		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
+    		"Email", "Endereco", "Nº", "Complemento",
+    		"Bairro", "Cidade", "UF", "CEP"
+        };
+        
+        // Modelo da tabela com células não editáveis
+        tableModel = new DefaultTableModel(colunas, 0) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tabelaClientes = new JTable(tableModel);
+        
+        // Preenche a tabela com dados do banco
+        carregarDadosTabela();
+        
+        // Monta tabela ao painel
+        JScrollPane scrollPane = new JScrollPane(tabelaClientes);
+        int larguraPainel = this.getWidth();
+        scrollPane.setPreferredSize(new Dimension(larguraPainel, 200)); // Altura da tabela
+        painelTabela.add(scrollPane);
+    	
+        return painelTabela;
+    }
+    
+    private JPanel criarPainelDadosGerais() {
+        JPanel painelDadosGerais = new JPanel();
+        painelDadosGerais.setLayout(new BoxLayout(painelDadosGerais, BoxLayout.Y_AXIS));
+        painelDadosGerais.setBorder(BorderFactory.createCompoundBorder(
+        	    BorderFactory.createTitledBorder("Endereço Residencial"),
+        	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
+            ));
+        painelDadosGerais.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
+
+ 
+        // Adiciona os componentes ao painel com espaçamento
+        painelDadosGerais.add(tfNome);
+        painelDadosGerais.add(Box.createVerticalStrut(10));
+
+        painelDadosGerais.add(tfCpfCnpj);
+        painelDadosGerais.add(Box.createVerticalStrut(10));
+
+        painelDadosGerais.add(cbTipo);
+        painelDadosGerais.add(Box.createVerticalStrut(10));
+
+        painelDadosGerais.add(tfTelefone);
+        painelDadosGerais.add(Box.createVerticalStrut(10));
+
+        painelDadosGerais.add(tfEmail);
+        painelDadosGerais.add(Box.createVerticalStrut(10));
+
+        return painelDadosGerais;
+    }
+  
+    private JPanel criarPainelEndereco() {
+        JPanel painelEndereco = new JPanel();
+        painelEndereco.setLayout(new BoxLayout(painelEndereco, BoxLayout.Y_AXIS));
+        painelEndereco.setBorder(BorderFactory.createCompoundBorder(
+    	    BorderFactory.createTitledBorder("Endereço Residencial"),
+    	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
+        ));
+        painelEndereco.setAlignmentY(Component.TOP_ALIGNMENT);
+
+        // Adiciona os componentes ao painel com espaçamento
+        painelEndereco.add(tfEndereco);
+        painelEndereco.add(Box.createVerticalStrut(10));
+
+        painelEndereco.add(tfNumero);
+        painelEndereco.add(Box.createVerticalStrut(10));
+
+        painelEndereco.add(tfComplemento);
+        painelEndereco.add(Box.createVerticalStrut(10));
+
+        painelEndereco.add(tfBairro);
+        painelEndereco.add(Box.createVerticalStrut(10));
+
+        painelEndereco.add(tfCidade);
+        painelEndereco.add(Box.createVerticalStrut(10));
+
+        painelEndereco.add(cbUf);
+        painelEndereco.add(Box.createVerticalStrut(10));
+
+        painelEndereco.add(tfCep);
+        painelEndereco.add(Box.createVerticalStrut(10));
+
+        return painelEndereco;
+    }
+    
+    private JPanel criarPainelBotoes() {
+    	// --- Painel de Botões ---
+	    // Cria um painel FlowLayout alinhado à direita.
+	    // 10 → espaçamento horizontal entre os componentes (botões), em pixels.
+	    // 5 → espaçamento vertical entre os componentes e as bordas do painel, em pixels.
+    	JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
+    	
+    	// Define ações dos botões
+        btnNovo.addActionListener(e -> new TelaCadastroCliente(this));
+        btnAtualizar.addActionListener(e -> atualizarCliente());
+        btnLimpar.addActionListener(e -> limparFormulario());
+        btnAtivar.addActionListener(e -> ativarCliente());
+        btnDesativar.addActionListener(e -> desativarCliente());
+        btnExcluir.addActionListener(e -> excluirCliente());
+        
+        // Define tamanho fixo dos botões (largura, altura)
+        Dimension tamanhoBotao = new Dimension(90, 30);
+        btnNovo.setPreferredSize(tamanhoBotao);
+        btnAtualizar.setPreferredSize(tamanhoBotao);
+        btnLimpar.setPreferredSize(tamanhoBotao);
+        btnAtivar.setPreferredSize(tamanhoBotao);
+        btnDesativar.setPreferredSize(tamanhoBotao);
+        btnExcluir.setPreferredSize(tamanhoBotao);
+        
+        // Adiciona botões ao painel
+        painelBotoes.add(btnNovo);
+        painelBotoes.add(btnAtualizar);
+        painelBotoes.add(btnLimpar);
+        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
+        	painelBotoes.add(btnAtivar);
+        }
+        painelBotoes.add(btnDesativar);
+        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
+        	painelBotoes.add(btnExcluir);
+        }
+        
+        return painelBotoes;
+    }
+    
     public void carregarDadosTabela() {
         tableModel.setRowCount(0); // Limpa a tabela
+        
+        
         ClienteDAO dao = new ClienteDAO();
-        List<Cliente> clientes = dao.listarApenasAtivos();
+        
+        List<Cliente> clientes = ckbMostrarInativos.isSelected()
+                ? dao.listarTodos()
+                : dao.listarApenasAtivos();
 
         for (Cliente c : clientes) {
             tableModel.addRow(new Object[]{
@@ -194,19 +318,19 @@ public class TelaGerenciamentoClientes extends JPanel {
         String cep = (String) tableModel.getValueAt(linha, 12);
         
         // Preenche os campos do formulário
-        tfId.setText(String.valueOf(id));
-        tfNome.setText(String.valueOf(nome));
-        tfCpfCnpj.setText(String.valueOf(cpfCnpj));
-        cbTipo.setSelectedItem(tipo);
-        tfTelefone.setText(String.valueOf(telefone));
-        tfEmail.setText(String.valueOf(email));
-        tfEndereco.setText(String.valueOf(endereco));
-        tfNumero.setText(String.valueOf(numero));
-        tfComplemento.setText(String.valueOf(complemento));
-        tfBairro.setText(String.valueOf(bairro));
-        tfCidade.setText(String.valueOf(cidade));
-        tfCep.setText(String.valueOf(cep));
-        cbUf.setSelectedItem(uf);
+        tfId.setValor(id);
+        tfNome.setValor(nome);
+        tfCpfCnpj.setValor(cpfCnpj);
+        cbTipo.setValor(tipo);
+        tfTelefone.setValor(telefone);
+        tfEmail.setValor(email);
+        tfEndereco.setValor(endereco);
+        tfNumero.setValor(numero);
+        tfComplemento.setValor(complemento);
+        tfBairro.setValor(bairro);
+        tfCidade.setValor(cidade);
+        tfCep.setValor(cep);
+        cbUf.setValor(uf);
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao preencher formulário: " + ex.getMessage());
@@ -214,42 +338,42 @@ public class TelaGerenciamentoClientes extends JPanel {
     }
     
     private void limparFormulario() {
-        tfId.setText("");
-        tfNome.setText("");
-        tfCpfCnpj.setText("");
-        cbTipo.setSelectedIndex(0);
-        tfTelefone.setText("");
-        tfEmail.setText("");
-        tfEndereco.setText("");
-        tfNumero.setText("");
-        tfComplemento.setText("");
-        tfBairro.setText("");
-        tfCidade.setText("");
-        tfCep.setText("");
-        cbUf.setSelectedIndex(0);
+    	tfId.setValor("");
+        tfNome.setValor("");
+        tfCpfCnpj.setValor("");
+        cbTipo.setValor(null);
+        tfTelefone.setValor("");
+        tfEmail.setValor("");
+        tfEndereco.setValor("");
+        tfNumero.setValor("");
+        tfComplemento.setValor("");
+        tfBairro.setValor("");
+        tfCidade.setValor("");
+        tfCep.setValor("");
+        cbUf.setValor(null);
     }
     
     private void atualizarCliente() {
         try {
-            if (tfId.getText().isEmpty()) {
+            if (tfId.getValor().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela para atualizar.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            int id = Integer.parseInt(tfId.getText());
-            String nome = tfNome.getText().trim();
-            String cpfCnpj = tfCpfCnpj.getText().trim();
-            TipoCliente tipo = (TipoCliente) cbTipo.getSelectedItem();
-            String telefone = tfTelefone.getText().trim();
-            String email = tfEmail.getText().trim();
-            String endereco = tfEndereco.getText().trim();
-            String numero = tfNumero.getText().trim();
-            String complemento = tfComplemento.getText().trim();
-            String bairro = tfBairro.getText().trim();
-            String cidade = tfCidade.getText().trim();
-            Uf uf = (Uf) cbUf.getSelectedItem();
-            String cep = tfCep.getText().trim();
-
+            int id = Integer.parseInt(tfId.getValor());
+            String nome = tfNome.getValor().trim();
+            String cpfCnpj = tfCpfCnpj.getValor().trim();
+            TipoCliente tipo = (TipoCliente) cbTipo.getValor();
+            String telefone = tfTelefone.getValor().trim();
+            String email = tfEmail.getValor().trim();
+            String endereco = tfEndereco.getValor().trim();
+            String numero = tfNumero.getValor().trim();
+            String complemento = tfComplemento.getValor().trim();
+            String bairro = tfBairro.getValor().trim();
+            String cidade = tfCidade.getValor().trim();
+            Uf uf = (Uf) cbUf.getValor();
+            String cep = tfCep.getValor().trim();
+            
             // Validações
             if (nome.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "O nome não pode estar vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -289,8 +413,48 @@ public class TelaGerenciamentoClientes extends JPanel {
         }
     }
     
-    private void excluirCliente() {
-        if (tfId.getText().isEmpty()) {
+    private void ativarCliente() {
+        if (tfId.getValor().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+        		"Selecione um cliente na tabela para desativar.", 
+        		"Aviso", 
+        		JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirmacao = JOptionPane.showConfirmDialog(this, 
+    		"Tem certeza que deseja ativar este cliente?", 
+    		"Confirmação de ativação", 
+    		JOptionPane.YES_NO_OPTION);
+        
+        if (confirmacao == JOptionPane.YES_OPTION) {
+            try {
+            	int id = Integer.parseInt(tfId.getValor());
+                
+                Cliente cliente = new Cliente();
+                cliente.setId(id);
+                
+                ClienteDAO dao = new ClienteDAO();
+                boolean sucesso = dao.ativar(cliente);
+                
+                if (sucesso) {
+                    JOptionPane.showMessageDialog(this, "Cliente ativado com sucesso!");
+                    carregarDadosTabela();
+                    limparFormulario();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao ativar cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    private void desativarCliente() {
+        if (tfId.getValor().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
         		"Selecione um cliente na tabela para desativar.", 
         		"Aviso", 
@@ -305,13 +469,78 @@ public class TelaGerenciamentoClientes extends JPanel {
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-                int id = Integer.parseInt(tfId.getText());
+            	int id = Integer.parseInt(tfId.getValor());
                 
                 Cliente cliente = new Cliente();
                 cliente.setId(id);
                 
                 ClienteDAO dao = new ClienteDAO();
                 boolean sucesso = dao.desativar(cliente);
+                
+                if (sucesso) {
+                    JOptionPane.showMessageDialog(this, "Cliente desativado com sucesso!");
+                    carregarDadosTabela();
+                    limparFormulario();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao desativar cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    private void excluirCliente() {
+        if (tfId.getValor().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+        		"Selecione um cliente na tabela para excluir.", 
+        		"Aviso", 
+        		JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirmacao = JOptionPane.showConfirmDialog(this, 
+    		"Tem certeza que deseja excluir este cliente? Essa é uma exclusão em cascata. "
+    		+ "\nTodos os dados referentes a esse cliente serão excluídos definitivamente.", 
+    		"Confirmação de exclusão", 
+    		JOptionPane.YES_NO_OPTION);
+        
+        if (confirmacao == JOptionPane.YES_OPTION) {
+            try {
+            	int id = Integer.parseInt(tfId.getValor());
+                String nome = tfNome.getValor().trim();
+                String cpfCnpj = tfCpfCnpj.getValor().trim();
+                TipoCliente tipo = (TipoCliente) cbTipo.getValor();
+                String telefone = tfTelefone.getValor().trim();
+                String email = tfEmail.getValor().trim();
+                String endereco = tfEndereco.getValor().trim();
+                String numero = tfNumero.getValor().trim();
+                String complemento = tfComplemento.getValor().trim();
+                String bairro = tfBairro.getValor().trim();
+                String cidade = tfCidade.getValor().trim();
+                Uf uf = (Uf) cbUf.getValor();
+                String cep = tfCep.getValor().trim();
+                
+                Cliente cliente = new Cliente();
+                cliente.setId(id);
+                cliente.setNome(nome);
+                cliente.setCpfCnpj(cpfCnpj);
+                cliente.setTipo(tipo);
+                cliente.setTelefone(telefone);
+                cliente.setEmail(email);
+                cliente.setEndereco(endereco);
+                cliente.setNumero(numero);
+                cliente.setComplemento(complemento);
+                cliente.setBairro(bairro);
+                cliente.setCidade(cidade);
+                cliente.setUf(uf);
+                cliente.setCep(cep);
+                
+                ClienteDAO dao = new ClienteDAO();
+                boolean sucesso = dao.excluir(cliente);
                 
                 if (sucesso) {
                     JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
@@ -342,109 +571,5 @@ public class TelaGerenciamentoClientes extends JPanel {
         for (int i : indices) {
             table.getColumnModel().getColumn(i).setCellRenderer(centralizado);
         }
-    }
-    
-    private JPanel criarPainelDadosGerais() {
-    	// O GridBagLayout permite posicionar componentes em uma grade flexível,
-        JPanel painelDadosGerais = new JPanel(new GridBagLayout());
-        painelDadosGerais.setBorder(BorderFactory.createTitledBorder("Dados"));
-        painelDadosGerais.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); // Espaçamento interno
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.LINE_START; // Alinhamento no canto esquerdo
-        gbc.weightx = 1.0;
-
-        int linha = 0;
-
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Nome:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfNome, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("CPF/CNPJ:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfCpfCnpj, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Tipo de Cliente:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(cbTipo, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Telefone:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfTelefone, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Email:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfEmail, gbc);
-
-        return painelDadosGerais;
-    }
-
-    
-    private JPanel criarPainelEndereco() {
-        JPanel painelEndereco = new JPanel(new GridBagLayout());
-        painelEndereco.setBorder(BorderFactory.createTitledBorder("Endereço Residencial"));
-        painelEndereco.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.LINE_START; // Alinha os componentes à esquerda
-        gbc.weightx = 1.0;
-
-        int linha = 0;
-
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Endereço:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfEndereco, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Número:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfNumero, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Complemento:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfComplemento, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Bairro:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfBairro, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("Cidade:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfCidade, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("UF:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(cbUf, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelEndereco.add(new JLabel("CEP:"), gbc);
-        gbc.gridx = 1;
-        painelEndereco.add(tfCep, gbc);
-
-        return painelEndereco;
     }
 }

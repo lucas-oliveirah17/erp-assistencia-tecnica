@@ -1,6 +1,6 @@
 package view;
 
-import control.UsuarioDAO;
+import control.UsuarioDAOTeste;
 import model.Usuario;
 
 import javax.swing.*;
@@ -100,7 +100,7 @@ public class TelaLogin extends JFrame {
         String senha = new String(pfSenha.getPassword());
 
         try {
-        	UsuarioDAO dao = new UsuarioDAO();
+        	UsuarioDAOTeste dao = new UsuarioDAOTeste();
             List<Usuario> usuarios = dao.listarTodos();
             
             for (Usuario usuario : usuarios) {

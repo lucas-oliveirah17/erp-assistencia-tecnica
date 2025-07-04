@@ -12,6 +12,8 @@ import java.awt.event.ActionEvent;
 
 public class TelaCadastroFuncionario extends JFrame {
     private static final long serialVersionUID = 1L; // Default serialVersion
+    
+    private TelaGerenciamentoFuncionarios1 painelGerenciamento;
 
     // -- COMPONENTES DE ENTRADA --
     private JTextField tfNome = new JTextField();
@@ -28,8 +30,17 @@ public class TelaCadastroFuncionario extends JFrame {
     private Font labelFont = new Font("Arial", Font.BOLD, 12);
     private Font inputFont = new Font("Arial", Font.PLAIN, 12);
     private Dimension inputSize = new Dimension(200, 25);
-
+    
     public TelaCadastroFuncionario() {
+        this(null);
+    }
+    
+    public TelaCadastroFuncionario(TelaGerenciamentoFuncionarios1 painelGerenciamento) {
+        this.painelGerenciamento = painelGerenciamento;
+        inicializar();
+    }
+
+    public void inicializar() {
     	// -- CONFIGURAÇÕES DA JANELA --
         this.setTitle("Cadastro de Funcionário");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

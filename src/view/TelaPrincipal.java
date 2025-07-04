@@ -32,11 +32,11 @@ public class TelaPrincipal extends JFrame {
         menuCliente.addActionListener(e -> new TelaCadastroCliente());
         menuCadastro.add(menuCliente);
         
-        menuFuncionario.addActionListener(e -> new TelaCadastroFuncionario());
-        menuCadastro.add(menuFuncionario);
-
-        // Só mostra o menu de usuários se o privilégio for ADMINISTRADOR
+        // Itens do Menu exclusivo do privilégio ADMINISTRADOR
         if (usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
+        	menuFuncionario.addActionListener(e -> new TelaCadastroFuncionario());
+            menuCadastro.add(menuFuncionario);
+            
             menuUsuario.addActionListener(e -> new TelaCadastroUsuario());
             menuCadastro.add(menuUsuario);
         }
@@ -68,9 +68,14 @@ public class TelaPrincipal extends JFrame {
         telas.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         // ADICIONANDO TELAS EM ABAS
-        telas.addTab("Cliente", new TelaGerenciamentoClientes());
-        telas.addTab("Usuário", new TelaGerenciamentoUsuarios());
+        telas.addTab("Cliente", new JScrollPane(new TelaGerenciamentoClientes(usuarioLogado)));
         
+        // Abas exclusiva do privilégio ADMINISTRADOR
+        if (usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
+        	telas.addTab("Usuário", new JScrollPane(new TelaGerenciamentoUsuarios()));
+        	//telas.addTab("Funcionarios", new JScrollPane((new TelaGerenciamentoFuncionarios1()));
+        }
+              
         add(telas); // Insere as abas no Frame
         
         // CONFIGURAÇÃO FINAL

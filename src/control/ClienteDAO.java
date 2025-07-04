@@ -100,6 +100,18 @@ public class ClienteDAO {
 		return dbQuery.update(values) > 0;
 	}
 	
+	public boolean ativar(Cliente cliente) {
+	    if (cliente == null || cliente.getId() <= 0) {
+	        throw new IllegalArgumentException("Cliente inválido para aativar.");
+	    }
+
+	    String sql = "UPDATE " + dbQuery.getTableName() +
+	                 " SET ativo = 1 WHERE " + dbQuery.getFieldKey() + " = " + cliente.getId();
+
+	    int rowsAffected = dbQuery.execute(sql);
+	    return rowsAffected > 0;
+	}
+	
 	public boolean desativar(Cliente cliente) {
 	    if (cliente == null || cliente.getId() <= 0) {
 	        throw new IllegalArgumentException("Cliente inválido para desativar.");
@@ -110,6 +122,28 @@ public class ClienteDAO {
 
 	    int rowsAffected = dbQuery.execute(sql);
 	    return rowsAffected > 0;
+	}
+	
+	public boolean excluir(Cliente cliente) {
+		String[] valores = {
+			String.valueOf(cliente.getId()),
+	        cliente.getNome(),
+	        cliente.getCpfCnpj(),
+	        cliente.getTipo().name(),
+	        cliente.getTelefone(),
+	        cliente.getEmail(),
+	        cliente.getEndereco(),
+	        cliente.getNumero(),
+	        cliente.getComplemento(),
+	        cliente.getBairro(),
+	        cliente.getCidade(),
+	        cliente.getUf().name(),
+	        cliente.getCep(),
+	        cliente.isAtivo() ? "1" : "0"
+	    };
+
+	    // Retorna true se a operação de exclusão for bem-sucedida
+	    return dbQuery.delete(valores) > 0;
 	}
 	
 	public List<Cliente> listarApenasAtivos() {
