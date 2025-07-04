@@ -2,6 +2,7 @@ package view;
 
 import util.EntradaFormsComboBox;
 import util.EntradaFormsTextField;
+import util.PainelBotoesUtil;
 import util.TabelaUtils;
 
 import model.Funcionario;
@@ -14,7 +15,6 @@ import control.FuncionarioDAO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -50,14 +50,6 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
     private EntradaFormsComboBox<FuncaoFuncionario> cbFuncao = new EntradaFormsComboBox<>("Função:", FuncaoFuncionario.values());;
     private EntradaFormsTextField tfTelefone = new EntradaFormsTextField("Telefone:");
     private EntradaFormsTextField tfEmail = new EntradaFormsTextField("Email:");
-
-    // Botões de ação
-    private JButton btnNovo = new JButton("Novo"); 
-    private JButton btnAtualizar = new JButton("Atualizar"); 
-    private JButton btnLimpar = new JButton("Limpar");
-    private JButton btnAtivar = new JButton("Ativar");
-    private JButton btnDesativar = new JButton("Desativar");
-    private JButton btnExcluir = new JButton("Excluir");
     
     // Checkbox de filtro de exibição
     private JCheckBox ckbMostrarInativos = new JCheckBox("Mostrar Inativos");
@@ -114,8 +106,16 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
         });
         
         // --- Painel dos Botões ---
-        JPanel painelBotoes = new JPanel();
-        painelBotoes = criarPainelBotoes();
+        PainelBotoesUtil painelBotoes = new PainelBotoesUtil(
+    		usuarioLogado,
+    		new Dimension(90, 30),
+    	    e -> new TelaCadastroFuncionario(this),
+    	    e -> atualizarFuncionario(),
+    	    e -> limparFormulario(),
+    	    e -> ativarFuncionario(),
+    	    e -> desativarFuncionario(),
+    	    e -> excluirFuncionario()	
+        );
            
         // --- Montagem Final ---
         if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
@@ -202,45 +202,6 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
 	    painelVazio.setLayout(new BorderLayout()); // Layout neutro, ocupa todo o espaço disponível
 	    return painelVazio;
 	}
-	
-	private JPanel criarPainelBotoes() {
-    	// --- Painel de Botões ---
-	    // Cria um painel FlowLayout alinhado à direita.
-	    // 10 → espaçamento horizontal entre os componentes (botões), em pixels.
-	    // 5 → espaçamento vertical entre os componentes e as bordas do painel, em pixels.
-    	JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-    	
-    	// Define ações dos botões
-        btnNovo.addActionListener(e -> new TelaCadastroFuncionario(this));
-        btnAtualizar.addActionListener(e -> atualizarFuncionario());
-        btnLimpar.addActionListener(e -> limparFormulario());
-        btnAtivar.addActionListener(e -> ativarFuncionario());
-        btnDesativar.addActionListener(e -> desativarFuncionario());
-        btnExcluir.addActionListener(e -> excluirFuncionario());
-        
-        // Define tamanho fixo dos botões (largura, altura)
-        Dimension tamanhoBotao = new Dimension(90, 30);
-        btnNovo.setPreferredSize(tamanhoBotao);
-        btnAtualizar.setPreferredSize(tamanhoBotao);
-        btnLimpar.setPreferredSize(tamanhoBotao);
-        btnAtivar.setPreferredSize(tamanhoBotao);
-        btnDesativar.setPreferredSize(tamanhoBotao);
-        btnExcluir.setPreferredSize(tamanhoBotao);
-        
-        // Adiciona botões ao painel
-        painelBotoes.add(btnNovo);
-        painelBotoes.add(btnAtualizar);
-        painelBotoes.add(btnLimpar);
-        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
-        	painelBotoes.add(btnAtivar);
-        }
-        painelBotoes.add(btnDesativar);
-        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
-        	painelBotoes.add(btnExcluir);
-        }
-        
-        return painelBotoes;
-    }
 	
 	public void carregarDadosTabela() {
         tableModel.setRowCount(0); // Limpa a tabela

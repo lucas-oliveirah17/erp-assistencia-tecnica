@@ -2,6 +2,7 @@ package view;
 
 import util.EntradaFormsComboBox;
 import util.EntradaFormsTextField;
+import util.PainelBotoesUtil;
 import util.TabelaUtils;
 
 import model.Cliente;
@@ -15,7 +16,6 @@ import control.ClienteDAO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -57,15 +57,7 @@ public class TelaGerenciamentoClientes extends JPanel {
     private EntradaFormsTextField tfCidade = new EntradaFormsTextField("Cidade::");
     private EntradaFormsComboBox<Uf> cbUf = new EntradaFormsComboBox<>("UF:", Uf.values());;
     private EntradaFormsTextField tfCep = new EntradaFormsTextField("CEP:");
-    
-    // Botões de ação
-    private JButton btnNovo = new JButton("Novo"); 
-    private JButton btnAtualizar = new JButton("Atualizar"); 
-    private JButton btnLimpar = new JButton("Limpar");
-    private JButton btnAtivar = new JButton("Ativar");
-    private JButton btnDesativar = new JButton("Desativar");
-    private JButton btnExcluir = new JButton("Excluir");
-    
+        
     // Checkbox de filtro de exibição
     private JCheckBox ckbMostrarInativos = new JCheckBox("Mostrar Inativos");
 
@@ -121,8 +113,16 @@ public class TelaGerenciamentoClientes extends JPanel {
         });      
                   
         // --- Painel dos Botões ---
-        JPanel painelBotoes = new JPanel();
-        painelBotoes = criarPainelBotoes();
+        PainelBotoesUtil painelBotoes = new PainelBotoesUtil(
+    		usuarioLogado,
+    		new Dimension(90, 30),
+    	    e -> new TelaCadastroCliente(this),
+    	    e -> atualizarCliente(),
+    	    e -> limparFormulario(),
+    	    e -> ativarCliente(),
+    	    e -> desativarCliente(),
+    	    e -> excluirCliente()	
+        );
            
         // --- Montagem Final ---
         if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
@@ -238,46 +238,7 @@ public class TelaGerenciamentoClientes extends JPanel {
 
         return painelEndereco;
     }
-    
-    private JPanel criarPainelBotoes() {
-    	// --- Painel de Botões ---
-	    // Cria um painel FlowLayout alinhado à direita.
-	    // 10 → espaçamento horizontal entre os componentes (botões), em pixels.
-	    // 5 → espaçamento vertical entre os componentes e as bordas do painel, em pixels.
-    	JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
-    	
-    	// Define ações dos botões
-        btnNovo.addActionListener(e -> new TelaCadastroCliente(this));
-        btnAtualizar.addActionListener(e -> atualizarCliente());
-        btnLimpar.addActionListener(e -> limparFormulario());
-        btnAtivar.addActionListener(e -> ativarCliente());
-        btnDesativar.addActionListener(e -> desativarCliente());
-        btnExcluir.addActionListener(e -> excluirCliente());
         
-        // Define tamanho fixo dos botões (largura, altura)
-        Dimension tamanhoBotao = new Dimension(90, 30);
-        btnNovo.setPreferredSize(tamanhoBotao);
-        btnAtualizar.setPreferredSize(tamanhoBotao);
-        btnLimpar.setPreferredSize(tamanhoBotao);
-        btnAtivar.setPreferredSize(tamanhoBotao);
-        btnDesativar.setPreferredSize(tamanhoBotao);
-        btnExcluir.setPreferredSize(tamanhoBotao);
-        
-        // Adiciona botões ao painel
-        painelBotoes.add(btnNovo);
-        painelBotoes.add(btnAtualizar);
-        painelBotoes.add(btnLimpar);
-        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
-        	painelBotoes.add(btnAtivar);
-        }
-        painelBotoes.add(btnDesativar);
-        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
-        	painelBotoes.add(btnExcluir);
-        }
-        
-        return painelBotoes;
-    }
-    
     public void carregarDadosTabela() {
         tableModel.setRowCount(0); // Limpa a tabela
         
