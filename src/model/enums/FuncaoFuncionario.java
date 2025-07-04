@@ -37,4 +37,13 @@ public enum FuncaoFuncionario {
         }
         throw new IllegalArgumentException("Valor inválido para FuncaoFuncionario: " + valor);
     }
+    
+    public static FuncaoFuncionario fromString(String texto) {
+        for (FuncaoFuncionario t : values()) {
+            if (t.toString().equalsIgnoreCase(texto)) {
+                return t;
+            }
+        }
+        throw new IllegalArgumentException("Texto inválido para FuncaoFuncionario: " + texto);
+    }
 }

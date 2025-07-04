@@ -62,4 +62,13 @@ public enum Uf {
         }
         throw new IllegalArgumentException("Valor inválido para Uf: " + valor);
     }
+    
+    public static Uf fromString(String rotulo) {
+        for (Uf uf : values()) {
+            if (uf.toString().equals(rotulo)) {
+                return uf;
+            }
+        }
+        throw new IllegalArgumentException("UF inválido: " + rotulo);
+    }
 }

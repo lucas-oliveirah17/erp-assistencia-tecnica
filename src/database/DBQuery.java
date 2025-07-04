@@ -101,11 +101,12 @@ public class DBQuery {
 		return 0;
 	}
 	
-	public int insert(String[] values, String fieldsNamesInsert) {
+	public int insert(String[] values, String editableFieldsNames) {
 	    for (String value : values) {
 	        System.out.println(value);
 	    }
-	    String[] campos = fieldsNamesInsert.split(",");
+	    String[] campos = editableFieldsNames.split(",");
+	    
 	    if (values.length == campos.length) {
 	        String sql = "INSERT INTO " + this.tableName + " ( " + this.joinElements(campos, ", ");
 	        sql += ") VALUES ('" + joinElements(values, "','") + "')";
@@ -152,7 +153,8 @@ public class DBQuery {
 		System.out.print( sql );
 		return ( this.execute(sql) );
 	}
-
+	
+	
 	public String getTableName() {
 		return tableName;
 	}

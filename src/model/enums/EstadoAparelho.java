@@ -33,5 +33,14 @@ public enum EstadoAparelho {
         }
         throw new IllegalArgumentException("Valor inválido para EstadoAparelho: " + valor);
     }
+    
+    public static EstadoAparelho fromString(String texto) {
+        for (EstadoAparelho e : values()) {
+            if (e.toString().equalsIgnoreCase(texto)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Texto inválido para EstadoAparelho: " + texto);
+    }
 }
 

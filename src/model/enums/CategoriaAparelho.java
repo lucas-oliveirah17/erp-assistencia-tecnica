@@ -23,7 +23,7 @@ public enum CategoriaAparelho {
     @Override
     public String toString() {
         switch (this) {
-            case TELEVISAO: return "Em manutenção";
+            case TELEVISAO: return "Televisão";
             case MONITOR: return "Monitor";
             case HOME_THEATER: return "Home Theather";
             case CELULAR: return "Celular";
@@ -42,5 +42,14 @@ public enum CategoriaAparelho {
             }
         }
         throw new IllegalArgumentException("Valor inválido para CategoriaAparelho: " + valor);
+    }
+    
+    public static CategoriaAparelho fromString(String texto) {
+        for (CategoriaAparelho e : values()) {
+            if (e.toString().equalsIgnoreCase(texto)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Texto inválido para CategoriaAparelho: " + texto);
     }
 }

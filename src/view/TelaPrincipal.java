@@ -44,15 +44,22 @@ public class TelaPrincipal extends JFrame {
         menuBar.add(menuCadastro);
 
         // -- MENU SISTEMA --
-        JMenu menuSair = new JMenu("Sistema");
+        JMenu menuSistema = new JMenu("Sistema");
+        JMenuItem sobre = new JMenuItem("Sobre");
         JMenuItem sair = new JMenuItem("Sair");
+        
+        sobre.addActionListener((ActionEvent e) -> {
+            new TelaSobre();
+        });
+        
         sair.addActionListener((ActionEvent e) -> {
             dispose();
             new TelaLogin();
         });
 
-        menuSair.add(sair);
-        menuBar.add(menuSair);
+        menuSistema.add(sobre);
+        menuSistema.add(sair);
+        menuBar.add(menuSistema);
         
         setJMenuBar(menuBar); // Insere o menuBar no Frame
         
@@ -63,7 +70,6 @@ public class TelaPrincipal extends JFrame {
         // ADICIONANDO TELAS EM ABAS
         telas.addTab("Cliente", new TelaGerenciamentoClientes());
         telas.addTab("Usuário", new TelaGerenciamentoUsuarios());
-        telas.addTab("Sobre", new TelaSobre());
         
         add(telas); // Insere as abas no Frame
         

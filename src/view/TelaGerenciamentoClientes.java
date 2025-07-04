@@ -21,12 +21,20 @@ public class TelaGerenciamentoClientes extends JPanel {
     private JTable tabelaClientes;
     private DefaultTableModel tableModel;
     
-    private JTextField tfId, tfNome, tfCpfCnpj, tfTelefone, tfEmail,
-    tfEndereco, tfNumero, tfComplemento, tfBairro, tfCidade, tfCep ;
+    private JTextField tfId = new JTextField();
+    private JTextField tfNome = new JTextField();
+    private JTextField tfCpfCnpj = new JTextField();
+    private JComboBox<TipoCliente> cbTipo = new JComboBox<>(TipoCliente.values());;
+    private JTextField tfTelefone = new JTextField();
+    private JTextField tfEmail = new JTextField();
+    private JTextField tfEndereco = new JTextField(); 
+    private JTextField tfNumero = new JTextField();
+    private JTextField tfComplemento = new JTextField();
+    private JTextField tfBairro = new JTextField();
+    private JTextField tfCidade = new JTextField();
+    private JComboBox<Uf> cbUf = new JComboBox<>(Uf.values());;
+    private JTextField tfCep = new JTextField();
     
-    private JComboBox<TipoCliente> cbTipo;
-    private JComboBox<Uf> cbUf;
-
     private JButton btnNovo = new JButton("Novo"); 
     private JButton btnAtualizar = new JButton("Atualizar"); 
     private JButton btnLimpar = new JButton("Limpar"); 
@@ -34,11 +42,13 @@ public class TelaGerenciamentoClientes extends JPanel {
 
     public TelaGerenciamentoClientes() {
     	// -- CONFIGURAÇÕES DO PAINEL --
-        this.setLayout(new BorderLayout(10, 10));
+    	this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
         // --- PAINEL DA TABELA (LISTAR) ---
-        JPanel painelTabela = new JPanel(new BorderLayout());
+        JPanel painelTabela = new JPanel();
+        painelTabela.setLayout(new BoxLayout(painelTabela, BoxLayout.Y_AXIS));
         painelTabela.setBorder(BorderFactory.createTitledBorder("Lista de Clientes"));
+        painelTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200)); // Fixar altura da tabela
 
         // Cabeçalho da tabela
         String[] colunas = {
@@ -46,17 +56,135 @@ public class TelaGerenciamentoClientes extends JPanel {
     		"Email", "Endereco", "Nº", "Complemento",
     		"Bairro", "Cidade", "UF", "CEP"
         };
-        tableModel = new DefaultTableModel(colunas, 0);
+        
+        // DESATIVA EDIÇÂO NA LINHA DA TABELA
+        tableModel = new DefaultTableModel(colunas, 0) {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+            public boolean isCellEditable(int row, int column) {
+                return false;  // nenhuma célula será editável
+            }
+        };
+        
         tabelaClientes = new JTable(tableModel);
                 
         carregarDadosTabela(); // Carrega a lista de dados
               
-        painelTabela.add(new JScrollPane(tabelaClientes), BorderLayout.CENTER);
+        painelTabela.add(new JScrollPane(tabelaClientes));
         
+        // -- PAINEL DADOS GERAIS DO CLIENTE --
+        JPanel painelCliente = new JPanel();
+        painelCliente.setLayout(new GridLayout(1, 2, 10, 0)); // 1 linha, 2 colunas, 10px espaço entre colunas
+
+        // Coluna 1
+        // -- PAINEL DADOS GERAIS --
+        JPanel painelDadosGerais = new JPanel(new GridBagLayout());
+        painelDadosGerais.setBorder(BorderFactory.createTitledBorder("Dados"));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+
+        int linha = 0;
+
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Nome:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfNome, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("CPF/CNPJ:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfCpfCnpj, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Tipo de Cliente:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(cbTipo, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Telefone:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfTelefone, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelDadosGerais.add(new JLabel("Email:"), gbc);
+        gbc.gridx = 1;
+        painelDadosGerais.add(tfEmail, gbc);
+
+        // Coluna 2
+        // -- PAINEL ENDEREÇO --
+        JPanel painelEndereco = new JPanel(new GridBagLayout());
+        painelEndereco.setBorder(BorderFactory.createTitledBorder("Endereço Residencial"));
+        painelEndereco.setAlignmentY(Component.TOP_ALIGNMENT);
+        linha = 0;
+
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Endereço:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfEndereco, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Número:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfNumero, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Complemento:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfComplemento, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Bairro:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfBairro, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("Cidade:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfCidade, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("UF:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(cbUf, gbc);
+
+        linha++;
+        gbc.gridx = 0; gbc.gridy = linha;
+        painelEndereco.add(new JLabel("CEP:"), gbc);
+        gbc.gridx = 1;
+        painelEndereco.add(tfCep, gbc);
+                
+        painelCliente.add(painelDadosGerais);
+        painelCliente.add(painelEndereco);
+        
+        // PREENCHE FORMULARIO AO CLICAR EM ALGUMA LINHA DA TABELA
+        tabelaClientes.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int linhaSelecionada = tabelaClientes.getSelectedRow();
+                if (linhaSelecionada != -1) {
+                    preencherFormulario(linhaSelecionada);
+                }
+            }
+        });
+                  
         // -- PAINEL BOTÕES --
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));      
            
+        // AÇÕES DOS BOTÕES
         btnNovo.addActionListener(e -> new TelaCadastroCliente(this));
+        btnLimpar.addActionListener(e -> limparFormulario());
         
         painelBotoes.add(btnNovo);
         painelBotoes.add(btnAtualizar);
@@ -64,8 +192,11 @@ public class TelaGerenciamentoClientes extends JPanel {
         painelBotoes.add(btnExcluir);
        
         // -- MONTAGEM FINAL --
-        add(painelTabela, BorderLayout.CENTER);
-        add(painelBotoes, BorderLayout.SOUTH);
+        add(painelTabela);
+        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertical
+        add(painelCliente);
+        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertical
+        add(painelBotoes);
     }
     
     public void carregarDadosTabela() {
@@ -87,8 +218,61 @@ public class TelaGerenciamentoClientes extends JPanel {
                 c.getBairro(),
                 c.getCidade(),
                 c.getUf(),
-                c.getCep()
+                c.getCep(),
             });
         }
+    }
+    
+    private void preencherFormulario(int linha) {
+        try {
+    	// Pega os dados da linha selecionada
+        int id = (int) tableModel.getValueAt(linha, 0);
+        String nome = (String) tableModel.getValueAt(linha, 1);
+        String cpfCnpj = (String) tableModel.getValueAt(linha, 2);
+        TipoCliente tipo = TipoCliente.fromString(tableModel.getValueAt(linha, 3).toString());
+        String telefone = (String) tableModel.getValueAt(linha, 4);
+        String email = (String) tableModel.getValueAt(linha, 5);
+        String endereco = (String) tableModel.getValueAt(linha, 6);
+        String numero = (String) tableModel.getValueAt(linha, 7);
+        String complemento = (String) tableModel.getValueAt(linha, 8);
+        String bairro = (String) tableModel.getValueAt(linha, 9);
+        String cidade = (String) tableModel.getValueAt(linha, 10);
+        Uf uf = Uf.fromString(tableModel.getValueAt(linha, 11).toString());
+        String cep = (String) tableModel.getValueAt(linha, 12);
+        
+        // Preenche os campos do formulário
+        tfId.setText(String.valueOf(id));
+        tfNome.setText(String.valueOf(nome));
+        tfCpfCnpj.setText(String.valueOf(cpfCnpj));
+        cbTipo.setSelectedItem(tipo);
+        tfTelefone.setText(String.valueOf(telefone));
+        tfEmail.setText(String.valueOf(email));
+        tfEndereco.setText(String.valueOf(endereco));
+        tfNumero.setText(String.valueOf(numero));
+        tfComplemento.setText(String.valueOf(complemento));
+        tfBairro.setText(String.valueOf(bairro));
+        tfCidade.setText(String.valueOf(cidade));
+        tfCep.setText(String.valueOf(cep));
+        cbUf.setSelectedItem(uf);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao preencher formulário: " + ex.getMessage());
+        }
+    }
+    
+    private void limparFormulario() {
+        tfId.setText("");
+        tfNome.setText("");
+        tfCpfCnpj.setText("");
+        cbTipo.setSelectedIndex(0);
+        tfTelefone.setText("");
+        tfEmail.setText("");
+        tfEndereco.setText("");
+        tfNumero.setText("");
+        tfComplemento.setText("");
+        tfBairro.setText("");
+        tfCidade.setText("");
+        tfCep.setText("");
+        cbUf.setSelectedIndex(0);
     }
 }

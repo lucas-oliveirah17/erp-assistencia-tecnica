@@ -33,4 +33,13 @@ public enum EstadoOrdemServico {
         }
         throw new IllegalArgumentException("Valor inválido para EstadoOrdemServico: " + valor);
     }
+    
+    public static EstadoOrdemServico fromString(String texto) {
+        for (EstadoOrdemServico e : values()) {
+            if (e.toString().equalsIgnoreCase(texto)) {
+                return e;
+            }
+        }
+        throw new IllegalArgumentException("Texto inválido para EstadoOrdemServico: " + texto);
+    }
 }

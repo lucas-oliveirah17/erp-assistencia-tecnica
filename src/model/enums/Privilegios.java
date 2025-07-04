@@ -31,4 +31,13 @@ public enum Privilegios {
         }
         throw new IllegalArgumentException("Valor inválido para Privilegios: " + valor);
     }
+    
+    public static Privilegios fromString(String texto) {
+        for (Privilegios p : values()) {
+            if (p.toString().equalsIgnoreCase(texto)) {
+                return p;
+            }
+        }
+        throw new IllegalArgumentException("Texto inválido para Privilegios: " + texto);
+    }
 }

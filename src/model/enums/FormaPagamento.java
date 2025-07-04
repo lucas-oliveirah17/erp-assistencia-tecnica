@@ -35,4 +35,13 @@ public enum FormaPagamento {
         }
         throw new IllegalArgumentException("Valor inválido para FormaPagamento: " + valor);
     }
+    
+    public static FormaPagamento fromString(String texto) {
+        for (FormaPagamento f : values()) {
+            if (f.toString().equalsIgnoreCase(texto)) {
+                return f;
+            }
+        }
+        throw new IllegalArgumentException("Texto inválido para FormaPagamento: " + texto);
+    }
 }

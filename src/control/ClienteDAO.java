@@ -7,11 +7,15 @@ import java.util.List;
 
 import database.DBQuery;
 import model.Cliente;
+import model.Usuario;
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
 public class ClienteDAO {
 	private DBQuery dbQuery;
+	private String editableFieldsName = "nome, cpf_cnpj, tipo_cliente, telefone, "
+			+ "email, endereco, numero, complemento, "
+			+ "bairro, cidade, uf, cep";
 	
 	public ClienteDAO() {
         String tableName = "tb_cliente";
@@ -19,14 +23,11 @@ public class ClienteDAO {
         		+ "telefone, email, endereco, numero, complemento, "
         		+ "bairro, cidade, uf, cep, ativo";
         String fieldKey = "id_cliente";
+        
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
 	
 	public boolean salvar(Cliente cliente) {
-		String fieldsNameInsert = "nome, cpf_cnpj, tipo_cliente, telefone, "
-				+ "email, endereco, numero, complemento, "
-				+ "bairro, cidade, uf, cep";
-		
         String[] values = {
 	        cliente.getNome(),
 	        cliente.getCpfCnpj(),
@@ -42,7 +43,7 @@ public class ClienteDAO {
 	        cliente.getCep()
         };
         
-        return dbQuery.insert(values, fieldsNameInsert) > 0;
+        return dbQuery.insert(values, editableFieldsName) > 0;
     }
 	
 	public List<Cliente> listarTodos(){
@@ -77,5 +78,26 @@ public class ClienteDAO {
 	    }
 
 		return clientes;
+	}
+	
+	public boolean atualizar(Cliente cliente) {
+		String[] values = {
+			String.valueOf(cliente.getId()),
+			cliente.getNome(),
+			cliente.getCpfCnpj(),
+			cliente.getTipo().name(),
+			cliente.getTelefone(),
+			cliente.getEmail(),
+			cliente.getEndereco(),
+			cliente.getNumero(),
+			cliente.getComplemento(),
+			cliente.getBairro(),
+			cliente.getCidade(),
+			cliente.getUf().name(),
+			cliente.getCep(),
+			cliente.isAtivo() ? "1" : "0"
+		};
+		
+		return dbQuery.update(values) > 0;
 	}
 }

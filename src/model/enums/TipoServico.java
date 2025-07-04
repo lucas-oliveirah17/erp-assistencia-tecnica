@@ -33,4 +33,13 @@ public enum TipoServico {
         }
         throw new IllegalArgumentException("Valor inválido para TipoServico: " + valor);
     }
+    
+    public static TipoServico fromString(String texto) {
+        for (TipoServico t : values()) {
+            if (t.toString().equalsIgnoreCase(texto)) {
+                return t;
+            }
+        }
+        throw new IllegalArgumentException("Texto inválido para TipoServico: " + texto);
+    }
 }

@@ -31,4 +31,13 @@ public enum TipoCliente {
         }
         throw new IllegalArgumentException("Valor inválido para TipoCliente: " + valor);
     }
+    
+    public static TipoCliente fromString(String rotulo) {
+        for (TipoCliente tipo : values()) {
+            if (tipo.toString().equals(rotulo)) {
+                return tipo;
+            }
+        }
+        throw new IllegalArgumentException("TipoCliente inválido: " + rotulo);
+    }
 }

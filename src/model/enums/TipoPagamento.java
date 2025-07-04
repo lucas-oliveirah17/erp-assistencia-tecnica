@@ -31,4 +31,13 @@ public enum TipoPagamento {
         }
         throw new IllegalArgumentException("Valor inválido para TipoPagamento: " + valor);
     }
+    
+    public static TipoPagamento fromString(String texto) {
+        for (TipoPagamento t : values()) {
+            if (t.toString().equalsIgnoreCase(texto)) {
+                return t;
+            }
+        }
+        throw new IllegalArgumentException("Texto inválido para TipoPagamento: " + texto);
+    }
 }
