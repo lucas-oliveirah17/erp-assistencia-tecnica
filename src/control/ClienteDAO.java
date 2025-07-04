@@ -2,32 +2,36 @@ package control;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import database.DBQuery;
+
 import model.Cliente;
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
 public class ClienteDAO {
 	private DBQuery dbQuery;
-	private String editableFieldsName = "nome, cpf_cnpj, tipo_cliente, telefone, "
-			+ "email, endereco, numero, complemento, "
-			+ "bairro, cidade, uf, cep";
+	private String editableFieldsName = 
+		"nome, cpf_cnpj, tipo_cliente, telefone, "
+		+ "email, endereco, numero, complemento, "
+		+ "bairro, cidade, uf, cep";
 	
 	public ClienteDAO() {
         String tableName = "tb_cliente";
-        String fieldNames = "id_cliente, nome, cpf_cnpj, tipo_cliente, "
-        		+ "telefone, email, endereco, numero, complemento, "
-        		+ "bairro, cidade, uf, cep, ativo";
+        String fieldNames = 
+    		"id_cliente, nome, cpf_cnpj, tipo_cliente, "
+    		+ "telefone, email, endereco, numero, complemento, "
+    		+ "bairro, cidade, uf, cep, ativo";
         String fieldKey = "id_cliente";
         
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
 	
 	public boolean salvar(Cliente cliente) {
-        String[] values = {
+        String[] valores = {
 	        cliente.getNome(),
 	        cliente.getCpfCnpj(),
 	        cliente.getTipo().getValorDb(),
@@ -42,7 +46,7 @@ public class ClienteDAO {
 	        cliente.getCep()
         };
         
-        return dbQuery.insert(values, editableFieldsName) > 0;
+        return dbQuery.insert(valores, editableFieldsName) > 0;
     }
 	
 	public List<Cliente> listarTodos(){
@@ -52,23 +56,23 @@ public class ClienteDAO {
 	        ResultSet rs = dbQuery.select("");
 
 	        while (rs.next()) {
-	            Cliente cliente = new Cliente();
-	            cliente.setId(rs.getInt("id_cliente"));
-	            cliente.setNome(rs.getString("nome"));
-	            cliente.setCpfCnpj(rs.getString("cpf_cnpj"));
-	            cliente.setTipo(TipoCliente.fromDb(rs.getString("tipo_cliente")));
-	            cliente.setTelefone(rs.getString("telefone"));
-	            cliente.setEmail(rs.getString("email"));
-	            cliente.setEndereco(rs.getString("endereco"));
-	            cliente.setNumero(rs.getString("numero"));
-	            cliente.setComplemento(rs.getString("complemento"));
-	            cliente.setBairro(rs.getString("bairro"));
-	            cliente.setCidade(rs.getString("cidade"));
-	            cliente.setUf(Uf.fromDb(rs.getString("uf")));
-	            cliente.setCep(rs.getString("cep"));
-	            cliente.setAtivo(rs.getBoolean("ativo"));
+	            Cliente c = new Cliente();
+	            c.setId(rs.getInt("id_cliente"));
+	            c.setNome(rs.getString("nome"));
+	            c.setCpfCnpj(rs.getString("cpf_cnpj"));
+	            c.setTipo(TipoCliente.fromDb(rs.getString("tipo_cliente")));
+	            c.setTelefone(rs.getString("telefone"));
+	            c.setEmail(rs.getString("email"));
+	            c.setEndereco(rs.getString("endereco"));
+	            c.setNumero(rs.getString("numero"));
+	            c.setComplemento(rs.getString("complemento"));
+	            c.setBairro(rs.getString("bairro"));
+	            c.setCidade(rs.getString("cidade"));
+	            c.setUf(Uf.fromDb(rs.getString("uf")));
+	            c.setCep(rs.getString("cep"));
+	            c.setAtivo(rs.getBoolean("ativo"));
 
-	            clientes.add(cliente);
+	            clientes.add(c);
 	        }
 
 	        rs.close();
@@ -80,7 +84,7 @@ public class ClienteDAO {
 	}
 	
 	public boolean atualizar(Cliente cliente) {
-		String[] values = {
+		String[] valores = {
 			String.valueOf(cliente.getId()),
 			cliente.getNome(),
 			cliente.getCpfCnpj(),
@@ -97,7 +101,7 @@ public class ClienteDAO {
 			cliente.isAtivo() ? "1" : "0"
 		};
 		
-		return dbQuery.update(values) > 0;
+		return dbQuery.update(valores) > 0;
 	}
 	
 	public boolean ativar(Cliente cliente) {

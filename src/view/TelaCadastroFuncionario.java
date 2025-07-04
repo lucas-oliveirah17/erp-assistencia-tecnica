@@ -1,19 +1,37 @@
 package view;
 
 import model.Funcionario;
+
 import model.enums.FuncaoFuncionario;
+
 import control.FuncionarioDAO;
 
-import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class TelaCadastroFuncionario extends JFrame {
     private static final long serialVersionUID = 1L; // Default serialVersion
     
-    private TelaGerenciamentoFuncionarios1 painelGerenciamento;
+    private TelaGerenciamentoFuncionarios painelGerenciamento;
 
     // -- COMPONENTES DE ENTRADA --
     private JTextField tfNome = new JTextField();
@@ -32,10 +50,10 @@ public class TelaCadastroFuncionario extends JFrame {
     private Dimension inputSize = new Dimension(200, 25);
     
     public TelaCadastroFuncionario() {
-        this(null);
+    	this((TelaGerenciamentoFuncionarios) null);
     }
     
-    public TelaCadastroFuncionario(TelaGerenciamentoFuncionarios1 painelGerenciamento) {
+    public TelaCadastroFuncionario(TelaGerenciamentoFuncionarios painelGerenciamento) {
         this.painelGerenciamento = painelGerenciamento;
         inicializar();
     }
@@ -136,16 +154,19 @@ public class TelaCadastroFuncionario extends JFrame {
             funcionario.setFuncao((FuncaoFuncionario) cbFuncao.getSelectedItem());
             funcionario.setTelefone(tfTelefone.getText());
             funcionario.setEmail(tfEmail.getText());
-            
+            funcionario.setAtivo(true);            
 
             FuncionarioDAO dao = new FuncionarioDAO();
             boolean sucesso = dao.salvar(funcionario);
 
             if (sucesso) {
-                JOptionPane.showMessageDialog(this, "Funcionario salvo com sucesso!");
+                JOptionPane.showMessageDialog(this, "Funcionário salvo com sucesso!");
+                if (painelGerenciamento != null) {
+                    painelGerenciamento.carregarDadosTabela();
+                }
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Erro ao salvar funcionario.");
+                JOptionPane.showMessageDialog(this, "Erro ao salvar funcionário.");
             }
 
         } catch (Exception ex) {

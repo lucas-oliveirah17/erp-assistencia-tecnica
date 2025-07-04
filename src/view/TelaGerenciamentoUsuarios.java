@@ -24,7 +24,7 @@ public class TelaGerenciamentoUsuarios extends JPanel {
     private JCheckBox chkAtivo;
     private JButton btnAtualizar, btnExcluir, btnLimpar;
 
-    public TelaGerenciamentoUsuarios() {
+    public TelaGerenciamentoUsuarios(Usuario usuarioInstancia) {
     	// -- CONFIGURAÇÕES DO PAINEL --
         this.setLayout(new BorderLayout(10, 10));
 

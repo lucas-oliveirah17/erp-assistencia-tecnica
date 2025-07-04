@@ -1,16 +1,33 @@
 package view;
 
 import model.Cliente;
+
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
 import control.ClienteDAO;
 
-import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class TelaCadastroCliente extends JFrame {
     private static final long serialVersionUID = 1L; // Default serialVersion

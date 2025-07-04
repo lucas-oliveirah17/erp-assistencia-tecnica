@@ -3,13 +3,12 @@ package view;
 import util.EntradaFormsTextField;
 import util.EntradaFormsComboBox;
 
-import model.Cliente;
+import model.Funcionario;
 import model.Usuario;
 
-import model.enums.TipoCliente;
-import model.enums.Uf;
+import model.enums.FuncaoFuncionario;
 
-import control.ClienteDAO;
+import control.FuncionarioDAO;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -25,6 +24,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
@@ -36,30 +36,23 @@ import java.awt.Insets;
 
 import java.util.List;
 
-public class TelaGerenciamentoClientes extends JPanel {
-    private static final long serialVersionUID = 1L; // Default serialVersion
+public class TelaGerenciamentoFuncionarios extends JPanel {
+	private static final long serialVersionUID = 1L; // Default serialVersion
     
     private Usuario usuarioLogado;
     
-    // Componentes da tabela de clientes
-    private JTable tabelaClientes;
+ // Componentes da tabela de funcionário
+    private JTable tabelaFuncionarios;
     private DefaultTableModel tableModel;
     
     // Campos do formulário
     private EntradaFormsTextField tfId = new EntradaFormsTextField("ID:");
     private EntradaFormsTextField tfNome = new EntradaFormsTextField("Nome:");
-    private EntradaFormsTextField tfCpfCnpj = new EntradaFormsTextField("CPF/CNPJ:");
-    private EntradaFormsComboBox<TipoCliente> cbTipo = new EntradaFormsComboBox<>("Tipo de Cliente:", TipoCliente.values());;
+    private EntradaFormsTextField tfCpf = new EntradaFormsTextField("CPF:");
+    private EntradaFormsComboBox<FuncaoFuncionario> cbFuncao = new EntradaFormsComboBox<>("Função:", FuncaoFuncionario.values());;
     private EntradaFormsTextField tfTelefone = new EntradaFormsTextField("Telefone:");
     private EntradaFormsTextField tfEmail = new EntradaFormsTextField("Email:");
-    private EntradaFormsTextField tfEndereco = new EntradaFormsTextField("Endereço:"); 
-    private EntradaFormsTextField tfNumero = new EntradaFormsTextField("Número:");
-    private EntradaFormsTextField tfComplemento = new EntradaFormsTextField("Complemento::");
-    private EntradaFormsTextField tfBairro = new EntradaFormsTextField("Bairro::");
-    private EntradaFormsTextField tfCidade = new EntradaFormsTextField("Cidade::");
-    private EntradaFormsComboBox<Uf> cbUf = new EntradaFormsComboBox<>("UF:", Uf.values());;
-    private EntradaFormsTextField tfCep = new EntradaFormsTextField("CEP:");
-    
+
     // Botões de ação
     private JButton btnNovo = new JButton("Novo"); 
     private JButton btnAtualizar = new JButton("Atualizar"); 
@@ -70,11 +63,11 @@ public class TelaGerenciamentoClientes extends JPanel {
     
     // Checkbox de filtro de exibição
     private JCheckBox ckbMostrarInativos = new JCheckBox("Mostrar Inativos");
-
-    public TelaGerenciamentoClientes(Usuario usuarioInstancia) {
-    	this.usuarioLogado = usuarioInstancia;
-    	
-    	// Define o layout do painel principal como um BoxLayout na direção vertical (Y_AXIS),
+	
+	public TelaGerenciamentoFuncionarios(Usuario usuarioInstancia) {
+		this.usuarioLogado = usuarioInstancia;
+		
+		// Define o layout do painel principal como um BoxLayout na direção vertical (Y_AXIS),
     	// ou seja, os componentes serão empilhados verticalmente (um abaixo do outro).
     	this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
@@ -83,7 +76,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         ckbMostrarInativos.addActionListener(e -> carregarDadosTabela());
         painelFiltro.add(ckbMostrarInativos);
         
-        // --- Painel da Tabela (Lista de Clientes) ---
+        // --- Painel da Tabela (Lista de Funcionarios) ---
         JPanel painelTabela = new JPanel();
         
         painelTabela = criarPainelTabela();
@@ -102,7 +95,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
         gbc.anchor = GridBagConstraints.FIRST_LINE_START; // Alinha topo esquerdo
         painelFormulario.add(criarPainelDadosGerais(), gbc);
-
+        
         // Painel de Endereço (coluna direita)
         gbc.gridx = 1;
         gbc.weightx = 0.5;
@@ -110,18 +103,18 @@ public class TelaGerenciamentoClientes extends JPanel {
         gbc.insets = new Insets(5, 0, 0, 0); // Define margens internas. 5 para esquerda a direita.
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-        painelFormulario.add(criarPainelEndereco(), gbc);
- 
-        // Evento para preencher o formulário ao clicar na tabela
-        tabelaClientes.addMouseListener(new MouseAdapter() {
+        painelFormulario.add(criarPainelVazio(), gbc);
+        
+     // Evento para preencher o formulário ao clicar na tabela
+        tabelaFuncionarios.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                int linhaSelecionada = tabelaClientes.getSelectedRow();
+                int linhaSelecionada = tabelaFuncionarios.getSelectedRow();
                 if (linhaSelecionada != -1) {
                     preencherFormulario(linhaSelecionada);
                 }
             }
-        });      
-                  
+        });
+        
         // --- Painel dos Botões ---
         JPanel painelBotoes = new JPanel();
         painelBotoes = criarPainelBotoes();
@@ -135,14 +128,14 @@ public class TelaGerenciamentoClientes extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
         add(painelFormulario);
         add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertical
-        add(painelBotoes);
-    }
-    
-    private JPanel criarPainelTabela() {
+        add(painelBotoes);	
+	}
+	
+	private JPanel criarPainelTabela() {
     	JPanel painelTabela = new JPanel();
         painelTabela.setLayout(new BoxLayout(painelTabela, BoxLayout.Y_AXIS));
         painelTabela.setBorder(BorderFactory.createCompoundBorder(
-        	    BorderFactory.createTitledBorder("Lista de Clientes"),
+        	    BorderFactory.createTitledBorder("Lista de Funcionários"),
         	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
             ));
         painelTabela.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
@@ -150,9 +143,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         
         // Cabeçalhos da tabela
         String[] colunas = {
-    		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
-    		"Email", "Endereco", "Nº", "Complemento",
-    		"Bairro", "Cidade", "UF", "CEP"
+    		"ID", "Nome", "CPF", "Função", "Telefone", "Email"
         };
         
         // Modelo da tabela com células não editáveis
@@ -164,21 +155,21 @@ public class TelaGerenciamentoClientes extends JPanel {
                 return false;
             }
         };
-        tabelaClientes = new JTable(tableModel);
+        tabelaFuncionarios = new JTable(tableModel);
         
         // Preenche a tabela com dados do banco
         carregarDadosTabela();
         
         // Monta tabela ao painel
-        JScrollPane scrollPane = new JScrollPane(tabelaClientes);
+        JScrollPane scrollPane = new JScrollPane(tabelaFuncionarios);
         int larguraPainel = this.getWidth();
         scrollPane.setPreferredSize(new Dimension(larguraPainel, 200)); // Altura da tabela
         painelTabela.add(scrollPane);
     	
         return painelTabela;
     }
-    
-    private JPanel criarPainelDadosGerais() {
+	
+	private JPanel criarPainelDadosGerais() {
         JPanel painelDadosGerais = new JPanel();
         painelDadosGerais.setLayout(new BoxLayout(painelDadosGerais, BoxLayout.Y_AXIS));
         painelDadosGerais.setBorder(BorderFactory.createCompoundBorder(
@@ -192,10 +183,10 @@ public class TelaGerenciamentoClientes extends JPanel {
         painelDadosGerais.add(tfNome);
         painelDadosGerais.add(Box.createVerticalStrut(10));
 
-        painelDadosGerais.add(tfCpfCnpj);
+        painelDadosGerais.add(tfCpf);
         painelDadosGerais.add(Box.createVerticalStrut(10));
 
-        painelDadosGerais.add(cbTipo);
+        painelDadosGerais.add(cbFuncao);
         painelDadosGerais.add(Box.createVerticalStrut(10));
 
         painelDadosGerais.add(tfTelefone);
@@ -206,42 +197,15 @@ public class TelaGerenciamentoClientes extends JPanel {
 
         return painelDadosGerais;
     }
-  
-    private JPanel criarPainelEndereco() {
-        JPanel painelEndereco = new JPanel();
-        painelEndereco.setLayout(new BoxLayout(painelEndereco, BoxLayout.Y_AXIS));
-        painelEndereco.setBorder(BorderFactory.createCompoundBorder(
-    	    BorderFactory.createTitledBorder("Endereço Residencial"),
-    	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
-        ));
-        painelEndereco.setAlignmentY(Component.TOP_ALIGNMENT);
-
-        // Adiciona os componentes ao painel com espaçamento
-        painelEndereco.add(tfEndereco);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfNumero);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfComplemento);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfBairro);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfCidade);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(cbUf);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        painelEndereco.add(tfCep);
-        painelEndereco.add(Box.createVerticalStrut(10));
-
-        return painelEndereco;
-    }
-    
-    private JPanel criarPainelBotoes() {
+	
+	private JPanel criarPainelVazio() {
+		JPanel painelVazio = new JPanel();
+	    painelVazio.setOpaque(false); // Deixa o painel invisível (sem cor de fundo)
+	    painelVazio.setLayout(new BorderLayout()); // Layout neutro, ocupa todo o espaço disponível
+	    return painelVazio;
+	}
+	
+	private JPanel criarPainelBotoes() {
     	// --- Painel de Botões ---
 	    // Cria um painel FlowLayout alinhado à direita.
 	    // 10 → espaçamento horizontal entre os componentes (botões), em pixels.
@@ -249,12 +213,12 @@ public class TelaGerenciamentoClientes extends JPanel {
     	JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 5));
     	
     	// Define ações dos botões
-        btnNovo.addActionListener(e -> new TelaCadastroCliente(this));
-        btnAtualizar.addActionListener(e -> atualizarCliente());
+        btnNovo.addActionListener(e -> new TelaCadastroFuncionario(this));
+        btnAtualizar.addActionListener(e -> atualizarFuncionario());
         btnLimpar.addActionListener(e -> limparFormulario());
-        btnAtivar.addActionListener(e -> ativarCliente());
-        btnDesativar.addActionListener(e -> desativarCliente());
-        btnExcluir.addActionListener(e -> excluirCliente());
+        btnAtivar.addActionListener(e -> ativarFuncionario());
+        btnDesativar.addActionListener(e -> desativarFuncionario());
+        btnExcluir.addActionListener(e -> excluirFuncionario());
         
         // Define tamanho fixo dos botões (largura, altura)
         Dimension tamanhoBotao = new Dimension(90, 30);
@@ -279,120 +243,88 @@ public class TelaGerenciamentoClientes extends JPanel {
         
         return painelBotoes;
     }
-    
-    public void carregarDadosTabela() {
+	
+	public void carregarDadosTabela() {
         tableModel.setRowCount(0); // Limpa a tabela
         
         
-        ClienteDAO dao = new ClienteDAO();
+        FuncionarioDAO dao = new FuncionarioDAO();
         
-        List<Cliente> clientes = ckbMostrarInativos.isSelected()
+        List<Funcionario> funcionario = ckbMostrarInativos.isSelected()
                 ? dao.listarTodos()
                 : dao.listarApenasAtivos();
 
-        for (Cliente c : clientes) {
+        for (Funcionario f : funcionario) {
             tableModel.addRow(new Object[]{
-                c.getId(),
-                c.getNome(),
-                c.getCpfCnpj(),
-                c.getTipo(),
-                c.getTelefone(),
-                c.getEmail(),
-                c.getEndereco(),
-                c.getNumero(),
-                c.getComplemento(),
-                c.getBairro(),
-                c.getCidade(),
-                c.getUf(),
-                c.getCep(),
+                f.getId(),
+                f.getNome(),
+                f.getCpf(),
+                f.getFuncao(),
+                f.getTelefone(),
+                f.getEmail(),
             });
         }
         
-        centralizarTextoColunas(tabelaClientes, 0); // coluna ID
-        larguraColuna(tabelaClientes, 0, 40); // (tabela, coluna, largura) 
+        centralizarTextoColunas(tabelaFuncionarios, 0); // coluna ID
+        larguraColuna(tabelaFuncionarios, 0, 40); // (tabela, coluna, largura) 
         
-        centralizarTextoColunas(tabelaClientes, 7); // coluna Numero
-        larguraColuna(tabelaClientes, 7, 40);
+        centralizarTextoColunas(tabelaFuncionarios, 2); // coluna CPF
+        larguraColuna(tabelaFuncionarios, 2, 40);
         
-        centralizarTextoColunas(tabelaClientes, 11); // coluna UF
-        larguraColuna(tabelaClientes, 11, 40);
+        centralizarTextoColunas(tabelaFuncionarios, 3); // coluna Função
+        larguraColuna(tabelaFuncionarios, 3, 40);
+        
+        centralizarTextoColunas(tabelaFuncionarios, 4); // coluna Telefone
+        larguraColuna(tabelaFuncionarios, 4, 40);
     }
-    
-    private void preencherFormulario(int linha) {
+	
+	private void preencherFormulario(int linha) {
         try {
     	// Pega os dados da linha selecionada
         int id = (int) tableModel.getValueAt(linha, 0);
         String nome = (String) tableModel.getValueAt(linha, 1);
-        String cpfCnpj = (String) tableModel.getValueAt(linha, 2);
-        TipoCliente tipo = TipoCliente.fromString(tableModel.getValueAt(linha, 3).toString());
+        String cpf = (String) tableModel.getValueAt(linha, 2);
+        FuncaoFuncionario tipo = FuncaoFuncionario.fromString(tableModel.getValueAt(linha, 3).toString());
         String telefone = (String) tableModel.getValueAt(linha, 4);
         String email = (String) tableModel.getValueAt(linha, 5);
-        String endereco = (String) tableModel.getValueAt(linha, 6);
-        String numero = (String) tableModel.getValueAt(linha, 7);
-        String complemento = (String) tableModel.getValueAt(linha, 8);
-        String bairro = (String) tableModel.getValueAt(linha, 9);
-        String cidade = (String) tableModel.getValueAt(linha, 10);
-        Uf uf = Uf.fromString(tableModel.getValueAt(linha, 11).toString());
-        String cep = (String) tableModel.getValueAt(linha, 12);
         
         // Preenche os campos do formulário
         tfId.setValor(id);
         tfNome.setValor(nome);
-        tfCpfCnpj.setValor(cpfCnpj);
-        cbTipo.setValor(tipo);
+        tfCpf.setValor(cpf);
+        cbFuncao.setValor(tipo);
         tfTelefone.setValor(telefone);
         tfEmail.setValor(email);
-        tfEndereco.setValor(endereco);
-        tfNumero.setValor(numero);
-        tfComplemento.setValor(complemento);
-        tfBairro.setValor(bairro);
-        tfCidade.setValor(cidade);
-        tfCep.setValor(cep);
-        cbUf.setValor(uf);
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao preencher formulário: " + ex.getMessage());
         }
     }
-    
-    private void limparFormulario() {
+	
+	private void limparFormulario() {
     	tfId.setValor("");
         tfNome.setValor("");
-        tfCpfCnpj.setValor("");
-        cbTipo.setValor(null);
+        tfCpf.setValor("");
+        cbFuncao.setValor(null);
         tfTelefone.setValor("");
         tfEmail.setValor("");
-        tfEndereco.setValor("");
-        tfNumero.setValor("");
-        tfComplemento.setValor("");
-        tfBairro.setValor("");
-        tfCidade.setValor("");
-        tfCep.setValor("");
-        cbUf.setValor(null);
     }
-    
-    private void atualizarCliente() {
+	
+	private void atualizarFuncionario() {
         try {
             if (tfId.getValor().isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
-            		"Selecione um cliente na tabela para atualizar.", 
-            		"Aviso", JOptionPane.WARNING_MESSAGE);
+                	"Selecione um funcionário na tabela para atualizar.", 
+                	"Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
             int id = Integer.parseInt(tfId.getValor());
             String nome = tfNome.getValor().trim();
-            String cpfCnpj = tfCpfCnpj.getValor().trim();
-            TipoCliente tipo = (TipoCliente) cbTipo.getValor();
+            String cpf = tfCpf.getValor().trim();
+            FuncaoFuncionario funcao = (FuncaoFuncionario) cbFuncao.getValor();
             String telefone = tfTelefone.getValor().trim();
             String email = tfEmail.getValor().trim();
-            String endereco = tfEndereco.getValor().trim();
-            String numero = tfNumero.getValor().trim();
-            String complemento = tfComplemento.getValor().trim();
-            String bairro = tfBairro.getValor().trim();
-            String cidade = tfCidade.getValor().trim();
-            Uf uf = (Uf) cbUf.getValor();
-            String cep = tfCep.getValor().trim();
             
             // Validações
             if (nome.isEmpty()) {
@@ -402,32 +334,25 @@ public class TelaGerenciamentoClientes extends JPanel {
                 return;
             }
 
-            Cliente cliente = new Cliente();
-            cliente.setId(id);
-            cliente.setNome(nome);
-            cliente.setCpfCnpj(cpfCnpj);
-            cliente.setTipo(tipo);
-            cliente.setTelefone(telefone);
-            cliente.setEmail(email);
-            cliente.setEndereco(endereco);
-            cliente.setNumero(numero);
-            cliente.setComplemento(complemento);
-            cliente.setBairro(bairro);
-            cliente.setCidade(cidade);
-            cliente.setUf(uf);
-            cliente.setCep(cep);
+            Funcionario funcionario = new Funcionario();
+            funcionario.setId(id);
+            funcionario.setNome(nome);
+            funcionario.setCpf(cpf);
+            funcionario.setFuncao(funcao);
+            funcionario.setTelefone(telefone);
+            funcionario.setEmail(email);
 
-            ClienteDAO dao = new ClienteDAO();
-            boolean sucesso = dao.atualizar(cliente);
+            FuncionarioDAO dao = new FuncionarioDAO();
+            boolean sucesso = dao.atualizar(funcionario);
 
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, 
-            		"Cliente atualizado com sucesso!");
+            		"Funcionário atualizado com sucesso!");
                 carregarDadosTabela();
                 limparFormulario();
             } else {
                 JOptionPane.showMessageDialog(this, 
-            		"Erro ao atualizar cliente.", 
+            		"Erro ao atualizar funcionário.", 
             		"Erro", JOptionPane.ERROR_MESSAGE);
             }
         } catch (NumberFormatException e) {
@@ -439,17 +364,17 @@ public class TelaGerenciamentoClientes extends JPanel {
         		"Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
-    private void ativarCliente() {
+	
+	private void ativarFuncionario() {
         if (tfId.getValor().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
-        		"Selecione um cliente na tabela para ativar.", 
+        		"Selecione um funcionário na tabela para ativar.", 
         		"Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         int confirmacao = JOptionPane.showConfirmDialog(this, 
-    		"Tem certeza que deseja ativar este cliente?", 
+    		"Tem certeza que deseja ativar este funcionário?", 
     		"Confirmação de ativação", 
     		JOptionPane.YES_NO_OPTION);
         
@@ -457,20 +382,20 @@ public class TelaGerenciamentoClientes extends JPanel {
             try {
             	int id = Integer.parseInt(tfId.getValor());
                 
-                Cliente cliente = new Cliente();
-                cliente.setId(id);
+            	Funcionario funcionario = new Funcionario();
+            	funcionario.setId(id);
                 
-                ClienteDAO dao = new ClienteDAO();
-                boolean sucesso = dao.ativar(cliente);
+                FuncionarioDAO dao = new FuncionarioDAO();
+                boolean sucesso = dao.ativar(funcionario);
                 
                 if (sucesso) {
                     JOptionPane.showMessageDialog(this, 
-                		"Cliente ativado com sucesso!");
+                		"Funcionário ativado com sucesso!");
                     carregarDadosTabela();
                     limparFormulario();
                 } else {
                     JOptionPane.showMessageDialog(this, 
-                		"Erro ao ativar cliente.", 
+                		"Erro ao ativar funcionário.", 
                 		"Erro", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException e) {
@@ -485,18 +410,18 @@ public class TelaGerenciamentoClientes extends JPanel {
             }
         }
     }
-    
-    private void desativarCliente() {
+	
+	private void desativarFuncionario() {
         if (tfId.getValor().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
-        		"Selecione um cliente na tabela para desativar.", 
+        		"Selecione um funcionário na tabela para desativar.", 
         		"Aviso", 
         		JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         int confirmacao = JOptionPane.showConfirmDialog(this, 
-    		"Tem certeza que deseja desativar este cliente?", 
+    		"Tem certeza que deseja desativar este funcionário?", 
     		"Confirmação de Desativação", 
     		JOptionPane.YES_NO_OPTION);
         
@@ -504,20 +429,20 @@ public class TelaGerenciamentoClientes extends JPanel {
             try {
             	int id = Integer.parseInt(tfId.getValor());
                 
-                Cliente cliente = new Cliente();
-                cliente.setId(id);
+                Funcionario funcionario = new Funcionario();
+                funcionario.setId(id);
                 
-                ClienteDAO dao = new ClienteDAO();
-                boolean sucesso = dao.desativar(cliente);
+                FuncionarioDAO dao = new FuncionarioDAO();
+                boolean sucesso = dao.desativar(funcionario);
                 
                 if (sucesso) {
                     JOptionPane.showMessageDialog(this, 
-            			"Cliente desativado com sucesso!");
+                		"Funcionário desativado com sucesso!");
                     carregarDadosTabela();
                     limparFormulario();
                 } else {
                     JOptionPane.showMessageDialog(this, 
-                		"Erro ao desativar cliente.", 
+                		"Erro ao desativar funcionário.", 
                 		"Erro", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException e) {
@@ -532,18 +457,18 @@ public class TelaGerenciamentoClientes extends JPanel {
             }
         }
     }
-    
-    private void excluirCliente() {
+	
+	private void excluirFuncionario() {
         if (tfId.getValor().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
-        		"Selecione um cliente na tabela para excluir.", 
+        		"Selecione um funcionário na tabela para excluir.", 
         		"Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         int confirmacao = JOptionPane.showConfirmDialog(this, 
-    		"Tem certeza que deseja excluir este cliente? Essa é uma exclusão em cascata. "
-    		+ "\nTodos os dados referentes a esse cliente serão excluídos definitivamente.", 
+    		"Tem certeza que deseja excluir este funcionário? Essa é uma exclusão em cascata. "
+    		+ "\nTodos os dados referentes a esse funcionário serão excluídos definitivamente.", 
     		"Confirmação de exclusão", 
     		JOptionPane.YES_NO_OPTION);
         
@@ -551,48 +476,36 @@ public class TelaGerenciamentoClientes extends JPanel {
             try {
             	int id = Integer.parseInt(tfId.getValor());
                 String nome = tfNome.getValor().trim();
-                String cpfCnpj = tfCpfCnpj.getValor().trim();
-                TipoCliente tipo = (TipoCliente) cbTipo.getValor();
+                String cpf = tfCpf.getValor().trim();
+                FuncaoFuncionario funcao = (FuncaoFuncionario) cbFuncao.getValor();
                 String telefone = tfTelefone.getValor().trim();
                 String email = tfEmail.getValor().trim();
-                String endereco = tfEndereco.getValor().trim();
-                String numero = tfNumero.getValor().trim();
-                String complemento = tfComplemento.getValor().trim();
-                String bairro = tfBairro.getValor().trim();
-                String cidade = tfCidade.getValor().trim();
-                Uf uf = (Uf) cbUf.getValor();
-                String cep = tfCep.getValor().trim();
                 
-                Cliente cliente = new Cliente();
-                cliente.setId(id);
-                cliente.setNome(nome);
-                cliente.setCpfCnpj(cpfCnpj);
-                cliente.setTipo(tipo);
-                cliente.setTelefone(telefone);
-                cliente.setEmail(email);
-                cliente.setEndereco(endereco);
-                cliente.setNumero(numero);
-                cliente.setComplemento(complemento);
-                cliente.setBairro(bairro);
-                cliente.setCidade(cidade);
-                cliente.setUf(uf);
-                cliente.setCep(cep);
+                Funcionario funcionario = new Funcionario();
+                funcionario.setId(id);
+                funcionario.setNome(nome);
+                funcionario.setCpf(cpf);
+                funcionario.setFuncao(funcao);
+                funcionario.setTelefone(telefone);
+                funcionario.setEmail(email);
                 
-                ClienteDAO dao = new ClienteDAO();
-                boolean sucesso = dao.excluir(cliente);
+                FuncionarioDAO dao = new FuncionarioDAO();
+                boolean sucesso = dao.excluir(funcionario);
                 
                 if (sucesso) {
-                    JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
+                    JOptionPane.showMessageDialog(this, 
+                		"Funcionário excluído com sucesso!");
                     carregarDadosTabela();
                     limparFormulario();
                 } else {
                     JOptionPane.showMessageDialog(this, 
-                		"Erro ao excluir cliente.", 
+                		"Erro ao excluir funcionário.", 
                 		"Erro", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, 
-            		"ID inválido.", "Erro", JOptionPane.ERROR_MESSAGE);
+            		"ID inválido.", 
+            		"Erro", JOptionPane.ERROR_MESSAGE);
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, 
@@ -601,8 +514,8 @@ public class TelaGerenciamentoClientes extends JPanel {
             }
         }
     }
-    
-    private void larguraColuna(JTable tabela, int indiceColuna, int largura) {
+	
+	private void larguraColuna(JTable tabela, int indiceColuna, int largura) {
         TableColumn coluna = tabela.getColumnModel().getColumn(indiceColuna);
         coluna.setMinWidth(largura);
         coluna.setPreferredWidth(largura);

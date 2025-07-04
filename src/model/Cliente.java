@@ -17,7 +17,6 @@ public class Cliente {
 	private String cidade;
 	private Uf uf;
 	private String cep;
-	
 	private boolean ativo;
 	
 	public Cliente() {

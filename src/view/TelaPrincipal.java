@@ -72,8 +72,8 @@ public class TelaPrincipal extends JFrame {
         
         // Abas exclusiva do privilégio ADMINISTRADOR
         if (usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
-        	telas.addTab("Usuário", new JScrollPane(new TelaGerenciamentoUsuarios()));
-        	//telas.addTab("Funcionarios", new JScrollPane((new TelaGerenciamentoFuncionarios1()));
+        	telas.addTab("Funcionário", new JScrollPane(new TelaGerenciamentoFuncionarios(usuarioLogado)));
+        	telas.addTab("Usuário", new JScrollPane(new TelaGerenciamentoUsuarios(usuarioLogado)));
         }
               
         add(telas); // Insere as abas no Frame

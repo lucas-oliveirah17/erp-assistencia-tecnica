@@ -10,94 +10,99 @@ import model.Usuario;
 import model.enums.Privilegios;
 
 public class UsuarioDAO {
-	
-	private DBQuery dbQuery;
+    private DBQuery dbQuery;
+    private String editableFieldsName = "email, senha, privilegios, ativo";
 
-	public UsuarioDAO() {
-
+    public UsuarioDAO() {
         String tableName = "tb_usuario";
         String fieldNames = "id_usuario, email, senha, privilegios, ativo";
         String fieldKey = "id_usuario";
 
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
-	
 
-	public boolean salvar(Usuario usuario) {
-		String fieldsNameInsert = "email, senha, privilegios";
-		
+    public boolean salvar(Usuario usuario) {
         String[] values = {
-	        usuario.getEmail(),
-	        usuario.getSenha(),
-	        usuario.getPrivilegios().getValorDb(), // Converte o enum para String
+            usuario.getEmail(),
+            usuario.getSenha(),
+            usuario.getPrivilegios().getValorDb(),
+            usuario.isAtivo() ? "1" : "0"
         };
-        
-        // Chama o método da classe DBQuery para executar o INSERT.
-        return dbQuery.insert(values, fieldsNameInsert) > 0;
+
+        return dbQuery.insert(values, editableFieldsName) > 0;
     }
-	
-	/**
-	 * Atualiza um usuário existente no banco de dados (Operação UPDATE).
-	 * @param usuario O objeto Usuario com os dados atualizados (o ID deve estar presente).
-	 * @return true se a atualização for bem-sucedida, false caso contrário.
-	 */
-	public boolean atualizar(Usuario usuario) {
-		// Os valores são montados na ordem exata dos campos definidos em fieldNames.
-		String[] values = {
-			String.valueOf(usuario.getId()),
-			usuario.getEmail(),
-	        usuario.getSenha(),
-	        usuario.getPrivilegios().name(),
-	        usuario.isAtivo() ? "1" : "0"
-		};
-		
-		// Chama o método da classe DBQuery para executar o UPDATE.
-		return dbQuery.update(values) > 0;
-	}
-	
-	/**
-	 * Exclui um usuário do banco de dados (Operação DELETE).
-	 * @param usuario O objeto Usuario a ser excluído (usa o ID para a exclusão).
-	 * @return true se a exclusão for bem-sucedida, false caso contrário.
-	 */
-	public boolean excluir(Usuario usuario) {
-        // --- CÓDIGO CORRIGIDO AQUI ---
-        // A classe DBQuery.delete() espera um array com o mesmo tamanho do número de campos.
-        // Criamos um array com o tamanho correto (5) e colocamos o ID na posição correta (índice 0).
-        // Os outros valores podem ser vazios, pois não são usados pela query DELETE.
-		String[] values = new String[5];
-		values[0] = String.valueOf(usuario.getId()); // ID na posição 0
-        values[1] = "";
-        values[2] = "";
-        values[3] = "";
-        values[4] = "";
-		
-		// Chama o método da classe DBQuery para executar o DELETE.
-		return dbQuery.delete(values) > 0;
-	}
-	
-	/**
-	 * Lista todos os usuários do banco de dados (Operação READ).
-	 * @return Uma lista de objetos Usuario.
-	 */
-	public List<Usuario> listarTodos() {
-        ResultSet rs = dbQuery.select("");
+
+    public List<Usuario> listarTodos() {
         List<Usuario> usuarios = new ArrayList<>();
-        
+
         try {
+            ResultSet rs = dbQuery.select("");
+
             while (rs.next()) {
-                usuarios.add(new Usuario(
-                    rs.getInt("id_usuario"),
-                    rs.getString("email"),
-                    rs.getString("senha"),
-                    Privilegios.fromDb(rs.getString("privilegios")),
-                    rs.getBoolean("ativo")
-                ));
+                Usuario usuario = new Usuario();
+                usuario.setId(rs.getInt("id_usuario"));
+                usuario.setEmail(rs.getString("email"));
+                usuario.setSenha(rs.getString("senha"));
+                usuario.setPrivilegios(Privilegios.fromDb(rs.getString("privilegios")));
+                usuario.setAtivo(rs.getBoolean("ativo"));
+
+                usuarios.add(usuario);
             }
+
+            rs.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return usuarios;
+    }
+
+    public List<Usuario> listarApenasAtivos() {
+        List<Usuario> usuarios = new ArrayList<>();
+
+        try {
+            ResultSet rs = dbQuery.select("ativo = 1");
+
+            while (rs.next()) {
+                Usuario usuario = new Usuario();
+                usuario.setId(rs.getInt("id_usuario"));
+                usuario.setEmail(rs.getString("email"));
+                usuario.setSenha(rs.getString("senha"));
+                usuario.setPrivilegios(Privilegios.fromDb(rs.getString("privilegios")));
+                usuario.setAtivo(rs.getBoolean("ativo"));
+
+                usuarios.add(usuario);
+            }
+
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return usuarios;
+    }
+
+    public boolean atualizar(Usuario usuario) {
+        String[] values = {
+            String.valueOf(usuario.getId()),
+            usuario.getEmail(),
+            usuario.getSenha(),
+            usuario.getPrivilegios().name(),
+            usuario.isAtivo() ? "1" : "0"
+        };
+
+        return dbQuery.update(values) > 0;
+    }
+
+    public boolean desativar(Usuario usuario) {
+        if (usuario == null || usuario.getId() <= 0) {
+            throw new IllegalArgumentException("Usuário inválido para desativar.");
+        }
+
+        String sql = "UPDATE " + dbQuery.getTableName() +
+                     " SET ativo = 0 WHERE " + dbQuery.getFieldKey() + " = " + usuario.getId();
+
+        int rowsAffected = dbQuery.execute(sql);
+        return rowsAffected > 0;
     }
 }
