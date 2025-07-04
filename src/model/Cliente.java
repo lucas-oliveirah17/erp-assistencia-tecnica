@@ -23,10 +23,11 @@ public class Cliente {
 		this.ativo = true;
 	}
 	
-	public Cliente(int id, String nome, String cpfCnpj, TipoCliente tipo, String telefone, String email,
-			String endereco, String numero, String complemento, String bairro, String cidade, Uf uf, String cep, 
+	public Cliente(
+			int id, String nome, String cpfCnpj, TipoCliente tipo, 
+			String telefone, String email, String endereco, String numero, 
+			String complemento, String bairro, String cidade, Uf uf, String cep, 
 			boolean ativo) {
-		super();
 		this.id = id;
 		this.nome = nome;
 		this.cpfCnpj = cpfCnpj;

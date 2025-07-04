@@ -13,7 +13,9 @@ public class Usuario {
 		this.ativo = true;
 	}
 	
-	public Usuario(int id, String email, String senha, Privilegios privilegios, boolean ativo) {
+	public Usuario(
+			int id, String email, String senha, Privilegios privilegios, 
+			boolean ativo) {
 		this.id = id;
 		this.email = email;
 		this.senha = senha;

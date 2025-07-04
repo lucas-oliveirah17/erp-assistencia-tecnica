@@ -2,7 +2,7 @@ package view;
 
 import model.Usuario;
 import model.enums.Privilegios;
-import control.UsuarioDAOTeste;
+import control.UsuarioDAO;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -110,7 +110,7 @@ public class TelaCadastroUsuario extends JFrame {
         	usuario.setSenha(tfSenha.getText());
             usuario.setPrivilegios((Privilegios) cbPrivilegios.getSelectedItem());
 
-            UsuarioDAOTeste dao = new UsuarioDAOTeste();
+            UsuarioDAO dao = new UsuarioDAO();
             boolean sucesso = dao.salvar(usuario);
 
             if (sucesso) {

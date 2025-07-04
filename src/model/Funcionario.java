@@ -15,8 +15,9 @@ public class Funcionario {
 		this.ativo = true;
 	}
 
-	public Funcionario(int id, String nome, String cpf, FuncaoFuncionario funcao, String telefone, String email, boolean ativo) {
-		super();
+	public Funcionario(
+			int id, String nome, String cpf, FuncaoFuncionario funcao, 
+			String telefone, String email, boolean ativo) {		
 		this.id = id;
 		this.nome = nome;
 		this.cpf = cpf;

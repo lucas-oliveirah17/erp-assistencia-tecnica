@@ -1,7 +1,8 @@
 package view;
 
-import util.EntradaFormsTextField;
 import util.EntradaFormsComboBox;
+import util.EntradaFormsTextField;
+import util.TabelaUtils;
 
 import model.Funcionario;
 import model.Usuario;
@@ -19,10 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -265,17 +263,8 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
             });
         }
         
-        centralizarTextoColunas(tabelaFuncionarios, 0); // coluna ID
-        larguraColuna(tabelaFuncionarios, 0, 40); // (tabela, coluna, largura) 
-        
-        centralizarTextoColunas(tabelaFuncionarios, 2); // coluna CPF
-        larguraColuna(tabelaFuncionarios, 2, 40);
-        
-        centralizarTextoColunas(tabelaFuncionarios, 3); // coluna Função
-        larguraColuna(tabelaFuncionarios, 3, 40);
-        
-        centralizarTextoColunas(tabelaFuncionarios, 4); // coluna Telefone
-        larguraColuna(tabelaFuncionarios, 4, 40);
+        // Centralizar as colunas ID, CPF, Função e Telefone
+        TabelaUtils.centralizarTextoColunas(tabelaFuncionarios, 0, 2, 3, 4);
     }
 	
 	private void preencherFormulario(int linha) {
@@ -512,21 +501,6 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
             		"Erro inesperado: " + e.getMessage(), 
             		"Erro", JOptionPane.ERROR_MESSAGE);
             }
-        }
-    }
-	
-	private void larguraColuna(JTable tabela, int indiceColuna, int largura) {
-        TableColumn coluna = tabela.getColumnModel().getColumn(indiceColuna);
-        coluna.setMinWidth(largura);
-        coluna.setPreferredWidth(largura);
-    }
-    
-    private void centralizarTextoColunas(JTable table, int... indices) {
-        DefaultTableCellRenderer centralizado = new DefaultTableCellRenderer();
-        centralizado.setHorizontalAlignment(SwingConstants.CENTER);
-
-        for (int i : indices) {
-            table.getColumnModel().getColumn(i).setCellRenderer(centralizado);
         }
     }
 }
