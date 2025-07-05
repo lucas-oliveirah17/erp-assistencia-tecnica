@@ -18,6 +18,7 @@ public class Cliente {
 	private Uf uf;
 	private String cep;
 	private boolean ativo;
+
 	
 	public Cliente() {
 		this.ativo = true;

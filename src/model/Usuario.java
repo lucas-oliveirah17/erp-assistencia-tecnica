@@ -9,6 +9,7 @@ public class Usuario {
 	private Privilegios privilegios;
 	private boolean ativo;
 
+	
 	public Usuario() {
 		this.ativo = true;
 	}
@@ -23,6 +24,7 @@ public class Usuario {
 		this.ativo = ativo;
 	}
 
+	
 	public int getId() {
 		return id;
 	}

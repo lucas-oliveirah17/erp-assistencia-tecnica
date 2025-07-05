@@ -11,6 +11,7 @@ public class Funcionario {
 	private String email;
 	private boolean ativo;
 
+	
 	public Funcionario() {
 		this.ativo = true;
 	}
@@ -27,6 +28,7 @@ public class Funcionario {
 		this.ativo = ativo;
 	}
 
+	
 	public int getId() {
 		return id;
 	}
