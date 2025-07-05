@@ -170,9 +170,10 @@ public class UsuarioDAO {
     	return null;
     }
     
-    public Usuario autenticar(String usuario, String senha) {
+    public Usuario autenticar(String login, String senha) {
         try {
-            ResultSet rs = dbQuery.select("usuario = '" + usuario + "' AND senha = '" + senha + "' AND ativo = 1");
+            String filtro = "(usuario = '" + login + "' OR email = '" + login + "') AND senha = '" + senha + "' AND ativo = 1";
+            ResultSet rs = dbQuery.select(filtro);
 
             if (rs != null && rs.next()) {
                 Usuario u = new Usuario();
