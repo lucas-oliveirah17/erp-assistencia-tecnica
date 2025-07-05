@@ -2,9 +2,15 @@ package view;
 
 import model.Usuario;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
 public class TelaPrincipal extends JFrame {
@@ -17,6 +23,7 @@ public class TelaPrincipal extends JFrame {
 
         // -- CONFIGURAÇÕES DA JANELA --
         setTitle("Sistema ERP - Bem-vindo, " + usuario.getEmail());
+        this.setMinimumSize(new Dimension(1000, 600));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         // BARRA MENU SUPERIOR --
@@ -78,7 +85,7 @@ public class TelaPrincipal extends JFrame {
         add(telas); // Insere as abas no Frame
         
         // CONFIGURAÇÃO FINAL
-        this.pack(); // Ajusta o tamanho da janela ao conteúdo
+        pack();
         this.setLocationRelativeTo(null); // Aparece centralizado na tela
         setVisible(true);
     }
