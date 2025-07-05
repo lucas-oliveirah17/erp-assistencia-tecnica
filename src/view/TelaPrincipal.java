@@ -17,7 +17,6 @@ public class TelaPrincipal extends JFrame {
 
         // -- CONFIGURAÇÕES DA JANELA --
         setTitle("Sistema ERP - Bem-vindo, " + usuario.getEmail());
-        this.setMinimumSize(new Dimension(800, 600));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         // BARRA MENU SUPERIOR --

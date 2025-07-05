@@ -1,17 +1,37 @@
 package view;
 
 import model.Usuario;
+
 import model.enums.Privilegios;
+
 import control.UsuarioDAO;
 
-import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 public class TelaCadastroUsuario extends JFrame {
     private static final long serialVersionUID = 1L; // Default serialVersion
+    
+    private TelaGerenciamentoUsuarios painelGerenciamento;
 
     // -- COMPONENTES DE ENTRADA --
     private JTextField tfEmail = new JTextField();
@@ -28,6 +48,15 @@ public class TelaCadastroUsuario extends JFrame {
     private Dimension inputSize = new Dimension(200, 25);
 
     public TelaCadastroUsuario() {
+    	this((TelaGerenciamentoUsuarios) null);
+    }
+    
+    public TelaCadastroUsuario(TelaGerenciamentoUsuarios painelGerenciamento) {
+        this.painelGerenciamento = painelGerenciamento;
+        inicializar();
+    }
+    
+    public void inicializar() {
     	// -- CONFIGURAÇÕES DA JANELA --
         this.setTitle("Cadastro de Usuários");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -115,6 +144,9 @@ public class TelaCadastroUsuario extends JFrame {
 
             if (sucesso) {
                 JOptionPane.showMessageDialog(this, "Usuário salvo com sucesso!");
+                if (painelGerenciamento != null) {
+                    painelGerenciamento.carregarDadosTabela();
+                }
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Erro ao salvar usuário.");

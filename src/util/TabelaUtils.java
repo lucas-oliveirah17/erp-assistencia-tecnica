@@ -23,5 +23,4 @@ public class TabelaUtils {
             table.getColumnModel().getColumn(i).setCellRenderer(centralizado);
         }
     }
-
 }

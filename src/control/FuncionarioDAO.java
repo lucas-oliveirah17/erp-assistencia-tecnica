@@ -9,6 +9,7 @@ import java.util.List;
 import database.DBQuery;
 
 import model.Funcionario;
+
 import model.enums.FuncaoFuncionario;
 
 public class FuncionarioDAO {
@@ -73,6 +74,7 @@ public class FuncionarioDAO {
             funcionario.getEmail(),
             funcionario.isAtivo() ? "1" : "0"
         };
+        
         return dbQuery.update(valores) > 0;
     }
     

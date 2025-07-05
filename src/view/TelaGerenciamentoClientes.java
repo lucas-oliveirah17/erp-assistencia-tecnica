@@ -155,7 +155,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
             ));
         painelTabela.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
-        painelTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100)); // Fixar altura da tabela
+        painelTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200)); // Fixar altura da tabela
         
         // Cabeçalhos da tabela
         String[] colunas = {
@@ -190,12 +190,11 @@ public class TelaGerenciamentoClientes extends JPanel {
     public void carregarDadosTabela() {
         tableModel.setRowCount(0); // Limpa a tabela
         
-        
         ClienteDAO dao = new ClienteDAO();
         
         List<Cliente> clientes = ckbMostrarInativos.isSelected()
-                ? dao.listarTodos()
-                : dao.listarApenasAtivos();
+            ? dao.listarTodos()
+            : dao.listarApenasAtivos();
 
         for (Cliente c : clientes) {
             tableModel.addRow(new Object[]{
@@ -224,35 +223,35 @@ public class TelaGerenciamentoClientes extends JPanel {
     
     private void preencherFormulario(int linha) {
         try {
-    	// Pega os dados da linha selecionada
-        int id = (int) tableModel.getValueAt(linha, 0);
-        String nome = (String) tableModel.getValueAt(linha, 1);
-        String cpfCnpj = (String) tableModel.getValueAt(linha, 2);
-        TipoCliente tipo = TipoCliente.fromString(tableModel.getValueAt(linha, 3).toString());
-        String telefone = (String) tableModel.getValueAt(linha, 4);
-        String email = (String) tableModel.getValueAt(linha, 5);
-        String endereco = (String) tableModel.getValueAt(linha, 6);
-        String numero = (String) tableModel.getValueAt(linha, 7);
-        String complemento = (String) tableModel.getValueAt(linha, 8);
-        String bairro = (String) tableModel.getValueAt(linha, 9);
-        String cidade = (String) tableModel.getValueAt(linha, 10);
-        Uf uf = Uf.fromString(tableModel.getValueAt(linha, 11).toString());
-        String cep = (String) tableModel.getValueAt(linha, 12);
-        
-        // Preenche os campos do formulário
-        tfId.setValor(id);
-        tfNome.setValor(nome);
-        tfCpfCnpj.setValor(cpfCnpj);
-        cbTipo.setValor(tipo);
-        tfTelefone.setValor(telefone);
-        tfEmail.setValor(email);
-        tfEndereco.setValor(endereco);
-        tfNumero.setValor(numero);
-        tfComplemento.setValor(complemento);
-        tfBairro.setValor(bairro);
-        tfCidade.setValor(cidade);
-        tfCep.setValor(cep);
-        cbUf.setValor(uf);
+	    	// Pega os dados da linha selecionada
+	        int id = (int) tableModel.getValueAt(linha, 0);
+	        String nome = (String) tableModel.getValueAt(linha, 1);
+	        String cpfCnpj = (String) tableModel.getValueAt(linha, 2);
+	        TipoCliente tipo = TipoCliente.fromString(tableModel.getValueAt(linha, 3).toString());
+	        String telefone = (String) tableModel.getValueAt(linha, 4);
+	        String email = (String) tableModel.getValueAt(linha, 5);
+	        String endereco = (String) tableModel.getValueAt(linha, 6);
+	        String numero = (String) tableModel.getValueAt(linha, 7);
+	        String complemento = (String) tableModel.getValueAt(linha, 8);
+	        String bairro = (String) tableModel.getValueAt(linha, 9);
+	        String cidade = (String) tableModel.getValueAt(linha, 10);
+	        Uf uf = Uf.fromString(tableModel.getValueAt(linha, 11).toString());
+	        String cep = (String) tableModel.getValueAt(linha, 12);
+	        
+	        // Preenche os campos do formulário
+	        tfId.setValor(id);
+	        tfNome.setValor(nome);
+	        tfCpfCnpj.setValor(cpfCnpj);
+	        cbTipo.setValor(tipo);
+	        tfTelefone.setValor(telefone);
+	        tfEmail.setValor(email);
+	        tfEndereco.setValor(endereco);
+	        tfNumero.setValor(numero);
+	        tfComplemento.setValor(complemento);
+	        tfBairro.setValor(bairro);
+	        tfCidade.setValor(cidade);
+	        tfCep.setValor(cep);
+	        cbUf.setValor(uf);
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao preencher formulário: " + ex.getMessage());
@@ -273,6 +272,8 @@ public class TelaGerenciamentoClientes extends JPanel {
         tfCidade.setValor("");
         tfCep.setValor("");
         cbUf.setValor(null);
+        
+        tabelaClientes.clearSelection();
     }
     
     private void atualizarCliente() {
@@ -339,7 +340,8 @@ public class TelaGerenciamentoClientes extends JPanel {
         		"Erro", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Erro inesperado: " + e.getMessage(), 
+            JOptionPane.showMessageDialog(this, 
+            	"Erro inesperado: " + e.getMessage(), 
         		"Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -401,7 +403,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         
         int confirmacao = JOptionPane.showConfirmDialog(this, 
     		"Tem certeza que deseja desativar este cliente?", 
-    		"Confirmação de Desativação", 
+    		"Confirmação de desativação", 
     		JOptionPane.YES_NO_OPTION);
         
         if (confirmacao == JOptionPane.YES_OPTION) {
