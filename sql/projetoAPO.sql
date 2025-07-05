@@ -4,21 +4,82 @@ CREATE DATABASE IF NOT EXISTS projeto_apo;
 USE projeto_apo;
 
 -- ==========================================================================================
+-- TABELA tb_funcionario
+-- Armazena os dados dos funcionários da empresa.
+-- ==========================================================================================
+CREATE TABLE IF NOT EXISTS tb_funcionario (
+    id_funcionario INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    cpf VARCHAR(14) NOT NULL UNIQUE, -- CPF no formato "000.000.000-00"
+    funcao ENUM(
+        'tecnico', 'atendente', 'gerente', 'rh', 'diretor'
+    ) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    ativo BOOLEAN DEFAULT TRUE
+);
+
+-- ==========================================================================================
 -- TABELA tb_usuario
 -- Armazena os dados do sistema de login da assistência técnica.
 -- ==========================================================================================
 CREATE TABLE IF NOT EXISTS tb_usuario (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    id_funcionario INT NOT NULL UNIQUE,
+    usuario VARCHAR(50) NOT NULL UNIQUE, -- Nome de usuário para login
     senha VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,   -- Deve ser igual ao email do funcionário
     privilegios ENUM('administrador', 'usuario') NOT NULL,
-    ativo BOOLEAN DEFAULT TRUE
+    ativo BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (id_funcionario) REFERENCES tb_funcionario(id_funcionario) ON DELETE CASCADE
 );
--- DROP TABLE tb_usuario;
--- SELECT * FROM tb_usuario;
-INSERT INTO tb_usuario(email, senha, privilegios) VALUES('admin', '123', 'administrador');
-INSERT INTO tb_usuario(email, senha, privilegios) VALUES('user', '123', 'usuario');
 
+DELIMITER $$
+
+-- Trigger: Antes de inserir na tabela tb_usuario, verifica se o email informado
+-- é igual ao email cadastrado para o funcionário correspondente na tb_funcionario.
+CREATE TRIGGER trg_usu_email_check BEFORE INSERT ON tb_usuario
+FOR EACH ROW
+BEGIN
+    DECLARE func_email VARCHAR(255);
+    SELECT email INTO func_email FROM tb_funcionario WHERE id_funcionario = NEW.id_funcionario;
+    
+    IF func_email IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Funcionário não encontrado';
+    ELSEIF func_email <> NEW.email THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email do usuário deve ser igual ao do funcionário';
+    END IF;
+END$$
+
+-- Trigger: Antes de atualizar a tabela tb_usuario, verifica se o email informado
+-- permanece igual ao email do funcionário na tb_funcionario.
+CREATE TRIGGER trg_usu_email_check_update BEFORE UPDATE ON tb_usuario
+FOR EACH ROW
+BEGIN
+    DECLARE func_email VARCHAR(255);
+    SELECT email INTO func_email FROM tb_funcionario WHERE id_funcionario = NEW.id_funcionario;
+
+    IF func_email IS NULL THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Funcionário não encontrado';
+    ELSEIF func_email <> NEW.email THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email do usuário deve ser igual ao do funcionário';
+    END IF;
+END$$
+
+-- Trigger: Após atualização do email na tabela tb_funcionario,
+-- atualiza automaticamente o email correspondente na tabela tb_usuario.
+CREATE TRIGGER trg_funcionario_email_update AFTER UPDATE ON tb_funcionario
+FOR EACH ROW
+BEGIN
+    -- Só executa se o email realmente mudou
+    IF OLD.email <> NEW.email THEN
+        UPDATE tb_usuario
+        SET email = NEW.email
+        WHERE id_funcionario = NEW.id_funcionario;
+    END IF;
+END$$
+
+DELIMITER ;
 -- ==========================================================================================
 -- TABELA tb_cliente
 -- Armazena os dados dos clientes da assistência técnica.
@@ -45,25 +106,6 @@ CREATE TABLE IF NOT EXISTS tb_cliente (
 );
 -- DROP TABLE tb_cliente;
 -- SELECT * FROM tb_cliente;
-
--- ==========================================================================================
--- TABELA tb_funcionario
--- Armazena os dados dos funcionários da empresa.
--- ==========================================================================================
-CREATE TABLE IF NOT EXISTS tb_funcionario (
-    id_funcionario INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(255) NOT NULL,
-    cpf VARCHAR(14) NOT NULL UNIQUE,
-    funcao ENUM(
-		'tecnico', 'atendente', 'gerente', 'rh', 'diretor'
-    ) NOT NULL,
-    telefone VARCHAR(20) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    ativo BOOLEAN DEFAULT TRUE
-);
--- DROP TABLE tb_funcionario;
--- SELECT * FROM tb_funcionario;
-
 -- ==========================================================================================
 -- TABELA tb_fornecedor
 -- Armazena os dados dos fornecedores de peças e outros materiais.
@@ -153,17 +195,36 @@ CREATE TABLE IF NOT EXISTS tb_ordem_servico (
 -- ==========================================================================================
 -- INSERÇÕES PARA DADOS INICIAIS DO BANCO DE DADOS
 -- ==========================================================================================
-INSERT INTO tb_usuario (email, senha, privilegios) VALUES
-('joao.admin@apo.com', 'senha123', 'administrador'),
-('maria.usr@apo.com', 'senha123', 'usuario'),
-('carlos.usr@apo.com', 'senha123', 'usuario'),
-('ana.admin@apo.com', 'senha123', 'administrador'),
-('lucas.tecnico@apo.com', 'senha123', 'usuario'),
-('juliana.usr@apo.com', 'senha123', 'usuario'),
-('pedro.admin@apo.com', 'senha123', 'administrador'),
-('carla.usr@apo.com', 'senha123', 'usuario'),
-('fernando.usr@apo.com', 'senha123', 'usuario'),
-('laura.admin@apo.com', 'senha123', 'administrador');
+INSERT INTO tb_funcionario (nome, cpf, funcao, telefone, email) VALUES
+('Dummy Admin', '000.000.000-00', 'diretor', '(00)00000-0000', 'admin@apo.com'),
+('Dummy User', '000.000.000-01', 'diretor', '(00)00000-0000', 'user@apo.com'),
+
+('Cleber Oliveira', '567.567.567-56', 'diretor', '(51)95678-9012', 'cleber@apo.com'),
+('Lucas Oliveira', '901.901.901-90', 'gerente', '(48)99012-3456', 'lucas@apo.com'),
+('Guilherme Dionizo', '012.012.012-01', 'gerente', '(11)90123-4567', 'guilherme@apo.com'),
+('Tatiane Freitas', '890.890.890-89', 'rh', '(85)98901-2345', 'tatiane@apo.com'),
+('Carlos Mendes', '123.123.123-12', 'tecnico', '(11)91234-5678', 'carlos@apo.com'),
+('Fernanda Lima', '234.234.234-23', 'atendente', '(21)92345-6789', 'fernanda@apo.com'),
+('Joana Silva', '345.345.345-34', 'tecnico', '(31)93456-7890', 'joana@apo.com'),
+('Paulo Henrique', '456.456.456-45', 'tecnico', '(41)94567-8901', 'paulo@apo.com'),
+('Vanessa Rocha', '678.678.678-67', 'atendente', '(71)96789-0123', 'vanessa@apo.com'),
+('Bruno Soares', '789.789.789-78', 'tecnico', '(62)97890-1234', 'bruno@apo.com');
+
+-- Usuários (com privilégio correto e dois de teste "admin" e "user")
+INSERT INTO tb_usuario (id_funcionario, usuario, senha, email, privilegios) VALUES
+(1, 'admin', '123', 'admin@apo.com', 'administrador'), -- usuário admin para testes
+(2, 'user', '123', 'user@apo.com', 'usuario'),         -- usuário user para testes
+
+(3, 'clebero', '123', 'cleber@apo.com', 'administrador'),  -- diretor admin
+(4, 'lucaso', '123', 'lucas@apo.com', 'administrador'),    -- gerente admin
+(5, 'guilhermed', '123', 'guilherme@apo.com', 'administrador'), -- gerente admin
+(6, 'tatianef', '123', 'tatiane@apo.com', 'administrador'), -- rh admin
+(7, 'carlosm', '123', 'carlos@apo.com', 'usuario'),
+(8, 'fernandal', '123', 'fernanda@apo.com', 'usuario'),
+(9, 'joanas', '123', 'joana@apo.com', 'usuario'),
+(10, 'pauloh', '123', 'paulo@apo.com', 'usuario'),
+(11, 'vanessar', '123', 'vanessa@apo.com', 'usuario'),
+(12, 'brunos', '123', 'bruno@apo.com', 'usuario');
 
 INSERT INTO tb_cliente (nome, cpf_cnpj, tipo_cliente, telefone, email, endereco, numero, complemento, bairro, cidade, uf, cep) VALUES
 ('Lucas Almeida', '123.456.789-01', 'pf', '(11)91234-5678', 'lucas@email.com', 'Rua das Flores', '123', '', 'Centro', 'São Paulo', 'SP', '01001-000'),
@@ -198,18 +259,6 @@ INSERT INTO tb_cliente (nome, cpf_cnpj, tipo_cliente, telefone, email, endereco,
 ('Bella Flores', '99.666.555-44', 'pj', '(71)99988-1111', 'contato@bellaflores.com', 'Rua Chile', '88', '', 'Campo Grande', 'Salvador', 'BA', '40285-030'),
 ('Carlos Moreira', '357.951.456-00', 'pf', '(21)92345-6789', 'carlos.moreira@email.com', 'Rua Visconde de Pirajá', '456', '', 'Ipanema', 'Rio de Janeiro', 'RJ', '22410-002'),
 ('Delícias da Casa', '33.222.111/0001-33', 'pj', '(31)91111-3333', 'contato@deliciasdacasa.com', 'Av. Afonso Pena', '1230', '', 'Centro', 'Belo Horizonte', 'MG', '30130-080');
-
-INSERT INTO tb_funcionario (nome, cpf, funcao, telefone, email) VALUES
-('Carlos Mendes', '123.123.123-12', 'tecnico', '(11)91234-5678', 'carlos@apo.com'),
-('Fernanda Lima', '234.234.234-23', 'atendente', '(21)92345-6789', 'fernanda@apo.com'),
-('Joana Silva', '345.345.345-34', 'gerente', '(31)93456-7890', 'joana@apo.com'),
-('Paulo Henrique', '456.456.456-45', 'tecnico', '(41)94567-8901', 'paulo@apo.com'),
-('André Matos', '567.567.567-56', 'diretor', '(51)95678-9012', 'andre@apo.com'),
-('Vanessa Rocha', '678.678.678-67', 'atendente', '(71)96789-0123', 'vanessa@apo.com'),
-('Bruno Soares', '789.789.789-78', 'tecnico', '(62)97890-1234', 'bruno@apo.com'),
-('Tatiane Freitas', '890.890.890-89', 'rh', '(85)98901-2345', 'tatiane@apo.com'),
-('Eduardo Reis', '901.901.901-90', 'gerente', '(48)99012-3456', 'eduardo@apo.com'),
-('Letícia Costa', '012.012.012-01', 'tecnico', '(11)90123-4567', 'leticia@apo.com');
 
 INSERT INTO tb_fornecedor (razao_social, cnpj, telefone, site, tipo_fornecedor, garantia, nome_fantasia) VALUES
 ('Eletrônica Silva LTDA', '01.234.567/0001-01', '(11)4002-8922', 'http://eletronicasilva.com.br', 'eletrônicos', '12 meses', 'Silva Eletrônicos'),
