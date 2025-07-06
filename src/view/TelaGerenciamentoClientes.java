@@ -1,130 +1,70 @@
 package view;
 
-import util.EntradaFormsComboBox;
-import util.EntradaFormsTextField;
-import util.PainelBotoesUtil;
-import util.PainelFormularioUtil;
-import util.TabelaUtils;
-
 import model.Cliente;
 import model.Usuario;
-
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
 import control.ClienteDAO;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import view.base.TelaGerenciamentoAbstrata;
+import view.components.FormInputV;
+import view.components.GerenciamentoButton;
+import view.components.GerenciamentoForm;
 
-import java.awt.Component;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 import java.util.List;
 
-public class TelaGerenciamentoClientes extends JPanel {
+public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
     private static final long serialVersionUID = 1L; // Default serialVersion
-    
-    private Usuario usuarioLogado;
-    
-    // Componentes da tabela de clientes
-    private JTable tabelaClientes;
-    private DefaultTableModel tableModel;
-    
+            
     // Campos do formulário
-    private EntradaFormsTextField tfId = new EntradaFormsTextField("ID:");
-    private EntradaFormsTextField tfNome = new EntradaFormsTextField("Nome:");
-    private EntradaFormsTextField tfCpfCnpj = new EntradaFormsTextField("CPF/CNPJ:");
-    private EntradaFormsComboBox<TipoCliente> cbTipo = new EntradaFormsComboBox<>("Tipo de Cliente:", TipoCliente.values());;
-    private EntradaFormsTextField tfTelefone = new EntradaFormsTextField("Telefone:");
-    private EntradaFormsTextField tfEmail = new EntradaFormsTextField("Email:");
-    private EntradaFormsTextField tfEndereco = new EntradaFormsTextField("Endereço:"); 
-    private EntradaFormsTextField tfNumero = new EntradaFormsTextField("Número:");
-    private EntradaFormsTextField tfComplemento = new EntradaFormsTextField("Complemento::");
-    private EntradaFormsTextField tfBairro = new EntradaFormsTextField("Bairro::");
-    private EntradaFormsTextField tfCidade = new EntradaFormsTextField("Cidade::");
-    private EntradaFormsComboBox<Uf> cbUf = new EntradaFormsComboBox<>("UF:", Uf.values());;
-    private EntradaFormsTextField tfCep = new EntradaFormsTextField("CEP:");
+    private FormInputV tfId          = new FormInputV("ID:", new JTextField());
+    private FormInputV tfNome        = new FormInputV("Nome:", new JTextField());
+    private FormInputV tfCpfCnpj     = new FormInputV("CPF/CNPJ:", new JTextField());
+    private FormInputV cbTipo		 = new FormInputV("Tipo de Cliente:", new JComboBox<>(TipoCliente.values()));
+    private FormInputV tfTelefone    = new FormInputV("Telefone:", new JTextField());
+    private FormInputV tfEmail       = new FormInputV("Email:", new JTextField());
+    private FormInputV tfEndereco    = new FormInputV("Endereço:", new JTextField());
+    private FormInputV tfNumero      = new FormInputV("Número:", new JTextField());
+    private FormInputV tfComplemento = new FormInputV("Complemento:", new JTextField());
+    private FormInputV tfBairro      = new FormInputV("Bairro:", new JTextField());
+    private FormInputV tfCidade      = new FormInputV("Cidade:", new JTextField());
+    private FormInputV cbUf   		 = new FormInputV("UF:", new JComboBox<>(Uf.values()));
+    private FormInputV tfCep         = new FormInputV("CEP:", new JTextField());
         
-    // Checkbox de filtro de exibição
-    private JCheckBox ckbMostrarInativos = new JCheckBox("Mostrar Inativos");
-
     public TelaGerenciamentoClientes(Usuario usuarioInstancia) {
-    	this.usuarioLogado = usuarioInstancia;
+    	super(usuarioInstancia);
     	
-    	// Define o layout do painel principal como um BoxLayout na direção vertical (Y_AXIS),
-    	// ou seja, os componentes serão empilhados verticalmente (um abaixo do outro).
-    	this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    	// Cabeçalhos da tabela
+    	String[] colunas = {
+        		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
+        		"Email", "Endereco", "Nº", "Complemento",
+        		"Bairro", "Cidade", "UF", "CEP"
+            };
+     
+        criarPainelTabela(colunas);
+        carregarDadosTabela();
         
-    	// Painel filtro (Admin)
-    	JPanel painelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ckbMostrarInativos.addActionListener(e -> carregarDadosTabela());
-        painelFiltro.add(ckbMostrarInativos);
-        
-        // --- Painel da Tabela (Lista de Clientes) ---
-        JPanel painelTabela = new JPanel();
-        
-        painelTabela = criarPainelTabela();
-        
-        // --- Painel do Formulário ---
-        JPanel painelFormulario = new JPanel(new GridBagLayout());
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridy = 0;
-
-        // Painel de Dados Gerais (coluna esquerda)
-        gbc.gridx = 0; // Define que o componente será colocado na coluna 0 do GridBagLayout
-        gbc.weightx = 0.5; // Define o "peso" horizontal. 0.5 para ocupar metade do painel
-        gbc.weighty = 0; // 0 para não crescer verticalmente
-        gbc.insets = new Insets(0, 0, 0, 5); // Define margens internas. 5 para espaço a direita.
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START; // Alinha topo esquerdo
-
-        // Cria formulário Dados
-        painelFormulario.add(PainelFormularioUtil.criarPainelFormulario(
-    		"Dados", tfNome, tfCpfCnpj, cbTipo, tfTelefone, tfEmail), gbc
+        formularioEsquerdo = new GerenciamentoForm(
+        		"Dados", tfNome, tfCpfCnpj, cbTipo, tfTelefone, tfEmail
         );
         
-
-        // Painel de Endereço (coluna direita)
-        gbc.gridx = 1;
-        gbc.weightx = 0.5;
-        gbc.weighty = 0;
-        gbc.insets = new Insets(5, 0, 0, 0); // Define margens internas. 5 para esquerda a direita.
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
-
-        // Cria formulário Endereço Residencial
-        painelFormulario.add(PainelFormularioUtil.criarPainelFormulario(
-    		"Endereço Residencial", tfEndereco, tfNumero, tfComplemento,
-    		tfBairro, tfCidade, cbUf, tfCep), gbc
-        );
-         
-        // Evento para preencher o formulário ao clicar na tabela
-        tabelaClientes.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                int linhaSelecionada = tabelaClientes.getSelectedRow();
-                if (linhaSelecionada != -1) {
-                    preencherFormulario(linhaSelecionada);
-                }
-            }
-        });      
+        formularioDireito = new GerenciamentoForm(
+        		"Endereço Residencial", tfEndereco, tfNumero, tfComplemento,
+        		tfBairro, tfCidade, cbUf, tfCep
+		);
+        
+        criarPainelFormulario();
+     
                   
         // --- Painel dos Botões ---
-        PainelBotoesUtil painelBotoes = new PainelBotoesUtil(
+        painelBotoes = new GerenciamentoButton(
     		usuarioLogado,
     		new Dimension(90, 30),
     	    e -> new TelaCadastroCliente(this),
@@ -134,61 +74,12 @@ public class TelaGerenciamentoClientes extends JPanel {
     	    e -> desativarCliente(),
     	    e -> excluirCliente()	
         );
-           
-        // --- Montagem Final ---
-        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
-        	add(painelFiltro);
-            add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
-        }
-        add(painelTabela);
-        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
-        add(painelFormulario);
-        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertical
-        add(painelBotoes);
+        
+        finalizarTela();
     }
-    
-    private JPanel criarPainelTabela() {
-    	JPanel painelTabela = new JPanel();
-        painelTabela.setLayout(new BoxLayout(painelTabela, BoxLayout.Y_AXIS));
-        painelTabela.setBorder(BorderFactory.createCompoundBorder(
-        	    BorderFactory.createTitledBorder("Lista de Clientes"),
-        	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
-            ));
-        painelTabela.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
-        painelTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200)); // Fixar altura da tabela
-        
-        // Cabeçalhos da tabela
-        String[] colunas = {
-    		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
-    		"Email", "Endereco", "Nº", "Complemento",
-    		"Bairro", "Cidade", "UF", "CEP"
-        };
-        
-        // Modelo da tabela com células não editáveis
-        tableModel = new DefaultTableModel(colunas, 0) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tabelaClientes = new JTable(tableModel);
-        
-        // Preenche a tabela com dados do banco
-        carregarDadosTabela();
-        
-        // Monta tabela ao painel
-        JScrollPane scrollPane = new JScrollPane(tabelaClientes);
-        int larguraPainel = this.getWidth();
-        scrollPane.setPreferredSize(new Dimension(larguraPainel, 200)); // Altura da tabela
-        painelTabela.add(scrollPane);
-    	
-        return painelTabela;
-    }
-            
-    public void carregarDadosTabela() {
-        tableModel.setRowCount(0); // Limpa a tabela
+              
+    protected void carregarDadosTabela() {
+        tabela.limparTabela();
         
         ClienteDAO dao = new ClienteDAO();
         
@@ -197,7 +88,7 @@ public class TelaGerenciamentoClientes extends JPanel {
             : dao.listarApenasAtivos();
 
         for (Cliente c : clientes) {
-            tableModel.addRow(new Object[]{
+            tabela.adicionarLinha(new Object[]{
                 c.getId(),
                 c.getNome(),
                 c.getCpfCnpj(),
@@ -214,90 +105,88 @@ public class TelaGerenciamentoClientes extends JPanel {
             });
         }
         
-        // Ajustar largura das colunas ID, Número e UF
-        TabelaUtils.larguraColunas(tabelaClientes, 40, 0, 7, 11);
-        
         // Centralizar as colunas ID, Número e UF
-        TabelaUtils.centralizarTextoColunas(tabelaClientes, 0, 7, 11);   
+        tabela.centralizarColuna(0, 7, 11);   
     }
     
-    private void preencherFormulario(int linha) {
+    protected void preencherFormulario(int linha) {
         try {
 	    	// Pega os dados da linha selecionada
-	        int id = (int) tableModel.getValueAt(linha, 0);
-	        String nome = (String) tableModel.getValueAt(linha, 1);
-	        String cpfCnpj = (String) tableModel.getValueAt(linha, 2);
-	        TipoCliente tipo = TipoCliente.fromString(tableModel.getValueAt(linha, 3).toString());
-	        String telefone = (String) tableModel.getValueAt(linha, 4);
-	        String email = (String) tableModel.getValueAt(linha, 5);
-	        String endereco = (String) tableModel.getValueAt(linha, 6);
-	        String numero = (String) tableModel.getValueAt(linha, 7);
-	        String complemento = (String) tableModel.getValueAt(linha, 8);
-	        String bairro = (String) tableModel.getValueAt(linha, 9);
-	        String cidade = (String) tableModel.getValueAt(linha, 10);
-	        Uf uf = Uf.fromString(tableModel.getValueAt(linha, 11).toString());
-	        String cep = (String) tableModel.getValueAt(linha, 12);
+	        int id = (int) tabela.getValorEm(linha, 0);
+	        String nome = (String) tabela.getValorEm(linha, 1);
+	        String cpfCnpj = (String) tabela.getValorEm(linha, 2);
+	        TipoCliente tipo = TipoCliente.fromString(tabela.getValorEm(linha, 3).toString());
+	        String telefone = (String) tabela.getValorEm(linha, 4);
+	        String email = (String) tabela.getValorEm(linha, 5);
+	        String endereco = (String) tabela.getValorEm(linha, 6);
+	        String numero = (String) tabela.getValorEm(linha, 7);
+	        String complemento = (String) tabela.getValorEm(linha, 8);
+	        String bairro = (String) tabela.getValorEm(linha, 9);
+	        String cidade = (String) tabela.getValorEm(linha, 10);
+	        Uf uf = Uf.fromString(tabela.getValorEm(linha, 11).toString());
+	        String cep = (String) tabela.getValorEm(linha, 12);
 	        
 	        // Preenche os campos do formulário
-	        tfId.setValor(id);
-	        tfNome.setValor(nome);
-	        tfCpfCnpj.setValor(cpfCnpj);
-	        cbTipo.setValor(tipo);
-	        tfTelefone.setValor(telefone);
-	        tfEmail.setValor(email);
-	        tfEndereco.setValor(endereco);
-	        tfNumero.setValor(numero);
-	        tfComplemento.setValor(complemento);
-	        tfBairro.setValor(bairro);
-	        tfCidade.setValor(cidade);
-	        tfCep.setValor(cep);
-	        cbUf.setValor(uf);
+	        tfId.setText(String.valueOf(id));
+	        tfNome.setText(nome);
+	        tfCpfCnpj.setText(cpfCnpj);
+	        cbTipo.setSelectedItem(tipo);
+	        tfTelefone.setText(telefone);
+	        tfEmail.setText(email);
+	        tfEndereco.setText(endereco);
+	        tfNumero.setText(numero);
+	        tfComplemento.setText(complemento);
+	        tfBairro.setText(bairro);
+	        tfCidade.setText(cidade);
+	        tfCep.setText(cep);
+	        cbUf.setSelectedItem(uf);
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Erro ao preencher formulário: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, 
+        		"Erro ao preencher formulário: " + ex.getMessage());
         }
     }
     
-    private void limparFormulario() {
-    	tfId.setValor("");
-        tfNome.setValor("");
-        tfCpfCnpj.setValor("");
-        cbTipo.setValor(null);
-        tfTelefone.setValor("");
-        tfEmail.setValor("");
-        tfEndereco.setValor("");
-        tfNumero.setValor("");
-        tfComplemento.setValor("");
-        tfBairro.setValor("");
-        tfCidade.setValor("");
-        tfCep.setValor("");
-        cbUf.setValor(null);
-        
-        tabelaClientes.clearSelection();
+    protected void limparFormulario() {
+    	tfId.setText("");
+    	tfNome.setText("");
+    	tfCpfCnpj.setText("");
+    	cbTipo.setSelectedItem(null);
+    	tfTelefone.setText("");
+    	tfEmail.setText("");
+    	tfEndereco.setText("");
+    	tfNumero.setText("");
+    	tfComplemento.setText("");
+    	tfBairro.setText("");
+    	tfCidade.setText("");
+    	cbUf.setSelectedItem(null);
+    	tfCep.setText("");
+    	
+    	tabela.clearSelection();
     }
     
     private void atualizarCliente() {
         try {
-            if (tfId.getValor().isEmpty()) {
+            if (tfId.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
             		"Selecione um cliente na tabela para atualizar.", 
             		"Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            int id = Integer.parseInt(tfId.getValor());
-            String nome = tfNome.getValor().trim();
-            String cpfCnpj = tfCpfCnpj.getValor().trim();
-            TipoCliente tipo = (TipoCliente) cbTipo.getValor();
-            String telefone = tfTelefone.getValor().trim();
-            String email = tfEmail.getValor().trim();
-            String endereco = tfEndereco.getValor().trim();
-            String numero = tfNumero.getValor().trim();
-            String complemento = tfComplemento.getValor().trim();
-            String bairro = tfBairro.getValor().trim();
-            String cidade = tfCidade.getValor().trim();
-            Uf uf = (Uf) cbUf.getValor();
-            String cep = tfCep.getValor().trim();
+            int id = Integer.parseInt(tfId.getText());
+            String nome = tfNome.getText().trim();
+            String cpfCnpj = tfCpfCnpj.getText().trim();
+            TipoCliente tipo = (TipoCliente) cbTipo.getSelectedItem();
+            String telefone = tfTelefone.getText().trim();
+            String email = tfEmail.getText().trim();
+            String endereco = tfEndereco.getText().trim();
+            String numero = tfNumero.getText().trim();
+            String complemento = tfComplemento.getText().trim();
+            String bairro = tfBairro.getText().trim();
+            String cidade = tfCidade.getText().trim();
+            Uf uf = (Uf) cbUf.getSelectedItem();
+            String cep = tfCep.getText().trim();
             
             // Validações
             if (nome.isEmpty()) {
@@ -347,7 +236,7 @@ public class TelaGerenciamentoClientes extends JPanel {
     }
     
     private void ativarCliente() {
-        if (tfId.getValor().isEmpty()) {
+        if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
         		"Selecione um cliente na tabela para ativar.", 
         		"Aviso", JOptionPane.WARNING_MESSAGE);
@@ -361,7 +250,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-            	int id = Integer.parseInt(tfId.getValor());
+            	int id = Integer.parseInt(tfId.getText());
                 
                 Cliente cliente = new Cliente();
                 cliente.setId(id);
@@ -393,7 +282,7 @@ public class TelaGerenciamentoClientes extends JPanel {
     }
     
     private void desativarCliente() {
-        if (tfId.getValor().isEmpty()) {
+        if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
         		"Selecione um cliente na tabela para desativar.", 
         		"Aviso", 
@@ -408,7 +297,7 @@ public class TelaGerenciamentoClientes extends JPanel {
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-            	int id = Integer.parseInt(tfId.getValor());
+            	int id = Integer.parseInt(tfId.getText());
                 
                 Cliente cliente = new Cliente();
                 cliente.setId(id);
@@ -440,7 +329,7 @@ public class TelaGerenciamentoClientes extends JPanel {
     }
     
     private void excluirCliente() {
-        if (tfId.getValor().isEmpty()) {
+        if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
         		"Selecione um cliente na tabela para excluir.", 
         		"Aviso", JOptionPane.WARNING_MESSAGE);
@@ -455,19 +344,19 @@ public class TelaGerenciamentoClientes extends JPanel {
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-            	int id = Integer.parseInt(tfId.getValor());
-                String nome = tfNome.getValor().trim();
-                String cpfCnpj = tfCpfCnpj.getValor().trim();
-                TipoCliente tipo = (TipoCliente) cbTipo.getValor();
-                String telefone = tfTelefone.getValor().trim();
-                String email = tfEmail.getValor().trim();
-                String endereco = tfEndereco.getValor().trim();
-                String numero = tfNumero.getValor().trim();
-                String complemento = tfComplemento.getValor().trim();
-                String bairro = tfBairro.getValor().trim();
-                String cidade = tfCidade.getValor().trim();
-                Uf uf = (Uf) cbUf.getValor();
-                String cep = tfCep.getValor().trim();
+            	int id = Integer.parseInt(tfId.getText());
+                String nome = tfNome.getText().trim();
+                String cpfCnpj = tfCpfCnpj.getText().trim();
+                TipoCliente tipo = (TipoCliente) cbTipo.getSelectedItem();
+                String telefone = tfTelefone.getText().trim();
+                String email = tfEmail.getText().trim();
+                String endereco = tfEndereco.getText().trim();
+                String numero = tfNumero.getText().trim();
+                String complemento = tfComplemento.getText().trim();
+                String bairro = tfBairro.getText().trim();
+                String cidade = tfCidade.getText().trim();
+                Uf uf = (Uf) cbUf.getSelectedItem();
+                String cep = tfCep.getText().trim();
                 
                 Cliente cliente = new Cliente();
                 cliente.setId(id);

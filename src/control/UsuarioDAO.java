@@ -15,57 +15,44 @@ import model.enums.Privilegios;
 public class UsuarioDAO {
     private DBQuery dbQuery;
     private String editableFieldsName = 
-		"email, senha, privilegios";
+		"id_funcionario, usuario, senha, email, privilegios";
 
     public UsuarioDAO() {
         String tableName = "tb_usuario";
         String fieldNames = 
-    		"id_usuario, email, senha, privilegios, ativo";
+    		"id_usuario, id_funcionario, usuario, senha, "
+    		+ "email, privilegios, ativo";
         String fieldKey = "id_usuario";
 
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
 
-    public boolean salvar(Usuario usuario) {
+    public int salvar(Usuario usuario) {
+    	int idGerado;
+    	
         String[] valores = {
-            usuario.getEmail(),
+    		String.valueOf(usuario.getIdFuncionario()),
+            usuario.getUsuario(),            
             usuario.getSenha(),
+            usuario.getEmail(),
             usuario.getPrivilegios().getValorDb()
         };
 
-        return dbQuery.insert(valores, editableFieldsName) > 0;
-    }
-
-    public List<Usuario> listarTodos() {
-        List<Usuario> usuarios = new ArrayList<>();
-
-        try {
-            ResultSet rs = dbQuery.select("");
-
-            while (rs.next()) {
-                Usuario u = new Usuario();
-                u.setId(rs.getInt("id_usuario"));
-                u.setEmail(rs.getString("email"));
-                u.setSenha(rs.getString("senha"));
-                u.setPrivilegios(Privilegios.fromDb(rs.getString("privilegios")));
-                u.setAtivo(rs.getBoolean("ativo"));
-
-                usuarios.add(u);
-            }
-
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        idGerado = dbQuery.insert(valores, editableFieldsName);
+        if(idGerado == 0) {
+        	System.out.println("Aviso: ID retornou 0");
         }
-
-        return usuarios;
+        
+        return idGerado;
     }
     
     public boolean atualizar(Usuario usuario) {
         String[] valores = {
             String.valueOf(usuario.getId()),
-            usuario.getEmail(),
+            String.valueOf(usuario.getIdFuncionario()),
+            usuario.getUsuario(),
             usuario.getSenha(),
+            usuario.getEmail(),
             usuario.getPrivilegios().name(),
             usuario.isAtivo() ? "1" : "0"
         };
@@ -75,7 +62,7 @@ public class UsuarioDAO {
     
     public boolean ativar(Usuario usuario) {
 	    if (usuario == null || usuario.getId() <= 0) {
-	        throw new IllegalArgumentException("Usuário inválido para aativar.");
+	        throw new IllegalArgumentException("Usuário inválido para ativar.");
 	    }
 
 	    String sql = "UPDATE " + dbQuery.getTableName() +
@@ -100,16 +87,44 @@ public class UsuarioDAO {
     public boolean excluir(Usuario usuario) {
     	String[] valores = {
     			String.valueOf(usuario.getId()),
-                usuario.getEmail(),
+    			String.valueOf(usuario.getIdFuncionario()),
+                usuario.getUsuario(),
                 usuario.getSenha(),
+                usuario.getEmail(),
                 usuario.getPrivilegios().name(),
                 usuario.isAtivo() ? "1" : "0"
             };
 
-	    // Retorna true se a operação de exclusão for bem-sucedida
 	    return dbQuery.delete(valores) > 0;
 	}
+    
+    public List<Usuario> listarTodos() {
+        List<Usuario> usuarios = new ArrayList<>();
 
+        try {
+            ResultSet rs = dbQuery.select("");
+
+            while (rs.next()) {
+                Usuario u = new Usuario();
+                u.setId(rs.getInt("id_usuario"));
+                u.setIdFuncionario(rs.getInt("id_funcionario"));
+                u.setUsuario(rs.getString("usuario"));
+                u.setSenha(rs.getString("senha"));
+                u.setEmail(rs.getString("email"));
+                u.setPrivilegios(Privilegios.fromDb(rs.getString("privilegios")));
+                u.setAtivo(rs.getBoolean("ativo"));
+
+                usuarios.add(u);
+            }
+
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return usuarios;
+    }
+    
     public List<Usuario> listarApenasAtivos() {
         List<Usuario> usuarios = new ArrayList<>();
 
@@ -119,8 +134,10 @@ public class UsuarioDAO {
             while (rs.next()) {
                 Usuario u = new Usuario();
                 u.setId(rs.getInt("id_usuario"));
-                u.setEmail(rs.getString("email"));
+                u.setIdFuncionario(rs.getInt("id_funcionario"));
+                u.setUsuario(rs.getString("usuario"));
                 u.setSenha(rs.getString("senha"));
+                u.setEmail(rs.getString("email"));
                 u.setPrivilegios(Privilegios.fromDb(rs.getString("privilegios")));
                 u.setAtivo(rs.getBoolean("ativo"));
 
@@ -140,12 +157,14 @@ public class UsuarioDAO {
     		ResultSet rs = dbQuery.select("id_usuario = " + id);
     		
     		if (rs != null && rs.next()) {
-	    		Usuario u = new Usuario();
-	            u.setId(rs.getInt("id_usuario"));
-	            u.setEmail(rs.getString("email"));
-	            u.setSenha(rs.getString("senha"));
-	            u.setPrivilegios(Privilegios.fromDb(rs.getString("privilegios")));
-	            u.setAtivo(rs.getBoolean("ativo"));
+    			Usuario u = new Usuario();
+                u.setId(rs.getInt("id_usuario"));
+                u.setIdFuncionario(rs.getInt("id_funcionario"));
+                u.setUsuario(rs.getString("usuario"));
+                u.setSenha(rs.getString("senha"));
+                u.setEmail(rs.getString("email"));
+                u.setPrivilegios(Privilegios.fromDb(rs.getString("privilegios")));
+                u.setAtivo(rs.getBoolean("ativo"));
 	            
 	            rs.close();
 	            return u; 
@@ -154,6 +173,33 @@ public class UsuarioDAO {
     	} catch (SQLException e) {
             e.printStackTrace();
         }
+    	
     	return null;
+    }
+    
+    public Usuario autenticar(String login, String senha) {
+        try {
+            String filtro = "(usuario = '" + login + "' OR email = '" + login + "') AND senha = '" + senha + "' AND ativo = 1";
+            ResultSet rs = dbQuery.select(filtro);
+
+            if (rs != null && rs.next()) {
+                Usuario u = new Usuario();
+                u.setId(rs.getInt("id_usuario"));
+                u.setIdFuncionario(rs.getInt("id_funcionario"));
+                u.setUsuario(rs.getString("usuario"));
+                u.setSenha(rs.getString("senha"));
+                u.setEmail(rs.getString("email"));
+                u.setPrivilegios(Privilegios.fromDb(rs.getString("privilegios")));
+                u.setAtivo(rs.getBoolean("ativo"));
+
+                rs.close();
+                return u;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

@@ -33,7 +33,6 @@ public class TelaPrincipal extends JFrame {
         JMenu menuCadastro = new JMenu("Cadastrar");
         JMenuItem menuCliente = new JMenuItem("Clientes");
         JMenuItem menuFuncionario = new JMenuItem("Funcionários");
-        JMenuItem menuUsuario = new JMenuItem("Usuários");
 
         menuCliente.addActionListener(e -> new TelaCadastroCliente());
         menuCadastro.add(menuCliente);
@@ -42,9 +41,6 @@ public class TelaPrincipal extends JFrame {
         if (usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
         	menuFuncionario.addActionListener(e -> new TelaCadastroFuncionario());
             menuCadastro.add(menuFuncionario);
-            
-            menuUsuario.addActionListener(e -> new TelaCadastroUsuario());
-            menuCadastro.add(menuUsuario);
         }
 
         menuBar.add(menuCadastro);

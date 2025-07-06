@@ -1,153 +1,89 @@
 package view;
 
+
 import model.Funcionario;
-
+import model.Usuario;
 import model.enums.FuncaoFuncionario;
-
+import model.enums.Privilegios;
 import control.FuncionarioDAO;
+import control.UsuarioDAO;
 
-import javax.swing.border.TitledBorder;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
+import view.base.TelaCadastroAbstrata;
+import view.components.FormInputH;
+
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-
-public class TelaCadastroFuncionario extends JFrame {
+public class TelaCadastroFuncionario extends TelaCadastroAbstrata {
     private static final long serialVersionUID = 1L; // Default serialVersion
     
     private TelaGerenciamentoFuncionarios painelGerenciamento;
-
+    
+    private static final String TITULO_JANELA = "Cadastro de Funcionário";
+        
     // -- COMPONENTES DE ENTRADA --
-    private JTextField tfNome = new JTextField();
-    private JTextField tfCpf = new JTextField();
-    private JComboBox<FuncaoFuncionario> cbFuncao = new JComboBox<>(FuncaoFuncionario.values());
-    private JTextField tfTelefone = new JTextField();
-    private JTextField tfEmail = new JTextField();
-
-    private JButton btnSalvar = new JButton("Salvar");
-    private JButton btnCancelar = new JButton("Cancelar");
-
-    // -- FONTE E TAMANHO DAS ENTRADAS --
-    private Font panelFont = new Font("Arial", Font.BOLD, 14);
-    private Font labelFont = new Font("Arial", Font.BOLD, 12);
-    private Font inputFont = new Font("Arial", Font.PLAIN, 12);
-    private Dimension inputSize = new Dimension(200, 25);
+    private FormInputH tfNome;
+    private FormInputH tfCpf;
+    private FormInputH cbFuncao;
+    private FormInputH tfTelefone;
+    private FormInputH tfEmail;
+    
+    private FormInputH tfUsuario;
+    private FormInputH pfSenha;
+    private FormInputH cbPrivilegios;
     
     public TelaCadastroFuncionario() {
     	this((TelaGerenciamentoFuncionarios) null);
     }
     
-    public TelaCadastroFuncionario(TelaGerenciamentoFuncionarios painelGerenciamento) {
+    public TelaCadastroFuncionario(TelaGerenciamentoFuncionarios painelGerenciamento) {	
+    	super(TITULO_JANELA);
+    	
         this.painelGerenciamento = painelGerenciamento;
-        inicializar();
-    }
-
-    public void inicializar() {
-    	// -- CONFIGURAÇÕES DA JANELA --
-        this.setTitle("Cadastro de Funcionário");
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.setResizable(false);
-
-        // -- PAINEL PRINCIPAL --
-        JPanel painelPrincipal = new JPanel();
-        painelPrincipal.setLayout(new BoxLayout(painelPrincipal, BoxLayout.Y_AXIS));
-        painelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // -- PAINEL DADOS GERAIS --
-        JPanel painelDadosGerais = new JPanel(new GridBagLayout());
-        painelDadosGerais.setBorder(BorderFactory.createTitledBorder("Dados"));
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-
-        int linha = 0;
-
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Nome:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfNome, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("CPF:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfCpf, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Função:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(cbFuncao, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Telefone:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfTelefone, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Email:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfEmail, gbc);
-
-        // -- PAINEL BOTÕES --
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));      
-           
-        btnSalvar.addActionListener(this::salvarFuncionario);
-        btnCancelar.addActionListener(e -> dispose());
-        
-        painelBotoes.add(btnCancelar);
-        painelBotoes.add(btnSalvar);
-
-        // --- ESTILIZAÇÃO --
-        ((TitledBorder) painelDadosGerais.getBorder()).setTitleFont(panelFont);
-
-        estilizarComponentes(painelDadosGerais, inputSize);
-
-        // -- MONTAGEM FINAL --
-        painelPrincipal.add(painelDadosGerais);
-        painelPrincipal.add(Box.createVerticalStrut(10)); // Cria um espaçamento de 10px entre os paineis
-        painelPrincipal.add(painelBotoes);
-
-        this.setContentPane(painelPrincipal);
-        this.pack(); // Ajusta o tamanho da janela ao conteúdo
-        this.setLocationRelativeTo(null); // Aparece centralizado na tela
-        this.setVisible(true);
-    }
-
-    // -- MÉTODO DE APOIO PARA APLICAR ESTILO --
-    private void estilizarComponentes(JPanel painel, Dimension inputSize) {
-        for (Component c : painel.getComponents()) {
-            if (c instanceof JLabel) {
-                c.setFont(labelFont);
-            } else if (c instanceof JTextField || c instanceof JComboBox) {
-                c.setFont(inputFont);
-                ((JComponent) c).setPreferredSize(inputSize);
-            }
-        }
+        inicializarCampos();
+        construirFormulario();
+        finalizarTela();
     }
     
-    private void salvarFuncionario(ActionEvent e) {
+    private void inicializarCampos() {
+        this.tfNome = new FormInputH("Nome:", new JTextField());
+        this.tfCpf = new FormInputH("CPF:", new JTextField());
+        this.cbFuncao = new FormInputH("Função:", new JComboBox<>(FuncaoFuncionario.values()));
+        this.tfTelefone = new FormInputH("Telefone:", new JTextField());
+        this.tfEmail = new FormInputH("Email:", new JTextField());
+        
+        this.tfUsuario = new FormInputH("Nome de Usuário:", new JTextField());
+        this.pfSenha = new FormInputH("Senha:", new JPasswordField());
+        this.cbPrivilegios = new FormInputH("Privilégio:", new JComboBox<>(Privilegios.values()));
+    }
+
+    @Override
+    protected void construirFormulario() {
+    	this.painelFormulario1 = criarPainelFormulario("Dados do Funcionário");
+    	adicionarEntrada(this.painelFormulario1, tfNome);
+        adicionarEntrada(this.painelFormulario1, tfCpf);
+        adicionarEntrada(this.painelFormulario1, cbFuncao);
+        adicionarEntrada(this.painelFormulario1, tfTelefone);
+        adicionarEntrada(this.painelFormulario1, tfEmail);
+        
+        adicionarPainelFormulario(this.painelFormulario1);
+        
+        this.painelFormulario2 = criarPainelFormulario("Dados do Funcionário");
+        adicionarEntrada(this.painelFormulario2, tfUsuario);
+        adicionarEntrada(this.painelFormulario2, pfSenha);
+        adicionarEntrada(this.painelFormulario2, cbPrivilegios);
+        
+        adicionarPainelFormulario(this.painelFormulario2);
+    	
+    	btnSalvar.addActionListener(e -> aoSalvar());
+    }
+   
+    @Override
+    protected void aoSalvar() {
         Funcionario funcionario = new Funcionario();
+        Usuario usuario = new Usuario();
         try {
             funcionario.setNome(tfNome.getText());
             funcionario.setCpf(tfCpf.getText());
@@ -156,17 +92,33 @@ public class TelaCadastroFuncionario extends JFrame {
             funcionario.setEmail(tfEmail.getText());
             funcionario.setAtivo(true);            
 
-            FuncionarioDAO dao = new FuncionarioDAO();
-            boolean sucesso = dao.salvar(funcionario);
+            FuncionarioDAO daoFuncionario = new FuncionarioDAO();
+            int idGerado = daoFuncionario.salvar(funcionario);
+            
+            if(idGerado == 0) {
+            	JOptionPane.showMessageDialog(this, 
+            	"Erro ao cadastrar funcionário.");
+            }
+            
+            usuario.setIdFuncionario(idGerado);
+            usuario.setUsuario(tfUsuario.getText());
+            usuario.setSenha(pfSenha.getText());
+            usuario.setEmail(tfEmail.getText());
+            usuario.setPrivilegios((Privilegios) cbPrivilegios.getSelectedItem());
+            usuario.setAtivo(true);
+            
+            UsuarioDAO daoUsuario = new UsuarioDAO();
+            idGerado = daoUsuario.salvar(usuario);
 
-            if (sucesso) {
-                JOptionPane.showMessageDialog(this, "Funcionário salvo com sucesso!");
+            if (idGerado > 0) {
+                JOptionPane.showMessageDialog(this, "Funcionário cadastrado com sucesso!");
                 if (painelGerenciamento != null) {
                     painelGerenciamento.carregarDadosTabela();
                 }
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Erro ao salvar funcionário.");
+                JOptionPane.showMessageDialog(this, 
+                "Funcionário cadastro, mas erro ao cadastrar usuário.");
             }
 
         } catch (Exception ex) {

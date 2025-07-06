@@ -9,7 +9,6 @@ import java.util.List;
 import database.DBQuery;
 
 import model.Funcionario;
-
 import model.enums.FuncaoFuncionario;
 
 public class FuncionarioDAO {
@@ -26,7 +25,9 @@ public class FuncionarioDAO {
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
 
-    public boolean salvar(Funcionario funcionario) {
+    public int salvar(Funcionario funcionario) {
+    	int idGerado;
+    	
         String[] valores = {
             funcionario.getNome(),
             funcionario.getCpf(),
@@ -34,7 +35,13 @@ public class FuncionarioDAO {
             funcionario.getTelefone(),
             funcionario.getEmail()
         };
-        return dbQuery.insert(valores, editableFieldsName) > 0;
+        
+        idGerado = dbQuery.insert(valores, editableFieldsName);
+        if(idGerado == 0) {
+        	System.out.println("Aviso: ID retornou 0");
+        }
+        
+        return idGerado;
     }
     
     public List<Funcionario> listarTodos() {
