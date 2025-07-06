@@ -28,9 +28,13 @@ import java.awt.Insets;
 public class TelaLogin extends JFrame {
     private static final long serialVersionUID = 1L; // Default serialVersion
     
-    // -- COMPONENTES DE ENTRADA --
+    // -- PAINEIS --
     private String tituloJanela = "Login";
+    private JPanel painelPrincipal = new JPanel();
+    private JPanel painelEntradasLogin = new JPanel();
+    private JPanel painelBotoes = new JPanel();
     
+    // -- COMPONENTES DE ENTRADA --
     private JLabel lbLogin = new JLabel("Usuário ou Email:");
     private JTextField tfLogin = new JTextField();
     
@@ -49,11 +53,6 @@ public class TelaLogin extends JFrame {
     
     private Dimension inputSize = new Dimension(200, 25);
     private Dimension buttonSize = new Dimension(100, 30);
-    
-    // Paineis
-    private JPanel painelPrincipal = new JPanel();
-    private JPanel painelEntradasLogin = new JPanel();
-    private JPanel painelBotoes = new JPanel();
 
     public TelaLogin() {
     	// Configurações da janela
@@ -64,14 +63,16 @@ public class TelaLogin extends JFrame {
         // Painel principal
         this.painelPrincipal.setLayout(new BoxLayout(this.painelPrincipal, BoxLayout.Y_AXIS));
         this.painelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        
         // Painel de entradas
-        this.painelEntradasLogin = criarPainelEntradasLogin();
+        criarPainelEntradasLogin();
         
         // Painel de botões
-        this.painelBotoes = criarPainelBotoes();
+        criarPainelBotoes();
         
-
+        // Estilizar
+        estilizarComponentes();
+        
         // Montagem final
         this.painelPrincipal.add(this.painelEntradasLogin);
         this.painelPrincipal.add(Box.createVerticalStrut(10)); // Cria um espaçamento de 10px entre os paineis
@@ -83,25 +84,19 @@ public class TelaLogin extends JFrame {
         setVisible(true);
     }
     
-    private JPanel criarPainelEntradasLogin() {
-    	JPanel painelEntradasLogin = new JPanel(new GridBagLayout());
-        painelEntradasLogin.setBorder(BorderFactory.createTitledBorder("Login"));
+    private void criarPainelEntradasLogin() {
+    	this.painelEntradasLogin.setLayout(new GridBagLayout());
+    	this.painelEntradasLogin.setBorder(BorderFactory.createTitledBorder("Login"));
         
-        // Estilização
-        ((TitledBorder) painelEntradasLogin.getBorder()).setTitleFont(panelFont);
-        lbLogin.setFont(labelFont);
-        tfLogin.setFont(inputFont);
-        tfLogin.setPreferredSize(inputSize);
+        this.lbSenha.setFont(this.labelFont);
+        this.pfSenha.setFont(this.inputFont);
+        this.pfSenha.setPreferredSize(this.inputSize);
 
-        lbSenha.setFont(labelFont);
-        pfSenha.setFont(inputFont);
-        pfSenha.setPreferredSize(inputSize);
-
-        ckbMostrarSenha.setFont(labelFont);
+        this.ckbMostrarSenha.setFont(this.labelFont);
         
         // Adicionando ações
-        ckbMostrarSenha.addActionListener(e -> {
-            pfSenha.setEchoChar(ckbMostrarSenha.isSelected() ? (char) 0 : '●');
+        this.ckbMostrarSenha.addActionListener(e -> {
+        	this.pfSenha.setEchoChar(this.ckbMostrarSenha.isSelected() ? (char) 0 : '●');
         });
         
         // Montando entradas no painel  
@@ -113,53 +108,56 @@ public class TelaLogin extends JFrame {
         
         gbc.anchor = GridBagConstraints.LINE_END;
         gbc.gridx = 0; gbc.gridy = linha;
-        painelEntradasLogin.add(lbLogin, gbc);
-        
-        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelEntradasLogin.add(this.lbLogin, gbc);
         gbc.anchor = GridBagConstraints.LINE_START;
-        painelEntradasLogin.add(tfLogin, gbc);
+        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelEntradasLogin.add(this.tfLogin, gbc);
 
         linha++;
         gbc.anchor = GridBagConstraints.LINE_END;
         gbc.gridx = 0; gbc.gridy = linha;
-        painelEntradasLogin.add(lbSenha, gbc);
-        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelEntradasLogin.add(lbSenha, gbc);
         gbc.anchor = GridBagConstraints.LINE_START;
-        painelEntradasLogin.add(pfSenha, gbc);
+        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelEntradasLogin.add(pfSenha, gbc);
         
         linha++;
         gbc.anchor = GridBagConstraints.LINE_END;
         gbc.gridx = 1; gbc.gridy = linha;      
-        painelEntradasLogin.add(ckbMostrarSenha, gbc);
-        
-        return painelEntradasLogin;
+        this.painelEntradasLogin.add(ckbMostrarSenha, gbc);
     }
     
-    private JPanel criarPainelBotoes() {
-    	JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));
- 
- 		// Estilização
- 		btnSair.setPreferredSize(new Dimension(buttonSize));
- 		btnEntrar.setPreferredSize(new Dimension(buttonSize));
-              
+    private void criarPainelBotoes() {
+    	this.painelBotoes.setLayout(new FlowLayout(FlowLayout.RIGHT));
+    	
 		// Adicionando ações
-		btnEntrar.addActionListener(this::verificarLogin);
-		btnSair.addActionListener(e -> dispose());
+ 		this.btnEntrar.addActionListener(this::verificarLogin);
+ 		this.btnSair.addActionListener(e -> dispose());
 		
 		// Montando botões no painel        
-		painelBotoes.add(btnSair);
-		painelBotoes.add(Box.createHorizontalStrut(10)); // Espaçamento
-		painelBotoes.add(btnEntrar);
+ 		this.painelBotoes.add(this.btnSair);
+ 		this.painelBotoes.add(Box.createHorizontalStrut(10)); // Espaçamento
+ 		this.painelBotoes.add(this.btnEntrar);
 		
 		// Enter aciona o botão Entrar        
-		getRootPane().setDefaultButton(btnEntrar); 
-		
-		return painelBotoes;
+		getRootPane().setDefaultButton(this.btnEntrar); 
+    }
+    
+    private void estilizarComponentes() {
+        // Login
+        ((TitledBorder) this.painelEntradasLogin.getBorder()).setTitleFont(this.panelFont);
+        this.lbLogin.setFont(this.labelFont);
+        this.tfLogin.setFont(this.inputFont);
+        this.tfLogin.setPreferredSize(this.inputSize);
+    	
+ 		// Botões
+        this.btnSair.setPreferredSize(new Dimension(this.buttonSize));
+ 		this.btnEntrar.setPreferredSize(new Dimension(this.buttonSize));	
     }
     
     private void verificarLogin(ActionEvent e) {
-        String login = tfLogin.getText().trim();
-        String senha = new String(pfSenha.getPassword());
+        String login = this.tfLogin.getText().trim();
+        String senha = new String(this.pfSenha.getPassword());
         
         if (login.isEmpty() || senha.isEmpty()) {
             JOptionPane.showMessageDialog(this, 

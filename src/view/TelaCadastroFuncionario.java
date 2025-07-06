@@ -12,7 +12,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,12 +31,27 @@ public class TelaCadastroFuncionario extends JFrame {
     private static final long serialVersionUID = 1L; // Default serialVersion
     
     private TelaGerenciamentoFuncionarios painelGerenciamento;
+    
+    // -- PAINÉIS --
+    private String tituloJanela = "Cadastro de Funcionário";
+    private JPanel painelPrincipal = new JPanel();
+    private JPanel painelFormulario = new JPanel();
+    private JPanel painelBotoes = new JPanel(); 
 
     // -- COMPONENTES DE ENTRADA --
+    private JLabel jlNome = new JLabel("Nome:");
     private JTextField tfNome = new JTextField();
+    
+    private JLabel jlCpf = new JLabel("CPF:");
     private JTextField tfCpf = new JTextField();
+    
+    private JLabel jlFuncao = new JLabel("Função:");
     private JComboBox<FuncaoFuncionario> cbFuncao = new JComboBox<>(FuncaoFuncionario.values());
+    
+    private JLabel jlTelefone = new JLabel("Telefone:");
     private JTextField tfTelefone = new JTextField();
+    
+    private JLabel jlEmail = new JLabel("Email:");
     private JTextField tfEmail = new JTextField();
 
     private JButton btnSalvar = new JButton("Salvar");
@@ -48,6 +62,7 @@ public class TelaCadastroFuncionario extends JFrame {
     private Font labelFont = new Font("Arial", Font.BOLD, 12);
     private Font inputFont = new Font("Arial", Font.PLAIN, 12);
     private Dimension inputSize = new Dimension(200, 25);
+    private Dimension buttonSize = new Dimension(100, 30);
     
     public TelaCadastroFuncionario() {
     	this((TelaGerenciamentoFuncionarios) null);
@@ -60,71 +75,25 @@ public class TelaCadastroFuncionario extends JFrame {
 
     public void inicializar() {
     	// -- CONFIGURAÇÕES DA JANELA --
-        this.setTitle("Cadastro de Funcionário");
+        this.setTitle(this.tituloJanela);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
 
         // -- PAINEL PRINCIPAL --
-        JPanel painelPrincipal = new JPanel();
-        painelPrincipal.setLayout(new BoxLayout(painelPrincipal, BoxLayout.Y_AXIS));
-        painelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        this.painelPrincipal.setLayout(new BoxLayout(this.painelPrincipal, BoxLayout.Y_AXIS));
+        this.painelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // -- PAINEL DADOS GERAIS --
-        JPanel painelDadosGerais = new JPanel(new GridBagLayout());
-        painelDadosGerais.setBorder(BorderFactory.createTitledBorder("Dados"));
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-
-        int linha = 0;
-
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Nome:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfNome, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("CPF:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfCpf, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Função:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(cbFuncao, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Telefone:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfTelefone, gbc);
-
-        linha++;
-        gbc.gridx = 0; gbc.gridy = linha;
-        painelDadosGerais.add(new JLabel("Email:"), gbc);
-        gbc.gridx = 1;
-        painelDadosGerais.add(tfEmail, gbc);
+        criarPainelFormulario();
 
         // -- PAINEL BOTÕES --
-        JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.RIGHT));      
-           
-        btnSalvar.addActionListener(this::salvarFuncionario);
-        btnCancelar.addActionListener(e -> dispose());
-        
-        painelBotoes.add(btnCancelar);
-        painelBotoes.add(btnSalvar);
+        criarPainelBotoes();
 
         // --- ESTILIZAÇÃO --
-        ((TitledBorder) painelDadosGerais.getBorder()).setTitleFont(panelFont);
-
-        estilizarComponentes(painelDadosGerais, inputSize);
+        estilizarComponentes();
 
         // -- MONTAGEM FINAL --
-        painelPrincipal.add(painelDadosGerais);
+        painelPrincipal.add(painelFormulario);
         painelPrincipal.add(Box.createVerticalStrut(10)); // Cria um espaçamento de 10px entre os paineis
         painelPrincipal.add(painelBotoes);
 
@@ -133,17 +102,88 @@ public class TelaCadastroFuncionario extends JFrame {
         this.setLocationRelativeTo(null); // Aparece centralizado na tela
         this.setVisible(true);
     }
+    private void criarPainelFormulario() {
+    	this.painelFormulario.setBorder(BorderFactory.createTitledBorder("Dados"));
+        this.painelFormulario.setLayout(new GridBagLayout());
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 5, 10, 5); // Padding
+        gbc.weightx = 1.0;
+
+        int linha = 0;
+
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.gridx = 0; gbc.gridy = linha;
+        this.painelFormulario.add(this.jlNome, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelFormulario.add(this.tfNome, gbc);
+
+        linha++;
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.gridx = 0; gbc.gridy = linha;
+        this.painelFormulario.add(this.jlCpf, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelFormulario.add(this.tfCpf, gbc);
+
+        linha++;
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.gridx = 0; gbc.gridy = linha;
+        this.painelFormulario.add(this.jlFuncao, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelFormulario.add(this.cbFuncao, gbc);
+
+        linha++;
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.gridx = 0; gbc.gridy = linha;
+        this.painelFormulario.add(this.jlTelefone, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelFormulario.add(this.tfTelefone, gbc);
+
+        linha++;
+        gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.gridx = 0; gbc.gridy = linha;
+        this.painelFormulario.add(this.jlEmail, gbc);
+        gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.gridx = 1; gbc.gridy = linha;
+        this.painelFormulario.add(this.tfEmail, gbc);
+    }
+    
+    private void criarPainelBotoes() {
+    	this.painelBotoes.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        
+        this.btnSalvar.addActionListener(this::salvarFuncionario);
+        this.btnCancelar.addActionListener(e -> dispose());
+        
+        this.painelBotoes.add(this.btnCancelar);
+        this.painelBotoes.add(this.btnSalvar);   	
+    }
 
     // -- MÉTODO DE APOIO PARA APLICAR ESTILO --
-    private void estilizarComponentes(JPanel painel, Dimension inputSize) {
-        for (Component c : painel.getComponents()) {
-            if (c instanceof JLabel) {
-                c.setFont(labelFont);
-            } else if (c instanceof JTextField || c instanceof JComboBox) {
-                c.setFont(inputFont);
-                ((JComponent) c).setPreferredSize(inputSize);
+    private void estilizarComponentes() {
+    	// Define a fonte da borda do painel
+        if (this.painelFormulario.getBorder() instanceof TitledBorder tb) {
+            tb.setTitleFont(this.panelFont);
+        }
+
+        // Aplica estilo aos componentes dentro do painel de dados
+        for (Component c : this.painelFormulario.getComponents()) {
+            if (c instanceof JLabel label) {
+                label.setFont(this.labelFont);
+            } else if (c instanceof JTextField textField) {
+                textField.setFont(this.inputFont);
+                textField.setPreferredSize(this.inputSize);
+            } else if (c instanceof JComboBox<?> comboBox) {
+                comboBox.setFont(this.inputFont);
+                comboBox.setPreferredSize(this.inputSize);
             }
         }
+        
+        this.btnSalvar.setPreferredSize(buttonSize);
+        this.btnCancelar.setPreferredSize(buttonSize);
     }
     
     private void salvarFuncionario(ActionEvent e) {
