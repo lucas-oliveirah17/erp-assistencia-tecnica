@@ -19,7 +19,7 @@ import java.awt.Insets;
 
 public abstract class TelaCadastroAbstrata extends JFrame {
 	private static final long serialVersionUID = 1L; // Default serialVersion
-	
+		
     protected JPanel painelPrincipal = new JPanel();
     protected JPanel painelFormulario1 = new JPanel();
     protected JPanel painelFormulario2 = new JPanel();
@@ -28,6 +28,7 @@ public abstract class TelaCadastroAbstrata extends JFrame {
     protected JButton btnSalvar = new JButton("Salvar");
     protected JButton btnCancelar = new JButton("Cancelar");
 
+    // Personalização
     protected Font panelFont = new Font("Arial", Font.BOLD, 14);
 
     protected Dimension buttonSize = new Dimension(100, 30);
@@ -48,14 +49,13 @@ public abstract class TelaCadastroAbstrata extends JFrame {
         btnCancelar.addActionListener(e -> dispose());
         this.painelBotoes.add(this.btnCancelar);
         this.painelBotoes.add(this.btnSalvar);
-
-        setContentPane(this.painelPrincipal);
     }
     
     protected void finalizarTela() {
     	
         aplicarEstiloPainel();
         this.painelPrincipal.add(this.painelBotoes);
+        this.add(this.painelPrincipal);
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -67,6 +67,7 @@ public abstract class TelaCadastroAbstrata extends JFrame {
         painel.setBorder(BorderFactory.createTitledBorder(titulo));
         return painel;
     }
+
     
     // Adiciona um painel personalizado ao painel principal
     protected void adicionarPainelFormulario(JPanel painel) {

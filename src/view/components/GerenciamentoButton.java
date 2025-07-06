@@ -1,4 +1,4 @@
-package util;
+package view.components;
 
 import model.Usuario;
 
@@ -9,7 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class PainelBotoesUtil extends JPanel {
+public class GerenciamentoButton extends JPanel {
 	private static final long serialVersionUID = 1L;
 	
 	private JButton btnNovo = new JButton("Novo");
@@ -19,7 +19,22 @@ public class PainelBotoesUtil extends JPanel {
 	private JButton btnDesativar = new JButton("Desativar");
 	private JButton btnExcluir = new JButton("Excluir");
 
-	public PainelBotoesUtil(
+	public GerenciamentoButton(
+			Usuario usuarioLogado,
+			Dimension tamanhoBotao,
+		    ActionListener atualizarAcao,
+		    ActionListener limparAcao,
+		    ActionListener ativarAcao,
+		    ActionListener desativarAcao,
+		    ActionListener excluirAcao
+		    ) {
+		inicializar(
+			usuarioLogado, tamanhoBotao, atualizarAcao, limparAcao, 
+			ativarAcao, desativarAcao, excluirAcao
+	    );
+	}
+	
+	public GerenciamentoButton(
 			Usuario usuarioLogado,
 			Dimension tamanhoBotao,
 			ActionListener novoAcao,
@@ -29,27 +44,44 @@ public class PainelBotoesUtil extends JPanel {
 		    ActionListener desativarAcao,
 		    ActionListener excluirAcao
 		    ) {
+		btnNovo.addActionListener(novoAcao);
+	    btnNovo.setPreferredSize(tamanhoBotao);
+	    this.add(btnNovo);
+		inicializar(
+			usuarioLogado, tamanhoBotao, atualizarAcao, limparAcao, 
+			ativarAcao, desativarAcao, excluirAcao
+		);
+	}
+		
+	private void inicializar(
+			Usuario usuarioLogado,
+			Dimension tamanhoBotao,
+		    ActionListener atualizarAcao,
+		    ActionListener limparAcao,
+		    ActionListener ativarAcao,
+		    ActionListener desativarAcao,
+		    ActionListener excluirAcao) {
 		this.setLayout(new FlowLayout(FlowLayout.RIGHT, 10, 5));
 
-		// Adiciona ActionListener
-	    btnNovo.addActionListener(novoAcao);
+		// ActionListener, estilização e montagem dos botões
+	    
+	    
 	    btnAtualizar.addActionListener(atualizarAcao);
-	    btnLimpar.addActionListener(limparAcao);
-	    btnAtivar.addActionListener(ativarAcao);
-	    btnDesativar.addActionListener(desativarAcao);
-	    btnExcluir.addActionListener(excluirAcao);
-
-	    // Define tamanho fixo dos botões
-	    btnNovo.setPreferredSize(tamanhoBotao);
 	    btnAtualizar.setPreferredSize(tamanhoBotao);
+	    this.add(btnAtualizar);
+	    
+	    btnLimpar.addActionListener(limparAcao);
 	    btnLimpar.setPreferredSize(tamanhoBotao);
+	    
+	    btnAtivar.addActionListener(ativarAcao);
 	    btnAtivar.setPreferredSize(tamanhoBotao);
+	    
+	    btnDesativar.addActionListener(desativarAcao);
 	    btnDesativar.setPreferredSize(tamanhoBotao);
+	    
+	    btnExcluir.addActionListener(excluirAcao);
 	    btnExcluir.setPreferredSize(tamanhoBotao);
 
-	    // Adiciona botões ao painel
-	    this.add(btnNovo);
-	    this.add(btnAtualizar);
 	    this.add(btnLimpar);
 	    if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
 	    	this.add(btnAtivar);

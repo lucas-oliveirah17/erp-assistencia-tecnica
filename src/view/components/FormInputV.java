@@ -14,54 +14,53 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-public class FormInputH extends JPanel {
-	private static final long serialVersionUID = 1L; // Default serialVersion
-	
+public class FormInputV extends JPanel {
+    private static final long serialVersionUID = 1L;
+
     private JLabel label;
     private JComponent campo;
-    
+
     private Font labelFont = new Font("Arial", Font.BOLD, 12);
     private Font inputFont = new Font("Arial", Font.PLAIN, 12);
-    
-    private Dimension inputSize = new Dimension(200, 25);
+    private int inputHeight = 25;
 
-    public FormInputH(String textoLabel, JComponent c) {
+    public FormInputV(String textoLabel, JComponent c) {
         if (c == null) {
-            throw new IllegalArgumentException("Campo não pode ser nulo em FormInputH.");
+            throw new IllegalArgumentException("Campo não pode ser nulo em FormInputV.");
         }
         this.label = new JLabel(textoLabel);
         this.campo = c;
 
-        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setOpaque(false); // permite que o painel fique transparente se o pai quiser
 
-        // Alinhamento vertical centralizado
-        setAlignmentY(Component.CENTER_ALIGNMENT);
-        label.setAlignmentY(Component.CENTER_ALIGNMENT);
-        campo.setAlignmentY(Component.CENTER_ALIGNMENT);
+        // Alinhamento horizontal à esquerda
+        setAlignmentX(Component.LEFT_ALIGNMENT);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        campo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Estilização
         label.setFont(labelFont);
         campo.setFont(inputFont);
-        campo.setPreferredSize(inputSize);
-        campo.setMaximumSize(inputSize);
-        //campo.setMaximumSize(inputSize); // para evitar crescer horizontalmente
+        campo.setPreferredSize(new Dimension(300, inputHeight));
+        //campo.setMaximumSize(new Dimension(Integer.MAX_VALUE, campo.height));
+        //campo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 15));
 
         // Montagem dos componentes
         add(label);
-        add(Box.createHorizontalStrut(5)); // pequeno espaçamento vertical entre label e campo
+        add(Box.createVerticalStrut(2)); // pequeno espaçamento vertical entre label e campo
         add(campo);
     }
 
     // -- MÉTODOS UTILITÁRIOS --
     public JComponent getCampo() {
-        return this.campo;
+        return campo;
     }
 
     public JLabel getLabel() {
-        return this.label;
+        return label;
     }
-    
+
     public String getText() {
         if (campo instanceof JTextField textField) {
             return textField.getText();
@@ -83,7 +82,7 @@ public class FormInputH extends JPanel {
             passwordField.setText(texto);
         }
     }
-    
+
     public Object getSelectedItem() {
         if (campo instanceof JComboBox<?> comboBox) {
             return comboBox.getSelectedItem();
@@ -96,7 +95,8 @@ public class FormInputH extends JPanel {
             comboBox.setSelectedItem(valor);
         }
     }
-    
+
+    @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         campo.setEnabled(enabled);

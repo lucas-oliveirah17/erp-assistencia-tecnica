@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS tb_funcionario (
     email VARCHAR(255) NOT NULL UNIQUE,
     ativo BOOLEAN DEFAULT TRUE
 );
-
+-- DROP TABLE tb_funcionario;
+-- SELECT * FROM tb_funcionario;
 -- ==========================================================================================
 -- TABELA tb_usuario
 -- Armazena os dados do sistema de login da assistência técnica.
@@ -33,53 +34,41 @@ CREATE TABLE IF NOT EXISTS tb_usuario (
     ativo BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (id_funcionario) REFERENCES tb_funcionario(id_funcionario) ON DELETE CASCADE
 );
+-- DROP TABLE tb_usuario;
+-- SELECT * FROM tb_usuario;
 
-DELIMITER $$
+DELIMITER //
 
--- Trigger: Antes de inserir na tabela tb_usuario, verifica se o email informado
--- é igual ao email cadastrado para o funcionário correspondente na tb_funcionario.
-CREATE TRIGGER trg_usu_email_check BEFORE INSERT ON tb_usuario
+CREATE TRIGGER trg_usuario_email_update
+AFTER UPDATE ON tb_usuario
 FOR EACH ROW
 BEGIN
-    DECLARE func_email VARCHAR(255);
-    SELECT email INTO func_email FROM tb_funcionario WHERE id_funcionario = NEW.id_funcionario;
-    
-    IF func_email IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Funcionário não encontrado';
-    ELSEIF func_email <> NEW.email THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email do usuário deve ser igual ao do funcionário';
+    IF OLD.email <> NEW.email AND
+       (SELECT email FROM tb_funcionario WHERE id_funcionario = NEW.id_funcionario) <> NEW.email
+    THEN
+        UPDATE tb_funcionario
+        SET email = NEW.email
+        WHERE id_funcionario = NEW.id_funcionario;
     END IF;
-END$$
+END;
+//
 
--- Trigger: Antes de atualizar a tabela tb_usuario, verifica se o email informado
--- permanece igual ao email do funcionário na tb_funcionario.
-CREATE TRIGGER trg_usu_email_check_update BEFORE UPDATE ON tb_usuario
+CREATE TRIGGER trg_funcionario_email_update
+AFTER UPDATE ON tb_funcionario
 FOR EACH ROW
 BEGIN
-    DECLARE func_email VARCHAR(255);
-    SELECT email INTO func_email FROM tb_funcionario WHERE id_funcionario = NEW.id_funcionario;
-
-    IF func_email IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Funcionário não encontrado';
-    ELSEIF func_email <> NEW.email THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Email do usuário deve ser igual ao do funcionário';
-    END IF;
-END$$
-
--- Trigger: Após atualização do email na tabela tb_funcionario,
--- atualiza automaticamente o email correspondente na tabela tb_usuario.
-CREATE TRIGGER trg_funcionario_email_update AFTER UPDATE ON tb_funcionario
-FOR EACH ROW
-BEGIN
-    -- Só executa se o email realmente mudou
-    IF OLD.email <> NEW.email THEN
+    IF OLD.email <> NEW.email AND
+       (SELECT email FROM tb_usuario WHERE id_funcionario = NEW.id_funcionario) <> NEW.email
+    THEN
         UPDATE tb_usuario
         SET email = NEW.email
         WHERE id_funcionario = NEW.id_funcionario;
     END IF;
-END$$
+END;
+//
 
 DELIMITER ;
+
 -- ==========================================================================================
 -- TABELA tb_cliente
 -- Armazena os dados dos clientes da assistência técnica.
@@ -197,7 +186,7 @@ CREATE TABLE IF NOT EXISTS tb_ordem_servico (
 -- ==========================================================================================
 INSERT INTO tb_funcionario (nome, cpf, funcao, telefone, email) VALUES
 ('Dummy Admin', '000.000.000-00', 'diretor', '(00)00000-0000', 'admin@apo.com'),
-('Dummy User', '000.000.000-01', 'diretor', '(00)00000-0000', 'user@apo.com'),
+('Dummy User', '000.000.000-01', 'diretor', '(00)00000-0001', 'user@apo.com'),
 
 ('Cleber Oliveira', '567.567.567-56', 'diretor', '(51)95678-9012', 'cleber@apo.com'),
 ('Lucas Oliveira', '901.901.901-90', 'gerente', '(48)99012-3456', 'lucas@apo.com'),
@@ -310,5 +299,3 @@ INSERT INTO tb_ordem_servico (id_cliente, id_aparelho, tecnico_responsavel, aten
 
 -- SELECT user, host FROM mysql.user;
 -- SELECT VERSION();
-
-

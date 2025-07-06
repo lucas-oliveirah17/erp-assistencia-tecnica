@@ -13,7 +13,6 @@ import view.components.FormInputH;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
@@ -62,21 +61,21 @@ public class TelaCadastroFuncionario extends TelaCadastroAbstrata {
 
     @Override
     protected void construirFormulario() {
-    	JPanel painelDados = criarPainelFormulario("Dados do Funcionário");
-    	adicionarEntrada(painelDados, tfNome);
-        adicionarEntrada(painelDados, tfCpf);
-        adicionarEntrada(painelDados, cbFuncao);
-        adicionarEntrada(painelDados, tfTelefone);
-        adicionarEntrada(painelDados, tfEmail);
+    	this.painelFormulario1 = criarPainelFormulario("Dados do Funcionário");
+    	adicionarEntrada(this.painelFormulario1, tfNome);
+        adicionarEntrada(this.painelFormulario1, tfCpf);
+        adicionarEntrada(this.painelFormulario1, cbFuncao);
+        adicionarEntrada(this.painelFormulario1, tfTelefone);
+        adicionarEntrada(this.painelFormulario1, tfEmail);
         
-        adicionarPainelFormulario(painelDados);
+        adicionarPainelFormulario(this.painelFormulario1);
         
-        JPanel painelConta = criarPainelFormulario("Dados do Funcionário");
-        adicionarEntrada(painelConta, tfUsuario);
-        adicionarEntrada(painelConta, pfSenha);
-        adicionarEntrada(painelConta, cbPrivilegios);
+        this.painelFormulario2 = criarPainelFormulario("Dados do Funcionário");
+        adicionarEntrada(this.painelFormulario2, tfUsuario);
+        adicionarEntrada(this.painelFormulario2, pfSenha);
+        adicionarEntrada(this.painelFormulario2, cbPrivilegios);
         
-        adicionarPainelFormulario(painelConta);
+        adicionarPainelFormulario(this.painelFormulario2);
     	
     	btnSalvar.addActionListener(e -> aoSalvar());
     }

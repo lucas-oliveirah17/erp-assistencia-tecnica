@@ -11,7 +11,6 @@ import view.components.FormInputH;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class TelaCadastroCliente extends TelaCadastroAbstrata {
@@ -54,6 +53,7 @@ public class TelaCadastroCliente extends TelaCadastroAbstrata {
         this.cbTipo = new FormInputH("Tipo de Cliente:", new JComboBox<>(TipoCliente.values()));
         this.tfTelefone = new FormInputH("Telefone:", new JTextField());
         this.tfEmail = new FormInputH("Email:", new JTextField());
+        
         this.tfEndereco = new FormInputH("Endereço:", new JTextField());
         this.tfNumero = new FormInputH("Número:", new JTextField());
         this.tfComplemento = new FormInputH("Complemento:", new JTextField());
@@ -65,25 +65,25 @@ public class TelaCadastroCliente extends TelaCadastroAbstrata {
     
     @Override
     protected void construirFormulario() {
-    	JPanel painelDados = criarPainelFormulario("Dados do Cliente");
-    	adicionarEntrada(painelDados, tfNome);
-        adicionarEntrada(painelDados, tfCpfCnpj);
-        adicionarEntrada(painelDados, cbTipo);
-        adicionarEntrada(painelDados, tfTelefone);
-        adicionarEntrada(painelDados, tfEmail);
+    	this.painelFormulario1 = criarPainelFormulario("Dados do Cliente");
+    	adicionarEntrada(this.painelFormulario1, tfNome);
+        adicionarEntrada(this.painelFormulario1, tfCpfCnpj);
+        adicionarEntrada(this.painelFormulario1, cbTipo);
+        adicionarEntrada(this.painelFormulario1, tfTelefone);
+        adicionarEntrada(this.painelFormulario1, tfEmail);
         
-        adicionarPainelFormulario(painelDados);
+        adicionarPainelFormulario(this.painelFormulario1);
         
-        JPanel painelEndereco = criarPainelFormulario("Endereço Residencial");
-        adicionarEntrada(painelEndereco, tfEndereco);
-        adicionarEntrada(painelEndereco, tfNumero);
-        adicionarEntrada(painelEndereco, tfComplemento);
-        adicionarEntrada(painelEndereco, tfBairro);
-        adicionarEntrada(painelEndereco, tfCidade);
-        adicionarEntrada(painelEndereco, cbUf);
-        adicionarEntrada(painelEndereco, tfCep);
+        this.painelFormulario2 = criarPainelFormulario("Endereço Residencial");
+        adicionarEntrada(this.painelFormulario2, tfEndereco);
+        adicionarEntrada(this.painelFormulario2, tfNumero);
+        adicionarEntrada(this.painelFormulario2, tfComplemento);
+        adicionarEntrada(this.painelFormulario2, tfBairro);
+        adicionarEntrada(this.painelFormulario2, tfCidade);
+        adicionarEntrada(this.painelFormulario2, cbUf);
+        adicionarEntrada(this.painelFormulario2, tfCep);
         
-        adicionarPainelFormulario(painelEndereco);
+        adicionarPainelFormulario(this.painelFormulario2);
     	
     	btnSalvar.addActionListener(e -> aoSalvar());
     }

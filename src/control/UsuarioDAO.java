@@ -51,8 +51,8 @@ public class UsuarioDAO {
             String.valueOf(usuario.getId()),
             String.valueOf(usuario.getIdFuncionario()),
             usuario.getUsuario(),
-            usuario.getEmail(),
             usuario.getSenha(),
+            usuario.getEmail(),
             usuario.getPrivilegios().name(),
             usuario.isAtivo() ? "1" : "0"
         };

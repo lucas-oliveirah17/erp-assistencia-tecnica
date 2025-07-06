@@ -86,7 +86,7 @@ public class TelaLogin extends JFrame {
     
     private void criarPainelEntradasLogin() {
     	this.painelEntradasLogin.setLayout(new GridBagLayout());
-    	this.painelEntradasLogin.setBorder(BorderFactory.createTitledBorder("Login"));
+    	this.painelEntradasLogin.setBorder(BorderFactory.createTitledBorder(tituloJanela));
         
         this.lbSenha.setFont(this.labelFont);
         this.pfSenha.setFont(this.inputFont);
@@ -101,7 +101,7 @@ public class TelaLogin extends JFrame {
         
         // Montando entradas no painel  
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(10, 5, 10, 5);
         gbc.weightx = 1.0;
         
         int linha = 0;

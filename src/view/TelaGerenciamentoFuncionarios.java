@@ -1,118 +1,57 @@
 package view;
 
-import util.EntradaFormsComboBox;
-import util.EntradaFormsTextField;
-import util.PainelBotoesUtil;
-import util.PainelFormularioUtil;
-import util.TabelaUtils;
 
 import model.Funcionario;
 import model.Usuario;
-
 import model.enums.FuncaoFuncionario;
+
+import view.base.TelaGerenciamentoAbstrata;
+import view.components.FormInputV;
+import view.components.GerenciamentoButton;
+import view.components.GerenciamentoForm;
 
 import control.FuncionarioDAO;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JTextField;
 
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 import java.util.List;
 
-public class TelaGerenciamentoFuncionarios extends JPanel {
+public class TelaGerenciamentoFuncionarios extends TelaGerenciamentoAbstrata {
 	private static final long serialVersionUID = 1L; // Default serialVersion
+        
+	// Campos do formulário
+    private FormInputV tfId 	  = new FormInputV("ID:", new JTextField());
+    private FormInputV tfNome 	  = new FormInputV("Nome:", new JTextField());
+    private FormInputV tfCpf 	  = new FormInputV("CPF:", new JTextField());
+    private FormInputV cbFuncao   = new FormInputV("Função:", new JComboBox<>(FuncaoFuncionario.values()));
+    private FormInputV tfTelefone = new FormInputV("Telefone:", new JTextField());
+    private FormInputV tfEmail    = new FormInputV("Email:", new JTextField());
     
-    private Usuario usuarioLogado;
-    
-    // Componentes da tabela de funcionário
-    private JTable tabelaFuncionarios;
-    private DefaultTableModel tableModel;
-    
-    // Campos do formulário
-    private EntradaFormsTextField tfId = new EntradaFormsTextField("ID:");
-    private EntradaFormsTextField tfNome = new EntradaFormsTextField("Nome:");
-    private EntradaFormsTextField tfCpf = new EntradaFormsTextField("CPF:");
-    private EntradaFormsComboBox<FuncaoFuncionario> cbFuncao = new EntradaFormsComboBox<>("Função:", FuncaoFuncionario.values());
-    private EntradaFormsTextField tfTelefone = new EntradaFormsTextField("Telefone:");
-    private EntradaFormsTextField tfEmail = new EntradaFormsTextField("Email:");
-    
-    // Checkbox de filtro de exibição
-    private JCheckBox ckbMostrarInativos = new JCheckBox("Mostrar Inativos");
-	
 	public TelaGerenciamentoFuncionarios(Usuario usuarioInstancia) {
-		this.usuarioLogado = usuarioInstancia;
+		super(usuarioInstancia);
 		
-		// Define o layout do painel principal como um BoxLayout na direção vertical (Y_AXIS),
-    	// ou seja, os componentes serão empilhados verticalmente (um abaixo do outro).
-    	this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		// Cabeçalhos da tabela
+        String[] colunas = {
+    		"ID", "Nome", "CPF", "Função", "Telefone", "Email"
+        };
         
-    	// Painel filtro (Admin)
-    	JPanel painelFiltro = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        ckbMostrarInativos.addActionListener(e -> carregarDadosTabela());
-        painelFiltro.add(ckbMostrarInativos);
+        criarPainelTabela(colunas);
+        carregarDadosTabela();
         
-        // --- Painel da Tabela (Lista de Funcionários) ---
-        JPanel painelTabela = new JPanel();
-        
-        painelTabela = criarPainelTabela();
-        
-        // --- Painel do Formulário ---
-        JPanel painelFormulario = new JPanel(new GridBagLayout());
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridy = 0;
-
-        // Painel de Dados Gerais (coluna esquerda)
-        gbc.gridx = 0; // Define que o componente será colocado na coluna 0 do GridBagLayout
-        gbc.weightx = 0.5; // Define o "peso" horizontal. 0.5 para ocupar metade do painel
-        gbc.weighty = 0; // 0 para não crescer verticalmente
-        gbc.insets = new Insets(0, 0, 0, 5); // Define margens internas. 5 para espaço a direita.
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START; // Alinha topo esquerdo
-
-        // Cria formulário
-        painelFormulario.add(PainelFormularioUtil.criarPainelFormulario(
-    		"Dados", tfNome, tfCpf, cbFuncao, tfTelefone, tfEmail), gbc
+        formularioEsquerdo = new GerenciamentoForm(
+        		"Dados", tfNome, tfCpf, cbFuncao, tfTelefone, tfEmail
         );
         
-        // Painel de Endereço (coluna direita)
-        gbc.gridx = 1;
-        gbc.weightx = 0.5;
-        gbc.weighty = 0;
-        gbc.insets = new Insets(5, 0, 0, 0); // Define margens internas. 5 para esquerda a direita.
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+        formularioDireito = new GerenciamentoForm();
         
-        // Cria painel vazio
-        painelFormulario.add(PainelFormularioUtil.criarPainelVazio(), gbc);
-
-        // Evento para preencher o formulário ao clicar na tabela
-        tabelaFuncionarios.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                int linhaSelecionada = tabelaFuncionarios.getSelectedRow();
-                if (linhaSelecionada != -1) {
-                    preencherFormulario(linhaSelecionada);
-                }
-            }
-        });
+        criarPainelFormulario();
         
-        // --- Painel dos Botões ---
-        PainelBotoesUtil painelBotoes = new PainelBotoesUtil(
+     // --- Painel dos Botões ---
+        painelBotoes = new GerenciamentoButton(
     		usuarioLogado,
     		new Dimension(90, 30),
     	    e -> new TelaCadastroFuncionario(this),
@@ -122,59 +61,12 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
     	    e -> desativarFuncionario(),
     	    e -> excluirFuncionario()	
         );
-           
-        // --- Montagem Final ---
-        if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
-        	add(painelFiltro);
-            add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
-        }
-        add(painelTabela);
-        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
-        add(painelFormulario);
-        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertical
-        add(painelBotoes);	
+        
+        finalizarTela();
 	}
 	
-	private JPanel criarPainelTabela() {
-    	JPanel painelTabela = new JPanel();
-        painelTabela.setLayout(new BoxLayout(painelTabela, BoxLayout.Y_AXIS));
-        painelTabela.setBorder(BorderFactory.createCompoundBorder(
-        	    BorderFactory.createTitledBorder("Lista de Funcionários"),
-        	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
-            ));
-        painelTabela.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
-        painelTabela.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200)); // Fixar altura da tabela
-        
-        // Cabeçalhos da tabela
-        String[] colunas = {
-    		"ID", "Nome", "CPF", "Função", "Telefone", "Email"
-        };
-        
-        // Modelo da tabela com células não editáveis
-        tableModel = new DefaultTableModel(colunas, 0) {
-			private static final long serialVersionUID = 1L;
-
-			@Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tabelaFuncionarios = new JTable(tableModel);
-        
-        // Preenche a tabela com dados do banco
-        carregarDadosTabela();
-        
-        // Monta tabela ao painel
-        JScrollPane scrollPane = new JScrollPane(tabelaFuncionarios);
-        int larguraPainel = this.getWidth();
-        scrollPane.setPreferredSize(new Dimension(larguraPainel, 200)); // Altura da tabela
-        painelTabela.add(scrollPane);
-    	
-        return painelTabela;
-    }
-	
-	public void carregarDadosTabela() {
-        tableModel.setRowCount(0); // Limpa a tabela
+	protected void carregarDadosTabela() {
+        tabela.limparTabela();
         
         FuncionarioDAO dao = new FuncionarioDAO();
         
@@ -183,7 +75,7 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
             : dao.listarApenasAtivos();
 
         for (Funcionario f : funcionario) {
-            tableModel.addRow(new Object[]{
+            tabela.adicionarLinha(new Object[]{
                 f.getId(),
                 f.getNome(),
                 f.getCpf(),
@@ -193,62 +85,60 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
             });
         }
         
-        // Ajustar largura das colunas ID
-        TabelaUtils.larguraColunas(tabelaFuncionarios, 0);
-        
-        // Centralizar as colunas ID, CPF, Função e Telefone
-        TabelaUtils.centralizarTextoColunas(tabelaFuncionarios, 0, 2, 3, 4);
+        // Centralizar as colunas ID, Número e UF
+        tabela.centralizarColuna(0, 2, 3, 4);
     }
 	
-	private void preencherFormulario(int linha) {
+	protected void preencherFormulario(int linha) {
         try {
 	    	// Pega os dados da linha selecionada
-	        int id = (int) tableModel.getValueAt(linha, 0);
-	        String nome = (String) tableModel.getValueAt(linha, 1);
-	        String cpf = (String) tableModel.getValueAt(linha, 2);
-	        FuncaoFuncionario tipo = FuncaoFuncionario.fromString(tableModel.getValueAt(linha, 3).toString());
-	        String telefone = (String) tableModel.getValueAt(linha, 4);
-	        String email = (String) tableModel.getValueAt(linha, 5);
+	        int id = (int) tabela.getValorEm(linha, 0);
+	        String nome = (String) tabela.getValorEm(linha, 1);
+	        String cpf = (String) tabela.getValorEm(linha, 2);
+	        FuncaoFuncionario tipo = FuncaoFuncionario.fromString(tabela.getValorEm(linha, 3).toString());
+	        String telefone = (String) tabela.getValorEm(linha, 4);
+	        String email = (String) tabela.getValorEm(linha, 5);
 	        
 	        // Preenche os campos do formulário
-	        tfId.setValor(id);
-	        tfNome.setValor(nome);
-	        tfCpf.setValor(cpf);
-	        cbFuncao.setValor(tipo);
-	        tfTelefone.setValor(telefone);
-	        tfEmail.setValor(email);
+	        tfId.setText(String.valueOf(id));
+	        tfNome.setText(nome);
+	        tfCpf.setText(cpf);
+	        cbFuncao.setSelectedItem(tipo);
+	        tfTelefone.setText(telefone);
+	        tfEmail.setText(email);
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Erro ao preencher formulário: " + ex.getMessage());
+            JOptionPane.showMessageDialog(this, 
+        		"Erro ao preencher formulário: " + ex.getMessage());
         }
     }
 	
-	private void limparFormulario() {
-    	tfId.setValor("");
-        tfNome.setValor("");
-        tfCpf.setValor("");
-        cbFuncao.setValor(null);
-        tfTelefone.setValor("");
-        tfEmail.setValor("");
+	protected void limparFormulario() {
+    	tfId.setText("");
+        tfNome.setText("");
+        tfCpf.setText("");
+        cbFuncao.setText(null);
+        tfTelefone.setText("");
+        tfEmail.setText("");
         
-        tabelaFuncionarios.clearSelection();
+        tabela.clearSelection();
     }
 	
 	private void atualizarFuncionario() {
         try {
-            if (tfId.getValor().isEmpty()) {
+            if (tfId.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(this, 
                 	"Selecione um funcionário na tabela para atualizar.", 
                 	"Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            int id = Integer.parseInt(tfId.getValor());
-            String nome = tfNome.getValor().trim();
-            String cpf = tfCpf.getValor().trim();
-            FuncaoFuncionario funcao = (FuncaoFuncionario) cbFuncao.getValor();
-            String telefone = tfTelefone.getValor().trim();
-            String email = tfEmail.getValor().trim();
+            int id = Integer.parseInt(tfId.getText());
+            String nome = tfNome.getText().trim();
+            String cpf = tfCpf.getText().trim();
+            FuncaoFuncionario funcao = (FuncaoFuncionario) cbFuncao.getSelectedItem();
+            String telefone = tfTelefone.getText().trim();
+            String email = tfEmail.getText().trim();
             
             // Validações
             if (nome.isEmpty()) {
@@ -291,7 +181,7 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
     }
 	
 	private void ativarFuncionario() {
-        if (tfId.getValor().isEmpty()) {
+        if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
         		"Selecione um funcionário na tabela para ativar.", 
         		"Aviso", JOptionPane.WARNING_MESSAGE);
@@ -305,7 +195,7 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-            	int id = Integer.parseInt(tfId.getValor());
+            	int id = Integer.parseInt(tfId.getText());
                 
             	Funcionario funcionario = new Funcionario();
             	funcionario.setId(id);
@@ -337,7 +227,7 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
     }
 	
 	private void desativarFuncionario() {
-        if (tfId.getValor().isEmpty()) {
+        if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
         		"Selecione um funcionário na tabela para desativar.", 
         		"Aviso", 
@@ -352,7 +242,7 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-            	int id = Integer.parseInt(tfId.getValor());
+            	int id = Integer.parseInt(tfId.getText());
                 
                 Funcionario funcionario = new Funcionario();
                 funcionario.setId(id);
@@ -384,7 +274,7 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
     }
 	
 	private void excluirFuncionario() {
-        if (tfId.getValor().isEmpty()) {
+        if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
         		"Selecione um funcionário na tabela para excluir.", 
         		"Aviso", JOptionPane.WARNING_MESSAGE);
@@ -399,12 +289,12 @@ public class TelaGerenciamentoFuncionarios extends JPanel {
         
         if (confirmacao == JOptionPane.YES_OPTION) {
             try {
-            	int id = Integer.parseInt(tfId.getValor());
-                String nome = tfNome.getValor().trim();
-                String cpf = tfCpf.getValor().trim();
-                FuncaoFuncionario funcao = (FuncaoFuncionario) cbFuncao.getValor();
-                String telefone = tfTelefone.getValor().trim();
-                String email = tfEmail.getValor().trim();
+            	int id = Integer.parseInt(tfId.getText());
+                String nome = tfNome.getText().trim();
+                String cpf = tfCpf.getText().trim();
+                FuncaoFuncionario funcao = (FuncaoFuncionario) cbFuncao.getSelectedItem();
+                String telefone = tfTelefone.getText().trim();
+                String email = tfEmail.getText().trim();
                 
                 Funcionario funcionario = new Funcionario();
                 funcionario.setId(id);
