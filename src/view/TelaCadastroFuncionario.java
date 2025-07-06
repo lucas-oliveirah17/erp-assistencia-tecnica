@@ -11,6 +11,7 @@ import view.components.FormInputH;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class TelaCadastroFuncionario extends TelaCadastroAbstrata {
@@ -18,6 +19,8 @@ public class TelaCadastroFuncionario extends TelaCadastroAbstrata {
     
     private TelaGerenciamentoFuncionarios painelGerenciamento;
     
+    private static final String TITULO_JANELA = "Cadastro de Funcionário";
+        
     // -- COMPONENTES DE ENTRADA --
     private FormInputH tfNome;
     private FormInputH tfCpf;
@@ -27,14 +30,16 @@ public class TelaCadastroFuncionario extends TelaCadastroAbstrata {
    
     
     public TelaCadastroFuncionario() {
-    	this(null);
+    	this((TelaGerenciamentoFuncionarios) null);
     }
     
     public TelaCadastroFuncionario(TelaGerenciamentoFuncionarios painelGerenciamento) {	
-    	super("Cadastro de Funcionario");
+    	super(TITULO_JANELA);
     	
         this.painelGerenciamento = painelGerenciamento;
         inicializarCampos();
+        construirFormulario();
+        finalizarTela();
     }
     
     private void inicializarCampos() {
@@ -47,12 +52,14 @@ public class TelaCadastroFuncionario extends TelaCadastroAbstrata {
 
     @Override
     protected void construirFormulario() {
-    	inicializarCampos();
-    	adicionarEntrada(tfNome);
-        adicionarEntrada(tfCpf);
-        adicionarEntrada(cbFuncao);
-        adicionarEntrada(tfTelefone);
-        adicionarEntrada(tfEmail);
+    	JPanel painelDados = criarPainelFormulario("Dados do Funcionário");
+    	adicionarEntrada(painelDados, tfNome);
+        adicionarEntrada(painelDados, tfCpf);
+        adicionarEntrada(painelDados, cbFuncao);
+        adicionarEntrada(painelDados, tfTelefone);
+        adicionarEntrada(painelDados, tfEmail);
+        
+        adicionarPainelFormulario(painelDados);
     	
     	btnSalvar.addActionListener(e -> aoSalvar());
     }

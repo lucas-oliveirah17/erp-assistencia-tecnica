@@ -21,7 +21,8 @@ public abstract class TelaCadastroAbstrata extends JFrame {
 	private static final long serialVersionUID = 1L; // Default serialVersion
 	
     protected JPanel painelPrincipal = new JPanel();
-    protected JPanel painelFormulario = new JPanel();
+    protected JPanel painelFormulario1 = new JPanel();
+    protected JPanel painelFormulario2 = new JPanel();
     protected JPanel painelBotoes = new JPanel();
 
     protected JButton btnSalvar = new JButton("Salvar");
@@ -31,8 +32,6 @@ public abstract class TelaCadastroAbstrata extends JFrame {
 
     protected Dimension buttonSize = new Dimension(100, 30);
     
-    private int linhaAtual = 0;
-
     public TelaCadastroAbstrata(String tituloJanela) {
     	// -- CONFIGURAÇÕES DA JANELA --
         setTitle(tituloJanela);
@@ -43,9 +42,6 @@ public abstract class TelaCadastroAbstrata extends JFrame {
         this.painelPrincipal.setLayout(new BoxLayout(this.painelPrincipal, BoxLayout.Y_AXIS));
         this.painelPrincipal.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        this.painelFormulario.setLayout(new GridBagLayout());
-        this.painelFormulario.setBorder(BorderFactory.createTitledBorder("Dados"));
-
         this.painelBotoes.setLayout(new FlowLayout(FlowLayout.RIGHT));
         
         // -- AÇÕES E MONTAGEM DOS BOTÕES --
@@ -53,40 +49,54 @@ public abstract class TelaCadastroAbstrata extends JFrame {
         this.painelBotoes.add(this.btnCancelar);
         this.painelBotoes.add(this.btnSalvar);
 
-        // -- MONTAGEM FINAL --
-        this.painelPrincipal.add(this.painelFormulario);
-        this.painelPrincipal.add(Box.createVerticalStrut(10));
-        this.painelPrincipal.add(this.painelBotoes);
-
-        setContentPane(painelPrincipal);
-        
-        construirFormulario(); // chamada obrigatória da subclasse
+        setContentPane(this.painelPrincipal);
+    }
+    
+    protected void finalizarTela() {
+    	
         aplicarEstiloPainel();
-        
-        pack(); // Ajusta o tamanho da janela ao conteúdo
-        setLocationRelativeTo(null); // Aparece centralizado na tela
+        this.painelPrincipal.add(this.painelBotoes);
+        pack();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
+    
+    // Cria um painel de formulário
+    protected JPanel criarPainelFormulario(String titulo) {
+        JPanel painel = new JPanel(new GridBagLayout());
+        painel.setBorder(BorderFactory.createTitledBorder(titulo));
+        return painel;
+    }
+    
+    // Adiciona um painel personalizado ao painel principal
+    protected void adicionarPainelFormulario(JPanel painel) {
+    	this.painelPrincipal.add(painel);
+    	this.painelPrincipal.add(Box.createVerticalStrut(10)); // espaçamento entre painéis
+    }
 
-    // Método utilitário para adicionar componentes ao painel de formulário
-    protected void adicionarEntrada(FormInputH input) {
+    // Adicionar componentes ao painel de formulário  
+    protected void adicionarEntrada(JPanel painel, FormInputH input) {
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = linhaAtual++;
+        gbc.gridx = 0;
+        gbc.gridy = painel.getComponentCount(); // posição baseada em quantidade
         gbc.gridwidth = 2;
         gbc.insets = new Insets(10, 5, 10, 5);
         gbc.anchor = GridBagConstraints.LINE_END;
-        this.painelFormulario.add(input, gbc);
+        painel.add(input, gbc);
     }
 
     protected void aplicarEstiloPainel() {
-        if (painelFormulario.getBorder() instanceof TitledBorder tb) {
-            tb.setTitleFont(panelFont);
+        if (this.painelFormulario1.getBorder() instanceof TitledBorder tb) {
+            tb.setTitleFont(this.panelFont);
+        }
+        if (this.painelFormulario2.getBorder() instanceof TitledBorder tb) {
+            tb.setTitleFont(this.panelFont);
         }
 
-        btnSalvar.setPreferredSize(buttonSize);
-        btnCancelar.setPreferredSize(buttonSize);
+        this.btnSalvar.setPreferredSize(this.buttonSize);
+        this.btnCancelar.setPreferredSize(this.buttonSize);
     }
-
+  
     // Subclasse deve definir o layout e ação de salvar
     protected abstract void construirFormulario();
     protected abstract void aoSalvar();
