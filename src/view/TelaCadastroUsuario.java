@@ -140,16 +140,16 @@ public class TelaCadastroUsuario extends JFrame {
             usuario.setPrivilegios((Privilegios) cbPrivilegios.getSelectedItem());
 
             UsuarioDAO dao = new UsuarioDAO();
-            boolean sucesso = dao.salvar(usuario);
+            int idGerado = dao.salvar(usuario);
 
-            if (sucesso) {
-                JOptionPane.showMessageDialog(this, "Usuário salvo com sucesso!");
+            if (idGerado > 0) {
+                JOptionPane.showMessageDialog(this, "Usuário cadastrado com sucesso!");
                 if (painelGerenciamento != null) {
                     painelGerenciamento.carregarDadosTabela();
                 }
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Erro ao salvar usuário.");
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar usuário.");
             }
 
         } catch (Exception ex) {

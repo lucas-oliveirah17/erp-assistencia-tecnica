@@ -78,7 +78,30 @@ public class DBQuery {
 		
 		return 0;
 	}
-
+	
+	public int execute(String sql, boolean retornarId) {
+		if (!retornarId) {
+	        return execute(sql); // Chama o método original se o boolean for false
+	    }
+		
+	    try {
+	        
+	        int rs = statement.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+	        if (rs > 0) {
+	            ResultSet lastId = statement.getGeneratedKeys();
+	            if (lastId.next()) {
+	                return lastId.getInt(1); // Retorna o ID gerado
+	            } else {
+	            	System.out.println("Aviso: Nenhuma chave gerada foi retornada.");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("\nErro ao executar comando SQL: " + e.getMessage());
+	    }
+	    
+	    return 0;
+	}
+	
 	public ResultSet select(String where) {
 		String sql = "SELECT "+  this.joinElements(this.fieldsName, ", ") + " FROM " + this.tableName;
 		sql += (( where!="") ? " WHERE "+ where : "" );
@@ -111,7 +134,7 @@ public class DBQuery {
 	        String sql = "INSERT INTO " + this.tableName + " ( " + this.joinElements(campos, ", ");
 	        sql += ") VALUES ('" + joinElements(values, "','") + "')";
 	        System.out.print(sql);
-	        return this.execute(sql);
+	        return this.execute(sql, true);
 	    } else {
 	        System.out.print("O número de valores informados não é equivalente aos campos da tabela!");
 	    }

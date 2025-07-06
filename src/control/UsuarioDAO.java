@@ -27,7 +27,9 @@ public class UsuarioDAO {
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
 
-    public boolean salvar(Usuario usuario) {
+    public int salvar(Usuario usuario) {
+    	int idGerado;
+    	
         String[] valores = {
     		String.valueOf(usuario.getIdFuncionario()),
             usuario.getUsuario(),            
@@ -36,7 +38,12 @@ public class UsuarioDAO {
             usuario.getPrivilegios().getValorDb()
         };
 
-        return dbQuery.insert(valores, editableFieldsName) > 0;
+        idGerado = dbQuery.insert(valores, editableFieldsName);
+        if(idGerado == 0) {
+        	System.out.println("Aviso: ID retornou 0");
+        }
+        
+        return idGerado;
     }
     
     public boolean atualizar(Usuario usuario) {

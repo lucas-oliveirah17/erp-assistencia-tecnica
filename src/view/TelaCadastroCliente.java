@@ -107,16 +107,16 @@ public class TelaCadastroCliente extends TelaCadastroAbstrata {
             cliente.setAtivo(true);
 
             ClienteDAO dao = new ClienteDAO();
-            boolean sucesso = dao.salvar(cliente);
+            int idGerado = dao.salvar(cliente);
 
-            if (sucesso) {
-                JOptionPane.showMessageDialog(this, "Cliente salvo com sucesso!");
+            if (idGerado > 0) {
+                JOptionPane.showMessageDialog(this, "Cliente cadastrado com sucesso!");
                 if (painelGerenciamento != null) {
                     painelGerenciamento.carregarDadosTabela();
                 }
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(this, "Erro ao salvar cliente.");
+                JOptionPane.showMessageDialog(this, "Erro ao cadastrar cliente.");
             }
 
         } catch (Exception ex) {

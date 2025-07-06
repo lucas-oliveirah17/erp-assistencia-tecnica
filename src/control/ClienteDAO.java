@@ -9,7 +9,6 @@ import java.util.List;
 import database.DBQuery;
 
 import model.Cliente;
-
 import model.enums.TipoCliente;
 import model.enums.Uf;
 
@@ -31,7 +30,9 @@ public class ClienteDAO {
         dbQuery = new DBQuery(tableName, fieldNames, fieldKey);
     }
 	
-	public boolean salvar(Cliente cliente) {
+	public int salvar(Cliente cliente) {
+		int idGerado;
+		
         String[] valores = {
 	        cliente.getNome(),
 	        cliente.getCpfCnpj(),
@@ -47,9 +48,14 @@ public class ClienteDAO {
 	        cliente.getCep()
         };
         
-        return dbQuery.insert(valores, editableFieldsName) > 0;
+        idGerado = dbQuery.insert(valores, editableFieldsName);
+        if(idGerado == 0) {
+        	System.out.println("Aviso: ID retornou 0");
+        }
+        
+        return idGerado;
     }
-	
+		
 	public List<Cliente> listarTodos(){
 		List<Cliente> clientes = new ArrayList<>();
 		
