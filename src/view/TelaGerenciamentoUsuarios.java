@@ -252,50 +252,63 @@ public class TelaGerenciamentoUsuarios extends TelaGerenciamentoAbstrata {
         }
     }
 	
-	private void desativarUsuario() {
+    private void desativarUsuario() {
         if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
-        		"Selecione um usuário na tabela para desativar.", 
-        		"Aviso", 
-        		JOptionPane.WARNING_MESSAGE);
+                "Selecione um usuário na tabela para desativar.", 
+                "Aviso", 
+                JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        int confirmacao = JOptionPane.showConfirmDialog(this, 
-    		"Tem certeza que deseja desativar este usuário?", 
-    		"Confirmação de desativação", 
-    		JOptionPane.YES_NO_OPTION);
-        
-        if (confirmacao == JOptionPane.YES_OPTION) {
-            try {
-            	int id = Integer.parseInt(tfId.getText());
-                
-            	Usuario usuario = new Usuario();
-            	usuario.setId(id);
-                
-                UsuarioDAO dao = new UsuarioDAO();
+
+        try {
+            int id = Integer.parseInt(tfId.getText());
+            
+            UsuarioDAO dao = new UsuarioDAO();
+            Usuario usuario = dao.buscar(id);
+            
+            if (usuario == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Usuário não encontrado.", 
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            if (usuario.isAtivo() == false) {
+                JOptionPane.showMessageDialog(this, 
+                    "Usuário já está inativo.", 
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            int confirmacao = JOptionPane.showConfirmDialog(this, 
+                "Tem certeza que deseja desativar este usuário?", 
+                "Confirmação de desativação", 
+                JOptionPane.YES_NO_OPTION);
+            
+            if (confirmacao == JOptionPane.YES_OPTION) {
                 boolean sucesso = dao.desativar(usuario);
                 
                 if (sucesso) {
                     JOptionPane.showMessageDialog(this, 
-                		"Usuário desativado com sucesso!");
+                        "Usuário desativado com sucesso!");
                     carregarDadosTabela();
                     limparFormulario();
                 } else {
                     JOptionPane.showMessageDialog(this, 
-                		"Erro ao desativar usuário.", 
-                		"Erro", JOptionPane.ERROR_MESSAGE);
+                        "Erro ao desativar usuário.", 
+                        "Erro", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, 
-            		"ID inválido.", 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, 
-            		"Erro inesperado: " + e.getMessage(), 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "ID inválido.", 
+                "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Erro inesperado: " + e.getMessage(), 
+                "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
     

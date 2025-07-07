@@ -304,47 +304,60 @@ public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
     private void desativarCliente() {
         if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
-        		"Selecione um cliente na tabela para desativar.", 
-        		"Aviso", 
-        		JOptionPane.WARNING_MESSAGE);
+                "Selecione um cliente na tabela para desativar.", 
+                "Aviso", 
+                JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        int confirmacao = JOptionPane.showConfirmDialog(this, 
-    		"Tem certeza que deseja desativar este cliente?", 
-    		"Confirmação de desativação", 
-    		JOptionPane.YES_NO_OPTION);
-        
-        if (confirmacao == JOptionPane.YES_OPTION) {
-            try {
-            	int id = Integer.parseInt(tfId.getText());
-                
-                Cliente cliente = new Cliente();
-                cliente.setId(id);
-                
-                ClienteDAO dao = new ClienteDAO();
+
+        try {
+            int id = Integer.parseInt(tfId.getText());
+            
+            ClienteDAO dao = new ClienteDAO();
+            Cliente cliente = dao.buscar(id);
+            
+            if (cliente == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Cliente não encontrado.", 
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            if (cliente.isAtivo() == false) {
+                JOptionPane.showMessageDialog(this, 
+                    "Cliente já está inativo.", 
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            int confirmacao = JOptionPane.showConfirmDialog(this, 
+                "Tem certeza que deseja desativar este cliente?", 
+                "Confirmação de desativação", 
+                JOptionPane.YES_NO_OPTION);
+            
+            if (confirmacao == JOptionPane.YES_OPTION) {
                 boolean sucesso = dao.desativar(cliente);
                 
                 if (sucesso) {
                     JOptionPane.showMessageDialog(this, 
-            			"Cliente desativado com sucesso!");
+                        "Cliente desativado com sucesso!");
                     carregarDadosTabela();
                     limparFormulario();
                 } else {
                     JOptionPane.showMessageDialog(this, 
-                		"Erro ao desativar cliente.", 
-                		"Erro", JOptionPane.ERROR_MESSAGE);
+                        "Erro ao desativar cliente.", 
+                        "Erro", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, 
-            		"ID inválido.", 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, 
-            		"Erro inesperado: " + e.getMessage(), 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "ID inválido.", 
+                "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Erro inesperado: " + e.getMessage(), 
+                "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
     
