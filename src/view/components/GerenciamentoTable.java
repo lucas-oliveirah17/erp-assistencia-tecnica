@@ -20,7 +20,7 @@ public class GerenciamentoTable extends JTable {
 	// Personalização
 	private Font headerFont = new Font("Arial", Font.BOLD, 12);
 	private Font cellsFont = new Font("Arial", Font.PLAIN, 12);
-	private int alturaTabelaScroll = 200;
+	private int alturaTabelaScroll = 180;
 	
 	public GerenciamentoTable (String[] colunasTabela){
 		this.colunas = colunasTabela;
@@ -80,6 +80,7 @@ public class GerenciamentoTable extends JTable {
         JScrollPane scroll = new JScrollPane(this);
         scroll.setPreferredSize(new Dimension(0, this.alturaTabelaScroll)); // Altura da tabela
         scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, this.alturaTabelaScroll));
+                
         return scroll;
     }
     

@@ -5,6 +5,7 @@ import model.Usuario;
 import view.components.GerenciamentoForm;
 import view.components.GerenciamentoTable;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -14,10 +15,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-public abstract class TelaGerenciamentoAbstrata extends JPanel {
+public abstract class TelaGerenciamentoAbstrata2 extends JPanel {
 	private static final long serialVersionUID = 1L; // Default serialVersion
 	
 	protected Usuario usuarioLogado;
@@ -38,53 +41,38 @@ public abstract class TelaGerenciamentoAbstrata extends JPanel {
     protected Font panelFont = new Font("Arial", Font.BOLD, 14);
     protected Dimension buttonSize = new Dimension(100, 30);
     
-    public  TelaGerenciamentoAbstrata(Usuario usuarioInstancia) {
+    public  TelaGerenciamentoAbstrata2(Usuario usuarioInstancia) {
     	this.usuarioLogado = usuarioInstancia;
     	
-    	this.setLayout(new GridBagLayout());
+    	// Define o layout do painel principal como um BoxLayout na direção vertical (Y_AXIS),
+    	// ou seja, os componentes serão empilhados verticalmente (um abaixo do outro).
+    	this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     }
     
     protected void finalizarTela() {
-    	GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.weightx = 1;       
-        gbc.weighty = 0.3;
-        gbc.anchor = GridBagConstraints.NORTHWEST; // Alinha topo esquerdo
-        gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
-        
-        gbc.insets = new Insets(10, 10, 0, 10); // padding
-        gbc.gridy = 0; // Define que o componente será colocado na linha 0 do GridBagLayout
-        
-    	add(painelTabela, gbc);
-    	
-    	gbc.insets = new Insets(0, 0, 0, 0); // padding 0px
-        gbc.gridy = 1;
-        add(painelFormularios, gbc);
-        
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.SOUTHEAST; // Alinha topo esquerdo
-        add(painelBotoes, gbc);
+    	add(painelTabela);
+        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
+        add(painelFormularios);
+        add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertical
+        add(painelBotoes);
     }
     
     protected void criarPainelTabela(String[] colunas) {
     	// Configuração do painel da tabela
+    	this.painelTabela.setLayout(new BoxLayout(this.painelTabela, BoxLayout.Y_AXIS));
     	this.painelTabela.setBorder(BorderFactory.createCompoundBorder(
         	    BorderFactory.createTitledBorder("Lista de Clientes"),
         	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
             ));
-    	painelTabela.setLayout(new GridBagLayout());
-    	GridBagConstraints gbc = new GridBagConstraints();
-    	gbc.gridx = 0; gbc.weightx = 1;
-    	gbc.anchor = GridBagConstraints.NORTHWEST; // Alinha topo esquerdo
+    	this.painelTabela.setAlignmentY(Component.TOP_ALIGNMENT); // Alinha verticalmente no topo
         
         // Inclusão do filtro
     	this.ckbMostrarInativos.addActionListener(e -> carregarDadosTabela());
         
     	if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
-            gbc.insets = new Insets(0, 5, 5, 5); // padding
-            gbc.gridy = 0; // Define que o componente será colocado na linha 0 do GridBagLayout
-            gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
-    		
-    		this.painelTabela.add(this.ckbMostrarInativos, gbc);
+    		this.ckbMostrarInativos.setAlignmentX(Component.LEFT_ALIGNMENT);
+    		this.painelTabela.add(this.ckbMostrarInativos);
+        	add(Box.createRigidArea(new Dimension(0, 10))); // espaçamento vertica
     	}
     	
     	this.colunasTabela = colunas;
@@ -94,10 +82,7 @@ public abstract class TelaGerenciamentoAbstrata extends JPanel {
         
         carregarDadosTabela();
         
-        gbc.insets = new Insets(5, 5, 5, 5); // padding
-        gbc.gridy = 1; // Define que o componente será colocado na linha 0 do GridBagLayout
-        
-        this.painelTabela.add(tabela.comScrollPanel(), gbc);
+        this.painelTabela.add(tabela.comScrollPanel());
         
         // Evento para preencher o formulário ao clicar na tabela
         this.tabela.addMouseListener(new MouseAdapter() {

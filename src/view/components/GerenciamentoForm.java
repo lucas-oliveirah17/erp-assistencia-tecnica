@@ -1,5 +1,7 @@
 package view.components;
 
+import java.awt.Dimension;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -34,6 +36,7 @@ public class GerenciamentoForm extends JPanel{
 	
 	public GerenciamentoForm() { // Cria um painel de preenchimento
 		this.setOpaque(false);
+		this.setPreferredSize(new Dimension(1, 1));
 	}
 	
 	public String getTitulo() {
