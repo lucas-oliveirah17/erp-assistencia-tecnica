@@ -41,15 +41,15 @@ public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
     public TelaGerenciamentoClientes(Usuario usuarioInstancia) {
     	super(usuarioInstancia);
     	
-    	// Cabeçalhos da tabela
+    	// Tabela
+    	String nomeTabela = "Lista de Cliente";
     	String[] colunas = {
         		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
         		"Email", "Endereco", "Nº", "Complemento",
         		"Bairro", "Cidade", "UF", "CEP"
             };
      
-        criarPainelTabela(colunas);
-        carregarDadosTabela();
+        criarPainelTabela(nomeTabela, colunas);
         
         formularioEsquerdo = new GerenciamentoForm(
         		"Dados", tfNome, tfCpfCnpj, cbTipo, tfTelefone, tfEmail

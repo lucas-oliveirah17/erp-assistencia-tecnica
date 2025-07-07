@@ -70,7 +70,7 @@ public class TelaCadastroFuncionario extends TelaCadastroAbstrata {
         
         adicionarPainelFormulario(this.painelFormulario1);
         
-        this.painelFormulario2 = criarPainelFormulario("Dados do Funcionário");
+        this.painelFormulario2 = criarPainelFormulario("Conta");
         adicionarEntrada(this.painelFormulario2, tfUsuario);
         adicionarEntrada(this.painelFormulario2, pfSenha);
         adicionarEntrada(this.painelFormulario2, cbPrivilegios);

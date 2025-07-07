@@ -7,7 +7,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFrame;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
 
 import java.awt.Dimension;
@@ -17,7 +17,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
-public abstract class TelaCadastroAbstrata extends JFrame {
+public abstract class TelaCadastroAbstrata extends JDialog {
 	private static final long serialVersionUID = 1L; // Default serialVersion
 		
     protected JPanel painelPrincipal = new JPanel();
@@ -38,6 +38,8 @@ public abstract class TelaCadastroAbstrata extends JFrame {
         setTitle(tituloJanela);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
+        setModal(true); // Bloqueia outras janelas enquanto aberta
+
 
         // -- CONFIGURAÇÕES DOS PAINEIS --
         this.painelPrincipal.setLayout(new BoxLayout(this.painelPrincipal, BoxLayout.Y_AXIS));

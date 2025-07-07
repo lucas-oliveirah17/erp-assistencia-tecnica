@@ -65,24 +65,26 @@ public abstract class TelaGerenciamentoAbstrata extends JPanel {
         add(painelBotoes, gbc);
     }
     
-    protected void criarPainelTabela(String[] colunas) {
+    protected void criarPainelTabela(String nomeTabela, String[] colunas) {
     	// Configuração do painel da tabela
     	this.painelTabela.setBorder(BorderFactory.createCompoundBorder(
-        	    BorderFactory.createTitledBorder("Lista de Clientes"),
+        	    BorderFactory.createTitledBorder(nomeTabela),
         	    BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding
             ));
     	painelTabela.setLayout(new GridBagLayout());
     	GridBagConstraints gbc = new GridBagConstraints();
     	gbc.gridx = 0; gbc.weightx = 1;
     	gbc.anchor = GridBagConstraints.NORTHWEST; // Alinha topo esquerdo
+    	gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
+    	int linhaAtual = 0;
         
         // Inclusão do filtro
     	this.ckbMostrarInativos.addActionListener(e -> carregarDadosTabela());
         
     	if(usuarioLogado.getPrivilegios() == model.enums.Privilegios.ADMINISTRADOR) {
             gbc.insets = new Insets(0, 5, 5, 5); // padding
-            gbc.gridy = 0; // Define que o componente será colocado na linha 0 do GridBagLayout
-            gbc.fill = GridBagConstraints.HORIZONTAL; // Permite expandir horizontalmente
+            gbc.gridy = linhaAtual; // Define que o componente será colocado na linha 0 do GridBagLayout
+    		linhaAtual++;
     		
     		this.painelTabela.add(this.ckbMostrarInativos, gbc);
     	}
@@ -95,7 +97,7 @@ public abstract class TelaGerenciamentoAbstrata extends JPanel {
         carregarDadosTabela();
         
         gbc.insets = new Insets(5, 5, 5, 5); // padding
-        gbc.gridy = 1; // Define que o componente será colocado na linha 0 do GridBagLayout
+        gbc.gridy = linhaAtual; // Define que o componente será colocado na linha 0 do GridBagLayout
         
         this.painelTabela.add(tabela.comScrollPanel(), gbc);
         

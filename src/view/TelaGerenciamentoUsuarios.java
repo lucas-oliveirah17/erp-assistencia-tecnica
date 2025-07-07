@@ -31,13 +31,13 @@ public class TelaGerenciamentoUsuarios extends TelaGerenciamentoAbstrata {
     public TelaGerenciamentoUsuarios(Usuario usuarioInstancia) {
     	super(usuarioInstancia);
     	
-    	// Cabeçalhos da tabela
+    	// Tabela
+    	String nomeTabela = "Lista de Usuários";
         String[] colunas = {
     		"ID", "Nome de Usuário", "Email", "Senha", "Privilégio"
         };
         
-        criarPainelTabela(colunas);
-        carregarDadosTabela();
+        criarPainelTabela(nomeTabela, colunas);
         
         formularioEsquerdo = new GerenciamentoForm(
         		"Dados", tfUsuario, tfEmail, pwSenha, cbPrivilegios
