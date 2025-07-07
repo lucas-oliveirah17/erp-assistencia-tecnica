@@ -190,4 +190,36 @@ public class ClienteDAO {
 
 	    return clientes;
 	}
+	
+	public Cliente buscar(int id) {
+    	try {
+    		ResultSet rs = dbQuery.select("id_cliente = " + id);
+    		
+    		if (rs != null && rs.next()) {
+    			Cliente c = new Cliente();
+                c.setId(rs.getInt("id_cliente"));
+                c.setNome(rs.getString("nome"));
+                c.setCpfCnpj(rs.getString("cpf_cnpj"));
+                c.setTipo(TipoCliente.fromDb(rs.getString("tipo_cliente")));
+                c.setTelefone(rs.getString("telefone"));
+                c.setEmail(rs.getString("email"));
+                c.setEndereco(rs.getString("endereco"));
+                c.setNumero(rs.getString("numero"));
+                c.setComplemento(rs.getString("complemento"));
+                c.setBairro(rs.getString("bairro"));
+                c.setCidade(rs.getString("cidade"));
+                c.setUf(Uf.fromDb(rs.getString("uf")));
+                c.setCep(rs.getString("cep"));
+                c.setAtivo(rs.getBoolean("ativo"));
+	            
+	            rs.close();
+	            return c; 
+    		}
+            
+    	} catch (SQLException e) {
+            e.printStackTrace();
+        }
+    	
+    	return null;
+    }
 }

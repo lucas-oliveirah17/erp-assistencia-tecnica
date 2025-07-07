@@ -183,50 +183,63 @@ public class TelaGerenciamentoFuncionarios extends TelaGerenciamentoAbstrata {
     }
 	
 	private void ativarFuncionario() {
-        if (tfId.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-        		"Selecione um funcionário na tabela para ativar.", 
-        		"Aviso", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        int confirmacao = JOptionPane.showConfirmDialog(this, 
-    		"Tem certeza que deseja ativar este funcionário?", 
-    		"Confirmação de ativação", 
-    		JOptionPane.YES_NO_OPTION);
-        
-        if (confirmacao == JOptionPane.YES_OPTION) {
-            try {
-            	int id = Integer.parseInt(tfId.getText());
-                
-            	Funcionario funcionario = new Funcionario();
-            	funcionario.setId(id);
-                
-                FuncionarioDAO dao = new FuncionarioDAO();
-                boolean sucesso = dao.ativar(funcionario);
-                
-                if (sucesso) {
-                    JOptionPane.showMessageDialog(this, 
-                		"Funcionário ativado com sucesso!");
-                    carregarDadosTabela();
-                    limparFormulario();
-                } else {
-                    JOptionPane.showMessageDialog(this, 
-                		"Erro ao ativar funcionário.", 
-                		"Erro", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, 
-            		"ID inválido.", 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, 
-            		"Erro inesperado: " + e.getMessage(), 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
+	    if (tfId.getText().isEmpty()) {
+	        JOptionPane.showMessageDialog(this, 
+	            "Selecione um funcionário na tabela para ativar.", 
+	            "Aviso", JOptionPane.WARNING_MESSAGE);
+	        return;
+	    }
+
+	    try {
+	        int id = Integer.parseInt(tfId.getText());
+	        
+	        FuncionarioDAO dao = new FuncionarioDAO();
+	        Funcionario funcionario = dao.buscar(id);
+	        
+	        if(funcionario == null) {
+	            JOptionPane.showMessageDialog(this, 
+	                "Funcionário não encontrado.", 
+	                "Aviso", JOptionPane.WARNING_MESSAGE);
+	            return;     	
+	        }
+	        
+	        if(funcionario.isAtivo() == true) {
+	            JOptionPane.showMessageDialog(this, 
+	                "Funcionário já está ativo.", 
+	                "Aviso", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+	        
+	        int confirmacao = JOptionPane.showConfirmDialog(this,
+	            "Tem certeza que deseja ativar este funcionário?", 
+	            "Confirmação de ativação", 
+	            JOptionPane.YES_NO_OPTION);
+	        
+	        if (confirmacao == JOptionPane.YES_OPTION) {
+	            boolean sucesso = dao.ativar(funcionario);
+	            
+	            if (sucesso) {
+	                JOptionPane.showMessageDialog(this, 
+	                    "Funcionário ativado com sucesso!");
+	                carregarDadosTabela();
+	                limparFormulario();
+	            } else {
+	                JOptionPane.showMessageDialog(this, 
+	                    "Erro ao ativar funcionário.", 
+	                    "Erro", JOptionPane.ERROR_MESSAGE);
+	            }
+	        }
+	    } catch (NumberFormatException e) {
+	        JOptionPane.showMessageDialog(this, 
+	            "ID inválido.", 
+	            "Erro", JOptionPane.ERROR_MESSAGE);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        JOptionPane.showMessageDialog(this, 
+	            "Erro inesperado: " + e.getMessage(), 
+	            "Erro", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
 	
 	private void desativarFuncionario() {
         if (tfId.getText().isEmpty()) {

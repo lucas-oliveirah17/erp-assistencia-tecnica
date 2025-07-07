@@ -248,42 +248,56 @@ public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
         		"Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        int confirmacao = JOptionPane.showConfirmDialog(this, 
-    		"Tem certeza que deseja ativar este cliente?", 
-    		"Confirmação de ativação", 
-    		JOptionPane.YES_NO_OPTION);
-        
-        if (confirmacao == JOptionPane.YES_OPTION) {
-            try {
-            	int id = Integer.parseInt(tfId.getText());
-                
-                Cliente cliente = new Cliente();
-                cliente.setId(id);
-                
-                ClienteDAO dao = new ClienteDAO();
-                boolean sucesso = dao.ativar(cliente);
-                
-                if (sucesso) {
-                    JOptionPane.showMessageDialog(this, 
-                		"Cliente ativado com sucesso!");
-                    carregarDadosTabela();
-                    limparFormulario();
-                } else {
-                    JOptionPane.showMessageDialog(this, 
-                		"Erro ao ativar cliente.", 
-                		"Erro", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, 
-            		"ID inválido.", 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, 
-            		"Erro inesperado: " + e.getMessage(), 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
+
+        try {
+        	int id = Integer.parseInt(tfId.getText());
+            
+            ClienteDAO dao = new ClienteDAO();
+            Cliente cliente = dao.buscar(id);
+            
+            if(cliente == null) {
+            	JOptionPane.showMessageDialog(this, 
+            		"Cliente não encontrado.", 
+            		"Aviso", JOptionPane.WARNING_MESSAGE);
+                return;     	
             }
+            
+            if(cliente.isAtivo() == true) {
+            	JOptionPane.showMessageDialog(this, 
+            		"Cliente já está ativo.", 
+            		"Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            	
+            }
+            
+            int confirmacao = JOptionPane.showConfirmDialog(this, 
+        		"Tem certeza que deseja ativar este cliente?", 
+        		"Confirmação de ativação", 
+        		JOptionPane.YES_NO_OPTION);
+            
+            if (confirmacao == JOptionPane.YES_OPTION) {
+		        boolean sucesso = dao.ativar(cliente);
+		        
+		        if (sucesso) {
+		            JOptionPane.showMessageDialog(this, 
+		        		"Cliente ativado com sucesso!");
+		            carregarDadosTabela();
+		            limparFormulario();
+		        } else {
+		            JOptionPane.showMessageDialog(this, 
+		        		"Erro ao ativar cliente.", 
+		        		"Erro", JOptionPane.ERROR_MESSAGE);
+		        }
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+        		"ID inválido.", 
+        		"Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+        		"Erro inesperado: " + e.getMessage(), 
+        		"Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
     

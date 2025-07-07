@@ -150,4 +150,29 @@ public class FuncionarioDAO {
 
         return funcionarios;
     }
+    
+    public Funcionario buscar(int id) {
+    	try {
+    		ResultSet rs = dbQuery.select("id_funcionario = " + id);
+    		
+    		if (rs != null && rs.next()) {
+    			Funcionario f = new Funcionario();
+                f.setId(rs.getInt("id_funcionario"));
+                f.setNome(rs.getString("nome"));
+                f.setCpf(rs.getString("cpf"));
+                f.setFuncao(FuncaoFuncionario.fromDb(rs.getString("funcao")));
+                f.setTelefone(rs.getString("telefone"));
+                f.setEmail(rs.getString("email"));
+                f.setAtivo(rs.getBoolean("ativo"));
+	            
+	            rs.close();
+	            return f; 
+    		}
+            
+    	} catch (SQLException e) {
+            e.printStackTrace();
+        }
+    	
+    	return null;
+    }
 }

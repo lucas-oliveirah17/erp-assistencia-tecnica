@@ -196,46 +196,59 @@ public class TelaGerenciamentoUsuarios extends TelaGerenciamentoAbstrata {
     private void ativarUsuario() {
         if (tfId.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, 
-        		"Selecione um usuário na tabela para ativar.", 
-        		"Aviso", JOptionPane.WARNING_MESSAGE);
+                "Selecione um usuário na tabela para ativar.", 
+                "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        
-        int confirmacao = JOptionPane.showConfirmDialog(this, 
-    		"Tem certeza que deseja ativar este usuário?", 
-    		"Confirmação de ativação", 
-    		JOptionPane.YES_NO_OPTION);
-        
-        if (confirmacao == JOptionPane.YES_OPTION) {
-            try {
-            	int id = Integer.parseInt(tfId.getText());
-                
-            	Usuario usuario = new Usuario();
-            	usuario.setId(id);
-                
-            	UsuarioDAO dao = new UsuarioDAO();
+
+        try {
+            int id = Integer.parseInt(tfId.getText());
+            
+            UsuarioDAO dao = new UsuarioDAO();
+            Usuario usuario = dao.buscar(id);
+            
+            if(usuario == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "Usuário não encontrado.", 
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;     	
+            }
+            
+            if(usuario.isAtivo() == true) {
+                JOptionPane.showMessageDialog(this, 
+                    "Usuário já está ativo.", 
+                    "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            int confirmacao = JOptionPane.showConfirmDialog(this, 
+                "Tem certeza que deseja ativar este usuário?", 
+                "Confirmação de ativação", 
+                JOptionPane.YES_NO_OPTION);
+            
+            if (confirmacao == JOptionPane.YES_OPTION) {
                 boolean sucesso = dao.ativar(usuario);
                 
                 if (sucesso) {
                     JOptionPane.showMessageDialog(this, 
-                		"Usuário ativado com sucesso!");
+                        "Usuário ativado com sucesso!");
                     carregarDadosTabela();
                     limparFormulario();
                 } else {
                     JOptionPane.showMessageDialog(this, 
-                		"Erro ao ativar Usuário.", 
-                		"Erro", JOptionPane.ERROR_MESSAGE);
+                        "Erro ao ativar Usuário.", 
+                        "Erro", JOptionPane.ERROR_MESSAGE);
                 }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, 
-            		"ID inválido.", 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, 
-            		"Erro inesperado: " + e.getMessage(), 
-            		"Erro", JOptionPane.ERROR_MESSAGE);
             }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "ID inválido.", 
+                "Erro", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, 
+                "Erro inesperado: " + e.getMessage(), 
+                "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 	
