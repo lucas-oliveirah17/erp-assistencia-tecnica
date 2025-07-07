@@ -22,7 +22,7 @@ public class TelaPrincipal extends JFrame {
         this.usuarioLogado = usuario;
 
         // -- CONFIGURAÇÕES DA JANELA --
-        setTitle("Sistema ERP - Bem-vindo, " + usuario.getEmail());
+        setTitle("Sistema ERP - Bem-vindo, " + usuario.getUsuario());
         this.setMinimumSize(new Dimension(1000, 600));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
