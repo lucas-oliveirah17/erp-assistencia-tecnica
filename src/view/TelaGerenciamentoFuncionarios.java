@@ -22,28 +22,30 @@ import java.util.List;
 
 public class TelaGerenciamentoFuncionarios extends TelaGerenciamentoAbstrata {
 	private static final long serialVersionUID = 1L; // Default serialVersion
+	
+	// Tabela
+	private String nomeTabela = "Lista de Funcionários";
+    private String[] colunas = {
+		"ID", "Nome", "CPF", "Função", "Telefone", "Email"
+    };
         
 	// Campos do formulário
-    private FormInputV tfId 	  = new FormInputV("ID:", new JTextField());
-    private FormInputV tfNome 	  = new FormInputV("Nome:", new JTextField());
-    private FormInputV tfCpf 	  = new FormInputV("CPF:", new JTextField());
-    private FormInputV cbFuncao   = new FormInputV("Função:", new JComboBox<>(FuncaoFuncionario.values()));
-    private FormInputV tfTelefone = new FormInputV("Telefone:", new JTextField());
-    private FormInputV tfEmail    = new FormInputV("Email:", new JTextField());
+    private String nomeFormulario1 = "Dados do Funcionário";
+    
+    private FormInputV tfId 	   = new FormInputV("ID:", new JTextField());
+    private FormInputV tfNome 	   = new FormInputV("Nome:", new JTextField());
+    private FormInputV tfCpf 	   = new FormInputV("CPF:", new JTextField());
+    private FormInputV cbFuncao    = new FormInputV("Função:", new JComboBox<>(FuncaoFuncionario.values()));
+    private FormInputV tfTelefone  = new FormInputV("Telefone:", new JTextField());
+    private FormInputV tfEmail     = new FormInputV("Email:", new JTextField());
     
 	public TelaGerenciamentoFuncionarios(Usuario usuarioInstancia) {
 		super(usuarioInstancia);
-		
-		// Tabela
-		String nomeTabela = "Lista de Funcionários";
-        String[] colunas = {
-    		"ID", "Nome", "CPF", "Função", "Telefone", "Email"
-        };
-        
+		      
         criarPainelTabela(nomeTabela, colunas);
         
         formularioEsquerdo = new GerenciamentoForm(
-        		"Dados", tfNome, tfCpf, cbFuncao, tfTelefone, tfEmail
+        		nomeFormulario1, tfNome, tfCpf, cbFuncao, tfTelefone, tfEmail
         );
         
         formularioDireito = new GerenciamentoForm();

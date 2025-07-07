@@ -21,7 +21,16 @@ import java.util.List;
 
 public class TelaGerenciamentoUsuarios extends TelaGerenciamentoAbstrata {
     private static final long serialVersionUID = 1L; // Default serialVersion
-        
+    
+    // Tabela
+	private String nomeTabela = "Lista de Usuários";
+    private String[] colunas = {
+		"ID", "Nome de Usuário", "Email", "Senha", "Privilégio"
+    };
+     
+    // Campos do formulário
+    private String nomeFormulario1   = "Dados do Usuário";
+    
     private FormInputV tfId 		 = new FormInputV("ID:", new JTextField());
     private FormInputV tfUsuario 	 = new FormInputV("Nome de Usuário:", new JTextField());
     private FormInputV tfEmail 		 = new FormInputV("Email:", new JTextField());
@@ -30,17 +39,11 @@ public class TelaGerenciamentoUsuarios extends TelaGerenciamentoAbstrata {
     
     public TelaGerenciamentoUsuarios(Usuario usuarioInstancia) {
     	super(usuarioInstancia);
-    	
-    	// Tabela
-    	String nomeTabela = "Lista de Usuários";
-        String[] colunas = {
-    		"ID", "Nome de Usuário", "Email", "Senha", "Privilégio"
-        };
         
         criarPainelTabela(nomeTabela, colunas);
         
         formularioEsquerdo = new GerenciamentoForm(
-        		"Dados", tfUsuario, tfEmail, pwSenha, cbPrivilegios
+        		nomeFormulario1, tfUsuario, tfEmail, pwSenha, cbPrivilegios
         );
     	
         formularioDireito = new GerenciamentoForm();

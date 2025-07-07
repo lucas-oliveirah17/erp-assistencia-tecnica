@@ -22,14 +22,28 @@ import java.util.List;
 
 public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
     private static final long serialVersionUID = 1L; // Default serialVersion
+    
+    // Tabela
+	private String nomeTabela = "Lista de Cliente";
+	private String[] colunas = {
+    		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
+    		"Email", "Endereco", "Nº", "Complemento",
+    		"Bairro", "Cidade", "UF", "CEP"
+    };
             
     // Campos do formulário
-    private FormInputV tfId          = new FormInputV("ID:", new JTextField());
+	private String nomeFormulario1   = "Dados do Cliente";
+	
+	private FormInputV tfId          = new FormInputV("ID:", new JTextField());
     private FormInputV tfNome        = new FormInputV("Nome:", new JTextField());
     private FormInputV tfCpfCnpj     = new FormInputV("CPF/CNPJ:", new JTextField());
     private FormInputV cbTipo		 = new FormInputV("Tipo de Cliente:", new JComboBox<>(TipoCliente.values()));
     private FormInputV tfTelefone    = new FormInputV("Telefone:", new JTextField());
     private FormInputV tfEmail       = new FormInputV("Email:", new JTextField());
+    
+    
+    private String nomeFormulario2 	 = "Endereço Residencial";
+    
     private FormInputV tfEndereco    = new FormInputV("Endereço:", new JTextField());
     private FormInputV tfNumero      = new FormInputV("Número:", new JTextField());
     private FormInputV tfComplemento = new FormInputV("Complemento:", new JTextField());
@@ -41,22 +55,14 @@ public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
     public TelaGerenciamentoClientes(Usuario usuarioInstancia) {
     	super(usuarioInstancia);
     	
-    	// Tabela
-    	String nomeTabela = "Lista de Cliente";
-    	String[] colunas = {
-        		"ID", "Nome", "CPF/CNPJ", "Tipo", "Telefone",
-        		"Email", "Endereco", "Nº", "Complemento",
-        		"Bairro", "Cidade", "UF", "CEP"
-            };
-     
         criarPainelTabela(nomeTabela, colunas);
         
         formularioEsquerdo = new GerenciamentoForm(
-        		"Dados", tfNome, tfCpfCnpj, cbTipo, tfTelefone, tfEmail
+        		nomeFormulario1, tfNome, tfCpfCnpj, cbTipo, tfTelefone, tfEmail
         );
         
         formularioDireito = new GerenciamentoForm(
-        		"Endereço Residencial", tfEndereco, tfNumero, tfComplemento,
+        		nomeFormulario2, tfEndereco, tfNumero, tfComplemento,
         		tfBairro, tfCidade, cbUf, tfCep
 		);
         
