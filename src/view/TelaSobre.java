@@ -30,7 +30,7 @@ public class TelaSobre extends JDialog {
         JLabel colaborador2 = new JLabel("Lucas Silva de Oliveira - GU3054314");
         colaborador2.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        JLabel empresa = new JLabel("Sistema ERP - Assistência Técnica © 2025");
+        JLabel empresa = new JLabel("Sistema ERP - LG System© 2025");
         empresa.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         header.setFont(boldFont);
