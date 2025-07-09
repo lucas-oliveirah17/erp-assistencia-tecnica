@@ -64,6 +64,7 @@ public class TelaGerenciamentoUsuarios extends TelaGerenciamentoAbstrata {
         finalizarTela();
     }
 
+    @Override
     protected void carregarDadosTabela() {
     	tabela.limparTabela();
         
@@ -87,6 +88,7 @@ public class TelaGerenciamentoUsuarios extends TelaGerenciamentoAbstrata {
         tabela.centralizarColuna(0);   
     }
     
+    @Override
     protected void preencherFormulario(int linha) {
     	try {
 	        // Pega os dados da linha selecionada
@@ -108,6 +110,7 @@ public class TelaGerenciamentoUsuarios extends TelaGerenciamentoAbstrata {
 	    }
     }
     
+    @Override
     protected void limparFormulario() {
         tfId.setText("");
         tfUsuario.setText("");

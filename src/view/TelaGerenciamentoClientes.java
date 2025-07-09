@@ -83,7 +83,8 @@ public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
         
         finalizarTela();
     }
-              
+     
+    @Override
     protected void carregarDadosTabela() {
         tabela.limparTabela();
         
@@ -115,6 +116,7 @@ public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
         tabela.centralizarColuna(0, 7, 11);   
     }
     
+    @Override
     protected void preencherFormulario(int linha) {
         try {
 	    	// Pega os dados da linha selecionada
@@ -153,6 +155,7 @@ public class TelaGerenciamentoClientes extends TelaGerenciamentoAbstrata {
         }
     }
     
+    @Override
     protected void limparFormulario() {
     	tfId.setText("");
     	tfNome.setText("");

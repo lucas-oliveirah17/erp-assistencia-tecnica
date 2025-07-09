@@ -34,7 +34,7 @@ public class GerenciamentoButton extends JPanel {
 	    );
 	}
 	
-	public GerenciamentoButton(
+ 	public GerenciamentoButton(
 			Usuario usuarioLogado,
 			Dimension tamanhoBotao,
 			ActionListener novoAcao,
