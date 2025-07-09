@@ -1,0 +1,21 @@
+Projeto Final APO - ANÁLISE E PROGRAMAÇÃO ORIENTADA A OBJETOS 1
+
+Tema do Projeto: Sistema ERP LG Systems - Sistema de Gerenciamento para Assistências Técnicas para Eletrônicos
+
+Integrantes do Grupo:
+
+- Lucas Oliveira : GU3054314
+- Guilherme Ludgero : GU3054918
+
+No repositório do projeto também consta os arquivos da documentação (PDF), vídeo da apresentação, e as imagens dos diagramas de entidades e classes, assim como os seus códigos para geração.
+
+Links:
+Repositório: https://github.com/lucas-oliveirah17/erp-assistencia-tecnica
+Vídeo: https://youtu.be/fYQgYB7aXMw
+
+
+
+
+
+
+

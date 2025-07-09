@@ -1,0 +1,95 @@
+@startuml
+' Título do Diagrama
+title Diagrama Entidade-Relacionamento (DER) - LG System (Versão Corrigida)
+
+' Configurações de aparência
+skinparam linetype ortho
+hide empty members
+
+' --- ENTIDADES ---
+
+entity "tb_funcionario" as Funcionario {
+  + id_funcionario : int <<PK>>
+  --
+  + nome : varchar
+  + cpf : varchar [UNIQUE]
+  + funcao : enum
+  + email : varchar [UNIQUE]
+  + ativo : boolean
+}
+
+entity "tb_usuario" as Usuario {
+  + id_usuario : int <<PK>>
+  --
+  + id_funcionario : int <<FK>> [UNIQUE]
+  + usuario : varchar [UNIQUE]
+  + email : varchar [UNIQUE]
+  + senha : varchar
+  + privilegios : enum
+  + ativo : boolean
+}
+
+entity "tb_cliente" as Cliente {
+  + id_cliente : int <<PK>>
+  --
+  + nome : varchar
+  + cpf_cnpj : varchar [UNIQUE]
+  ' ... outros campos
+  + ativo : boolean
+}
+
+entity "tb_fornecedor" as Fornecedor {
+  + id_fornecedor : int <<PK>>
+  --
+  + razao_social : varchar
+  + cnpj : varchar [UNIQUE]
+  ' ... outros campos
+  + ativo : boolean
+}
+
+entity "tb_estoque_aparelho" as EstoqueAparelho {
+  + id_estoque_aparelho : int <<PK>>
+  --
+  + localizacao : varchar
+  ' ... outros campos
+  + ativo : boolean
+}
+
+entity "tb_aparelho" as Aparelho {
+  + id_aparelho : int <<PK>>
+  --
+  + proprietario : int <<FK>>
+  + id_estoque_aparelho : int <<FK>>
+  + modelo : varchar
+  + numero_serie : varchar [UNIQUE]
+  + ativo : boolean
+}
+
+entity "tb_ordem_servico" as OrdemServico {
+  + id_ordem_servico : int <<PK>>
+  --
+  + id_cliente : int <<FK>>
+  + id_aparelho : int <<FK>>
+  + tecnico_responsavel : int <<FK>>
+  + atendente : int <<FK>>
+  + descricao_ocorrencia : text
+  + ativo : boolean
+}
+
+
+' --- RELACIONAMENTOS ---
+
+' NOVO RELACIONAMENTO 1-para-1
+Funcionario ||--|| Usuario : "possui conta de"
+
+' RELACIONAMENTOS ANTERIORES (MANTIDOS)
+Cliente ||--|{ Aparelho : "é proprietário de"
+EstoqueAparelho ||--|{ Aparelho : "armazena"
+
+Cliente ||--|{ OrdemServico : "solicita"
+Aparelho ||--|{ OrdemServico : "gera"
+
+Funcionario ||--|{ OrdemServico : "é técnico responsável"
+Funcionario ||--|{ OrdemServico : "é atendente"
+
+@enduml

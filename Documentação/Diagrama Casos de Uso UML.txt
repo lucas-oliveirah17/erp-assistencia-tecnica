@@ -1,0 +1,52 @@
+@startuml
+' Título do Diagrama
+title Diagrama de Caso de Uso - LG System
+
+' Configurações de aparência
+skinparam packageStyle rectangle
+left to right direction
+
+' Definição dos Atores
+actor Funcionário Padrão as Funcionario
+actor Administrador
+
+' Herança Administrador é um tipo de Funcionário Padrão
+Funcionario -- Administrador
+
+' Definição da fronteira do sistema e seus Casos de Uso
+rectangle LG System {
+  usecase UC_Login as Realizar Login
+  usecase UC_Clientes as Gerenciar Clientes
+  usecase UC_OS as Gerenciar Ordens de Serviço
+  usecase UC_Estoque as Gerenciar Estoque de Peças
+  usecase UC_Funcionarios as Gerenciar Funcionários
+  usecase UC_Usuarios as Gerenciar Usuários
+  usecase UC_VerInativos as Visualizar Clientes Inativos
+  usecase UC_Vincular as Vincular a Funcionário
+  usecase UC_Aparelho as Registrar Aparelho de Cliente
+}
+
+' Associações dos Atores com os Casos de Uso
+
+' Ações do Funcionário Padrão (e herdadas pelo Administrador)
+Funcionario -- UC_Login
+Funcionario -- UC_Clientes
+Funcionario -- UC_OS
+Funcionario -- UC_Estoque
+Funcionario -- UC_Aparelho '  LINHA CORRIGIDA
+
+' Ações exclusivas do Administrador
+Administrador -- UC_Funcionarios
+Administrador -- UC_Usuarios
+Administrador -- UC_VerInativos ' Apenas o Admin pode estender para ver inativos
+
+' Relacionamentos entre Casos de Uso
+
+' extend Um comportamento opcional que estende um caso de uso base.
+UC_Clientes .up. UC_VerInativos  extend
+
+' include Um comportamento obrigatório que é incluído em um caso de uso.
+UC_OS .down. UC_Aparelho  include
+UC_Usuarios .up. UC_Vincular  include
+
+@enduml

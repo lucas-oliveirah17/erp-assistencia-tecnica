@@ -27,9 +27,9 @@ CREATE TABLE IF NOT EXISTS tb_funcionario (
 CREATE TABLE IF NOT EXISTS tb_usuario (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     id_funcionario INT NOT NULL UNIQUE,
-    usuario VARCHAR(50) NOT NULL UNIQUE, -- Nome de usuário para login
-    senha VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,   -- Deve ser igual ao email do funcionário
+    usuario VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL UNIQUE, -- Nome de usuário para login
+    senha VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL UNIQUE,   -- Deve ser igual ao email do funcionário
     privilegios ENUM('administrador', 'usuario') NOT NULL,
     ativo BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (id_funcionario) REFERENCES tb_funcionario(id_funcionario) ON DELETE CASCADE

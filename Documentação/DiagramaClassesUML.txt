@@ -1,0 +1,359 @@
+@startuml
+' Título do Diagrama
+title Diagrama de Classes Completo - LG System
+
+' Configurações de aparência
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+' --- PACOTE MAIN (Ponto de Entrada) ---
+package main {
+  class Main {
+    + {static} main(args: String[]): void
+  }
+}
+
+' --- PACOTE MULTITOOLS ---
+package multitools {
+  class JsonUtilities {
+    +JsonUtilities()
+    +parse(jsonText: String, className: String): Object
+    +parse(object: Object): String
+    +parse(resultSet: ResultSet): String
+    +parse(hashMap: HashMap<String, String>): String
+    +parse(values: String[]): String
+    +parse(values: String[][]): String
+  }
+  class Utilities {
+    +Utilities()
+    +clearSqlInjection(value: String): String
+    +checkEmail(email: String): boolean
+    +replaceAll(pattern: String, replacement: String, source: String): String
+    +replaceAll(patterns: String[], replacement: String, source: String): String
+    +replaceAll(patterns: String[], replacements: String[], source: String): String
+    +replaceAll(patterns: String[], replacement: String, sources: String[]): String[]
+    +replaceAll(patterns: String[], replacements: String[], sources: String[]): String[]
+  }
+}
+
+' --- PACOTE UTIL ---
+package util {
+  class Dimensao {
+    -comprimento: int
+    -largura: int
+    -altura: int
+    +Dimensao(comprimento: int, largura: int, altura: int)
+    +Dimensao(dimensao: String)
+    -setDimensao(c: int, l: int, a: int): void
+    +toString(): String
+    +getComprimento(): int
+    -setComprimento(comprimento: int): void
+    +getLargura(): int
+    -setLargura(largura: int): void
+    +getAltura(): int
+    -setAltura(altura: int): void
+  }
+}
+
+' --- PACOTE MODEL (SINTAXE CORRIGIDA) ---
+package model {
+  class Funcionario {
+    -id: int
+    -nome: String
+    -cpf: String
+    -funcao: FuncaoFuncionario
+    -telefone: String
+    -email: String
+    -ativo: boolean
+    +Funcionario()
+    +Funcionario(id: int, nome: String, cpf: String, funcao: FuncaoFuncionario, 
+telefone: String, email: String, ativo: boolean)
+  }
+  
+  class Usuario {
+    -id: int
+    -idFuncionario: int
+    -usuario: String
+    -email: String
+    -senha: String
+    -privilegios: Privilegios
+    -ativo: boolean
+    +Usuario()
+    +Usuario(id: int, idFuncionario: int, usuario: String, email: String, 
+senha: String, privilegios: Privilegios, ativo: boolean)
+  }
+
+  class Cliente {
+    -id: int
+    -nome: String
+    -cpfCnpj: String
+    -tipo: TipoCliente
+    -telefone: String
+    -email: String
+    -endereco: String
+    -numero: String
+    -complemento: String
+    -bairro: String
+    -cidade: String
+    -uf: Uf
+    -cep: String
+    -ativo: boolean
+    +Cliente()
+    +Cliente(id: int, nome: String, cpfCnpj: String, tipo: TipoCliente, 
+telefone: String, email: String, endereco: String, numero: String, 
+complemento: String, bairro: String, cidade: String, uf: Uf, cep: String, ativo: boolean)
+  }
+  
+  class Aparelho {
+    -id: int
+    -modelo: String
+    -numeroSerie: String
+    -categoria: CategoriaAparelho
+    -dimensao: Dimensao
+    -peso: Float
+    -idProprietario: int
+    -idEstoqueAparelho: int
+    -garantia: String
+    -estado: EstadoAparelho
+    -ativo: boolean
+    +Aparelho()
+    +Aparelho(id: int, modelo: String, numeroSerie: String, 
+categoria: CategoriaAparelho, dimensao: Dimensao, peso: Float, 
+idProprietario: int, idEstoqueAparelho: int, garantia: String, 
+estado: EstadoAparelho, ativo: boolean)
+  }
+  
+  class EstoqueAparelho {
+    -id: int
+    -localizacao: String
+    -categoria: CategoriaAparelho
+    -dimensao: Dimensao
+    -capacidade: int
+    -ativo: boolean
+    +EstoqueAparelho()
+    +EstoqueAparelho(id: int, localizacao: String, 
+categoria: CategoriaAparelho, dimensao: Dimensao, 
+capacidade: int, ativo: boolean)
+  }
+  
+  class OrdemServico {
+    -id: int
+    -idCliente: int
+    -idAparelho: int
+    -idTecnico: int
+    -idAtendente: int
+    -descricao: String
+    -comentario: String
+    -tipoServico: TipoServico
+    -valorServico: Float
+    -tipoPagamento: TipoPagamento
+    -formaPagamento: FormaPagamento
+    -prazo: String
+    -dataCriacao: String
+    -estado: EstadoOrdemServico
+    -ativo: boolean
+    +OrdemServico()
+    +OrdemServico(id: int, idCliente: int, idAparelho: int, idTecnico: int, 
+idAtendente: int, descricao: String, comentario: String, 
+tipoServico: TipoServico, valorServico: Float, 
+tipoPagamento: TipoPagamento, formaPagamento: FormaPagamento, 
+prazo: String, dataCriacao: String, estado: EstadoOrdemServico, ativo: boolean)
+  }
+}
+
+' --- PACOTE ENUMS ---
+package "model.enums" {
+  enum FuncaoFuncionario
+  enum Privilegios
+  enum TipoCliente
+  enum Uf
+  enum CategoriaAparelho
+  enum EstadoAparelho
+  enum EstadoOrdemServico
+  enum TipoServico
+  enum FormaPagamento
+  enum TipoPagamento
+}
+
+' --- PACOTE DATABASE ---
+package database {
+  class DBConnection {
+    -host: String
+    -port: String
+    -schema: String
+    -user: String
+    -password: String
+    -connection: Connection
+    +DBConnection(host: String, port: String, schema: String, 
+user: String, password: String)
+    +DBConnection()
+    -doConnection(): void
+    +getConnection(): Connection
+  }
+  class DBQuery {
+    -statement: Statement
+    -tableName: String
+    -fieldsName: String[]
+    -fieldKey: String
+    -keyFieldIndex: int
+    +DBQuery()
+    +DBQuery(tableName: String, fieldsName: String, fieldKey: String)
+    +query(sql: String): ResultSet
+    +execute(sql: String): int
+    +execute(sql: String, retornarId: boolean): int
+    +select(where: String): ResultSet
+    +insert(values: String[], editableFieldsNames: String): int
+    +update(values: String[]): int
+    +delete(values: String[]): int
+  }
+}
+
+' --- PACOTE CONTROL ---
+package control {
+  class FuncionarioDAO {
+    -dbQuery: DBQuery
+    -editableFieldsName: String
+    +FuncionarioDAO()
+    +salvar(f: Funcionario): int
+    +atualizar(f: Funcionario): boolean
+    +ativar(f: Funcionario): boolean
+    +desativar(f: Funcionario): boolean
+    +excluir(f: Funcionario): boolean
+    +buscar(id: int): Funcionario
+    +listarTodos(): List<Funcionario>
+    +listarApenasAtivos(): List<Funcionario>
+  }
+  class UsuarioDAO {
+    -dbQuery: DBQuery
+    -editableFieldsName: String
+    +UsuarioDAO()
+    +salvar(u: Usuario): int
+    +atualizar(u: Usuario): boolean
+    +ativar(u: Usuario): boolean
+    +desativar(u: Usuario): boolean
+    +excluir(u: Usuario): boolean
+    +buscar(id: int): Usuario
+    +listarTodos(): List<Usuario>
+    +listarApenasAtivos(): List<Usuario>
+    +autenticar(login: String, senha: String): Usuario
+  }
+  class ClienteDAO {
+    -dbQuery: DBQuery
+    -editableFieldsName: String
+    +ClienteDAO()
+    +salvar(c: Cliente): int
+    +atualizar(c: Cliente): boolean
+    +ativar(c: Cliente): boolean
+    +desativar(c: Cliente): boolean
+    +excluir(c: Cliente): boolean
+    +buscar(id: int): Cliente
+    +listarTodos(): List<Cliente>
+    +listarApenasAtivos(): List<Cliente>
+  }
+}
+
+' --- PACOTE VIEW E SUBPASTAS ---
+package view {
+    class TelaLogin extends JFrame
+    class TelaPrincipal extends JFrame
+    class TelaSobre extends JDialog
+    class TelaGerenciamentoClientes extends view.base.TelaGerenciamentoAbstrata
+    class TelaGerenciamentoFuncionarios extends view.base.TelaGerenciamentoAbstrata
+    class TelaGerenciamentoUsuarios extends view.base.TelaGerenciamentoAbstrata
+    class TelaCadastroCliente extends view.base.TelaCadastroAbstrata
+    class TelaCadastroFuncionario extends view.base.TelaCadastroAbstrata
+}
+package view.base {
+    abstract class TelaCadastroAbstrata extends JDialog {
+        #painelPrincipal: JPanel
+        #btnSalvar: JButton
+        +TelaCadastroAbstrata(titulo: String)
+        #{abstract} construirFormulario(): void
+        #{abstract} aoSalvar(): void
+    }
+    abstract class TelaGerenciamentoAbstrata extends JPanel {
+      #usuarioLogado: Usuario
+      #tabela: GerenciamentoTable
+      +TelaGerenciamentoAbstrata(usuario: Usuario)
+      #{abstract} carregarDadosTabela(): void
+      #{abstract} preencherFormulario(linha: int): void
+    }
+}
+package view.components {
+    class FormInputH extends JPanel
+    class FormInputV extends JPanel
+    class GerenciamentoForm extends JPanel
+    class GerenciamentoButton extends JPanel
+    class GerenciamentoTable extends JScrollPane
+}
+
+' ========== RELACIONAMENTOS ==========
+' --- Ponto de Entrada da Aplicação ---
+main.Main ..> view.TelaLogin : inicia
+
+' --- Relações do Model ---
+model.Funcionario "1" -- "1" model.Usuario : possui
+model.Cliente "1" -- "0..*" model.Aparelho : é proprietário de
+model.EstoqueAparelho "1" -- "0..*" model.Aparelho : armazena
+model.OrdemServico "0..*" -- "1" model.Cliente : solicitada por
+model.OrdemServico "0..*" -- "1" model.Aparelho : referente a
+model.OrdemServico "0..*" -- "1" model.Funcionario : técnico >
+model.OrdemServico "0..*" -- "1" model.Funcionario : atendente >
+
+' --- Agregação com Util ---
+model.Aparelho o-- util.Dimensao
+model.EstoqueAparelho o-- util.Dimensao
+
+' --- Relações de Dependência com Enums ---
+model.Funcionario ..> model.enums.FuncaoFuncionario
+model.Usuario ..> model.enums.Privilegios
+model.Cliente ..> model.enums.TipoCliente
+model.Cliente ..> model.enums.Uf
+model.Aparelho ..> model.enums.CategoriaAparelho
+model.Aparelho ..> model.enums.EstadoAparelho
+model.OrdemServico ..> model.enums.EstadoOrdemServico
+model.OrdemServico ..> model.enums.TipoServico
+model.OrdemServico ..> model.enums.FormaPagamento
+model.OrdemServico ..> model.enums.TipoPagamento
+model.EstoqueAparelho ..> model.enums.CategoriaAparelho
+
+' --- Relações de Herança da View ---
+view.base.TelaCadastroAbstrata <|-- view.TelaCadastroCliente
+view.base.TelaCadastroAbstrata <|-- view.TelaCadastroFuncionario
+view.base.TelaGerenciamentoAbstrata <|-- view.TelaGerenciamentoClientes
+view.base.TelaGerenciamentoAbstrata <|-- view.TelaGerenciamentoFuncionarios
+view.base.TelaGerenciamentoAbstrata <|-- view.TelaGerenciamentoUsuarios
+
+' --- Relações de Composição da View ---
+view.base.TelaCadastroAbstrata *-- view.components.FormInputH
+view.base.TelaGerenciamentoAbstrata *-- view.components.GerenciamentoTable
+view.base.TelaGerenciamentoAbstrata *-- view.components.GerenciamentoForm
+view.base.TelaGerenciamentoAbstrata *-- view.components.GerenciamentoButton
+view.components.GerenciamentoForm *-- view.components.FormInputV
+
+' --- Fluxo da Aplicação e Dependências entre Camadas ---
+view.TelaLogin ..> control.UsuarioDAO : utiliza
+view.TelaLogin ..> view.TelaPrincipal : abre
+view.TelaPrincipal o-- model.Usuario : "usuarioLogado"
+view.TelaPrincipal ..> view.TelaSobre : cria
+view.TelaPrincipal ..> view.TelaGerenciamentoClientes : cria
+view.TelaPrincipal ..> view.TelaGerenciamentoFuncionarios : cria
+view.TelaPrincipal ..> view.TelaGerenciamentoUsuarios : cria
+view.TelaGerenciamentoClientes ..> view.TelaCadastroCliente : cria
+view.TelaGerenciamentoFuncionarios ..> view.TelaCadastroFuncionario : cria
+view.TelaCadastroCliente ..> control.ClienteDAO : utiliza
+view.TelaCadastroFuncionario ..> control.FuncionarioDAO : utiliza
+view.TelaCadastroFuncionario ..> control.UsuarioDAO : utiliza
+view.TelaGerenciamentoClientes ..> control.ClienteDAO : utiliza
+view.TelaGerenciamentoFuncionarios ..> control.FuncionarioDAO : utiliza
+view.TelaGerenciamentoUsuarios ..> control.UsuarioDAO : utiliza
+
+' --- Relações Control-Model-Database ---
+control.ClienteDAO ..> model.Cliente : manipula
+control.FuncionarioDAO ..> model.Funcionario : manipula
+control.UsuarioDAO ..> model.Usuario : manipula
+control.FuncionarioDAO *-- database.DBQuery
+control.UsuarioDAO *-- database.DBQuery
+control.ClienteDAO *-- database.DBQuery
+database.DBQuery ..> database.DBConnection : cria e utiliza
+@enduml
